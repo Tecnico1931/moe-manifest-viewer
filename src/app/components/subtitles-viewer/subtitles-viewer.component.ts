@@ -151,20 +151,37 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
   };
 
   private handleSubtitles = (subtitles: Subtitles[]): void => {
+    if (!subtitles || subtitles.length === 0) {
+      this.subtitlesLine = [];
+      this.viewerState.updateCaption('');
+      return;
+    }
+    
     let newSubtitles;
-    if (this.subtitleIndex >= 0) {
+    if (this.subtitleIndex >= 0 && this.subtitleIndex < subtitles.length) {
       newSubtitles = subtitles[this.subtitleIndex];
       if (this.selectedSubtitles === newSubtitles) {
         return;
       }
     } else {
-      newSubtitles = {};
+      this.subtitlesLine = [];
+      this.viewerState.updateCaption('');
+      return;
     }
-    this.initSelectedSubtitles(newSubtitles);
-    this.viewerState.updateSelectedSubtitles(this.selectedSubtitles as Subtitles);
+    
+    if (newSubtitles) {
+      this.initSelectedSubtitles(newSubtitles);
+      this.viewerState.updateSelectedSubtitles(this.selectedSubtitles as Subtitles);
+    }
   };
 
   private handleSelectedSubtitles = (subtitle: Subtitles): void => {
+    if (!subtitle) {
+      this.subtitlesLine = [];
+      this.viewerState.updateCaption('');
+      return;
+    }
+    
     if (this.selectedSubtitles === subtitle) {
       return;
     }
@@ -172,10 +189,18 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
   };
 
   private async initSelectedSubtitles(subtitle: Subtitles): Promise<void> {
+    if (!subtitle) {
+      this.selectedSubtitles = {} as Subtitles;
+      this.subtitlesLine = [];
+      this.subtitleManifest = [];
+      this.viewerState.updateCaption('');
+      return;
+    }
+    
     this.selectedSubtitles = subtitle;
     this.subtitlesLine = [];
     
-    if (this.selectedSubtitles.url) {
+    if (this.selectedSubtitles?.url) {
       const url = this.selectedSubtitles.url;
       const isSingleVttFile = url.includes('.vtt') || url.includes('.webvtt') || url.includes('.srt');
       

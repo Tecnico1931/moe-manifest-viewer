@@ -48,12 +48,12 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
   constructor(private dataService: DataService, private parserService: ParserService) {}
 
   public async ngOnInit() {
+    this.subtitlesLine = [];
     this.viewerState.currentDisplayTime$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.handleTime);
     this.viewerState.selectedSubtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.handleSelectedSubtitles);
     this.viewerState.subtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.handleSubtitles);
     this.subtitleIndex = this.viewerState.subtitles.findIndex((element) => element?.name === this.viewerState.selectedSubtitles?.name);
     await this.handleSubtitles(this.viewerState.subtitles);
-    this.subtitlesLine = [];
   }
 
   public onChangeLanguage = (value: string) => {
@@ -84,6 +84,14 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
           });
         }
       });
+      
+      if (this.currentTime !== undefined) {
+        const line = this.subtitlesLine?.find((subtitle) => subtitle.start <= this.currentTime && subtitle.end > this.currentTime);
+        if (line) {
+          this.currentEnd = line.end;
+          this.viewerState.updateCaption(line.text);
+        }
+      }
     }
   };
 

@@ -219,7 +219,10 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     this.initHls();
     this.currentSource = source;
     this.hls.loadSource(source);
-    this.viewerState.updateIsLive(this.hls.levels[this.hls.currentLevel].details?.live);
+    const currentLevel = this.hls.levels?.[this.hls.currentLevel];
+    if (currentLevel?.details) {
+      this.viewerState.updateIsLive(currentLevel.details.live);
+    }
   };
 
   private seekTime = (time: number) => {

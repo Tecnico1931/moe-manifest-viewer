@@ -126,34 +126,57 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
     if (this.selectedSubtitles.url) {
       let receivedSubtitleManifest = await this.dataService.getManifest(this.selectedSubtitles.url).then(this.parserService.parseManifest);
       this.subtitleManifest = receivedSubtitleManifest.lines?.filter((line) => line.startTime !== undefined && line.stream);
+      
+      if (this.subtitleManifest && this.subtitleManifest.length > 0 && this.currentTime !== undefined) {
+        const initialSegment = this.subtitleManifest.find((value) => {
+          const startTime = value.startTime;
+          const fragDuration = value.fragDuration;
+          return startTime !== undefined && fragDuration && startTime <= this.currentTime && startTime + fragDuration > this.currentTime;
+        });
+        if (initialSegment) {
+          await this.getSubtitles(initialSegment);
+          initialSegment.loadStatus = 'loaded';
+        }
+      }
     } else {
       this.subtitleManifest = [];
     }
   }
 
   private handleTime = (seconds: number) => {
-    if (seconds > this.currentEnd || seconds < this.currentTime) {
-      const line = this.subtitlesLine?.find((subtitle) => subtitle.start <= seconds && subtitle.end > seconds);
-      this.currentEnd = line?.end ?? 0;
-      const text = line?.text ?? '';
-      this.viewerState.updateCaption(text);
-      if (!line && this.subtitleManifest) {
+    this.currentTime = seconds;
+    
+    const line = this.subtitlesLine?.find((subtitle) => subtitle.start <= seconds && subtitle.end > seconds);
+    
+    if (line) {
+      if (seconds > this.currentEnd || seconds < (this.currentEnd - (line.end - line.start))) {
+        this.currentEnd = line.end;
+        this.viewerState.updateCaption(line.text);
+      }
+    } else {
+      if (this.currentEnd !== 0) {
+        this.currentEnd = 0;
+        this.viewerState.updateCaption('');
+      }
+      
+      if (this.subtitleManifest) {
         const nextPossibleManifest = this.subtitleManifest.find((value, key) => {
           const startTime = value.startTime;
           const fragDuration = value.fragDuration;
-          if (startTime && fragDuration && value.loadStatus !== 'loaded') {
-            this.subtitleManifest[key].loadStatus = startTime <= seconds && startTime + fragDuration > seconds ? 'loaded' : '';
-            return this.subtitleManifest[key].loadStatus === 'loaded';
-          } else {
-            return false;
+          if (startTime !== undefined && fragDuration && value.loadStatus !== 'loaded') {
+            const isInRange = startTime <= seconds && startTime + fragDuration > seconds;
+            if (isInRange) {
+              this.subtitleManifest[key].loadStatus = 'loaded';
+            }
+            return isInRange;
           }
+          return false;
         });
         if (nextPossibleManifest) {
           this.getSubtitles(nextPossibleManifest);
         }
       }
     }
-    this.currentTime = seconds;
   };
 
   public ngOnDestroy() {

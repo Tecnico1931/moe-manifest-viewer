@@ -126,6 +126,10 @@
       <em class="material-icons" [class.iconActive]="viewerState.showPlayerLogs">receipt</em>
       <span class="iconText">Show Player Logs <span *ngIf="viewerState.showPlayerLogs">&#9989;</span></span>
     </div>
+    <div class="iconWrapper" (click)="toggleHlsIssues(!viewerState.showHlsIssues)" *ngIf="type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showHlsIssues">warning</em>
+      <span class="iconText">Show HLS Issues <span *ngIf="viewerState.showHlsIssues">&#9989;</span></span>
+    </div>
     <div class="iconWrapper" (click)="toggleUseGlobalToken(!viewerState.globalTokenActive)">
       <em class="material-icons" [class.iconActive]="viewerState.globalTokenActive">&#xE0DA;</em>
       <span class="iconText">Global Token <span *ngIf="viewerState.globalTokenActive">&#9989;</span></span>

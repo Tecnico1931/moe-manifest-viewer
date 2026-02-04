@@ -299,6 +299,24 @@ ng build --prod --aot
 ```
 Output goes to `/dist/` directory.
 
+### GitHub Pages
+The project includes automated GitHub Pages deployment via GitHub Actions.
+
+**Automatic Deployment:**
+- Push to `main` branch triggers automatic build and deploy
+- Workflow located at `.github/workflows/deploy-gh-pages.yml`
+- Site available at `https://<username>.github.io/moe-manifest-viewer/`
+
+**Manual Build for GitHub Pages:**
+```bash
+npm run build:gh-pages
+```
+
+**Setup Requirements:**
+1. Go to repo Settings > Pages
+2. Set Source to "GitHub Actions"
+3. Push to `main` to trigger deployment
+
 ### Docker
 ```bash
 # Production container (nginx)

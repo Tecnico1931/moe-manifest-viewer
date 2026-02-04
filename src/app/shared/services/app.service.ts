@@ -28,6 +28,7 @@ export class AppService {
   public displaySegmentInspector$ = new Subject<SegmentInspector>();
   public displayStallDetector$ = new Subject<boolean>();
   public displayPlayerLogs$ = new Subject<boolean>();
+  public displayHlsIssues$ = new Subject<boolean>();
   public openRelmMenu$ = new Subject<boolean>();
   public relmUrl$ = new Subject<string>();
   public openSetManifest$ = new Subject<string>();
@@ -108,6 +109,10 @@ export class AppService {
 
   public togglePlayerLogsService(val: boolean): void {
     this.displayPlayerLogs$.next(val);
+  }
+
+  public toggleHlsIssuesService(val: boolean): void {
+    this.displayHlsIssues$.next(val);
   }
 
   public setPollInterval(val: number): void {

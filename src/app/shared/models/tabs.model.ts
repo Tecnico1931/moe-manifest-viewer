@@ -11,4 +11,5 @@ export enum TabObjectName {
   TERMSOFUSE = 'Terms Of Use',
   SCTEDISPLAY = 'SCTE',
   SUBTITLES = 'Subtitles Viewer',
+  HLSISSUES = 'HLS Issues',
 }

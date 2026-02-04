@@ -177,6 +177,11 @@
         <input type="checkbox" [class.active]="displayPlayerLogs" />
         <span class="checkmark"></span>
       </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleHlsIssuesService', !displayHlsIssues)"
+        >Show HLS Issues
+        <input type="checkbox" [class.active]="displayHlsIssues" />
+        <span class="checkmark"></span>
+      </label>
       <div class="listButton">
         <button class="clearSettingsCookieButton" (click)="activateClearSettingsConfirmationPanel()">{{ settingsClearButtonText }}</button>
       </div>

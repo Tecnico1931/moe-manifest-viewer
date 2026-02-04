@@ -8,6 +8,7 @@
     viewerState.showPlayerConfig ||
     viewerState.segmentInspector.show ||
     viewerState.showStallDetector ||
+    viewerState.showHlsIssues ||
     viewerState.showVideo ||
     viewerState.showScteDisplay ||
     viewerState.showSubtitles
@@ -54,6 +55,10 @@
 
   <app-tab *ngIf="viewerState.showStallDetector" tabTitle="{{ tabName.STALLDETECTOR }}">
     <app-stall-detector [viewerReset$]="viewerReset$" [manifestUpdate$]="manifestUpdate$" [viewerState]="viewerState"></app-stall-detector>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showHlsIssues && type === 'hls'" tabTitle="{{ tabName.HLSISSUES }}">
+    <app-hls-issues [viewerReset$]="viewerReset$" [manifestUpdate$]="manifestUpdate$" [viewerState]="viewerState"></app-hls-issues>
   </app-tab>
 
   <app-tab *ngIf="!useNative && viewerState.showPlayerLogs" tabTitle="{{ tabName.PLAYERLOGS }}">

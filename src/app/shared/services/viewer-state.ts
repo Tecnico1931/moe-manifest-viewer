@@ -55,6 +55,7 @@ export class ViewerState {
   public _showSubtitles: boolean;
   public _showPlayerLogs: boolean;
   public _showScteDisplay: boolean;
+  public _showHlsIssues: boolean;
   public _showPolling: boolean;
   public _showExplode = true;
   public _isMasterOpen: boolean;
@@ -371,6 +372,9 @@ export class ViewerState {
   }
   public get showScteDisplay(): boolean {
     return this._showScteDisplay;
+  }
+  public get showHlsIssues(): boolean {
+    return this._showHlsIssues;
   }
   public get name(): string {
     return this._name;

@@ -23,6 +23,7 @@ export interface ViewerOptionTypes {
   showScteDisplay: boolean;
   showStallDetector: boolean;
   showPlayerLogs: boolean;
+  showHlsIssues: boolean;
   showSubtitles: boolean;
   xhrCredentials: boolean;
   globalTokenActive: boolean;

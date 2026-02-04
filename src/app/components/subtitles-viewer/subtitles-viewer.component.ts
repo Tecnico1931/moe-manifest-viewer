@@ -61,6 +61,49 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
     this.handleSubtitles(this.viewerState.subtitles);
   };
 
+  private parseSubtitleFile = async (text: string): Promise<void> => {
+    const lines = text.split('\n');
+    console.log('[SubtitlesViewer] Parsing subtitle file, total lines:', lines.length);
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      if (line.includes('-->')) {
+        const times = line.split('-->');
+        const startTime = this.convertToSeconds(times[0]);
+        const endTime = this.convertToSeconds(times[1]);
+        
+        let subtitleText = '';
+        let j = i + 1;
+        
+        while (j < lines.length && lines[j].trim() !== '' && !lines[j].includes('-->')) {
+          if (subtitleText) {
+            subtitleText += '\n' + lines[j].trim();
+          } else {
+            subtitleText = lines[j].trim();
+          }
+          j++;
+        }
+        
+        if (subtitleText) {
+          this.subtitlesLine.push({
+            start: startTime,
+            end: endTime,
+            text: subtitleText,
+          });
+        }
+        
+        i = j - 1;
+      }
+    }
+    
+    console.log('[SubtitlesViewer] Parsed subtitles, total captions:', this.subtitlesLine.length);
+    if (this.subtitlesLine.length > 0) {
+      console.log('[SubtitlesViewer] First caption:', this.subtitlesLine[0]);
+      console.log('[SubtitlesViewer] Last caption:', this.subtitlesLine[this.subtitlesLine.length - 1]);
+    }
+  };
+
   private getSubtitles = async (manifestLineObject: ManifestLineObject) => {
     if (manifestLineObject.url) {
       const allText = ((await this.dataService.getManifest(manifestLineObject.url)).text ?? '').split('\n');
@@ -131,19 +174,41 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
   private async initSelectedSubtitles(subtitle: Subtitles): Promise<void> {
     this.selectedSubtitles = subtitle;
     this.subtitlesLine = [];
+    
     if (this.selectedSubtitles.url) {
-      let receivedSubtitleManifest = await this.dataService.getManifest(this.selectedSubtitles.url).then(this.parserService.parseManifest);
-      this.subtitleManifest = receivedSubtitleManifest.lines?.filter((line) => line.startTime !== undefined && line.stream);
+      const url = this.selectedSubtitles.url;
+      const isSingleVttFile = url.includes('.vtt') || url.includes('.webvtt') || url.includes('.srt');
       
-      if (this.subtitleManifest && this.subtitleManifest.length > 0 && this.currentTime !== undefined) {
-        const initialSegment = this.subtitleManifest.find((value) => {
-          const startTime = value.startTime;
-          const fragDuration = value.fragDuration;
-          return startTime !== undefined && fragDuration && startTime <= this.currentTime && startTime + fragDuration > this.currentTime;
-        });
-        if (initialSegment) {
-          await this.getSubtitles(initialSegment);
-          initialSegment.loadStatus = 'loaded';
+      if (isSingleVttFile) {
+        console.log('[SubtitlesViewer] Loading single VTT/SRT file:', url);
+        const subtitleContent = await this.dataService.getManifest(url);
+        await this.parseSubtitleFile(subtitleContent.text || '');
+        console.log('[SubtitlesViewer] Current time:', this.currentTime);
+        
+        if (this.currentTime !== undefined) {
+          const line = this.subtitlesLine?.find((subtitle) => subtitle.start <= this.currentTime && subtitle.end > this.currentTime);
+          if (line) {
+            console.log('[SubtitlesViewer] Found matching caption at init:', line);
+            this.currentEnd = line.end;
+            this.viewerState.updateCaption(line.text);
+          } else {
+            console.log('[SubtitlesViewer] No caption found for current time:', this.currentTime);
+          }
+        }
+      } else {
+        let receivedSubtitleManifest = await this.dataService.getManifest(this.selectedSubtitles.url).then(this.parserService.parseManifest);
+        this.subtitleManifest = receivedSubtitleManifest.lines?.filter((line) => line.startTime !== undefined && line.stream);
+        
+        if (this.subtitleManifest && this.subtitleManifest.length > 0 && this.currentTime !== undefined) {
+          const initialSegment = this.subtitleManifest.find((value) => {
+            const startTime = value.startTime;
+            const fragDuration = value.fragDuration;
+            return startTime !== undefined && fragDuration && startTime <= this.currentTime && startTime + fragDuration > this.currentTime;
+          });
+          if (initialSegment) {
+            await this.getSubtitles(initialSegment);
+            initialSegment.loadStatus = 'loaded';
+          }
         }
       }
     } else {
@@ -157,7 +222,7 @@ export class SubtitlesViewerComponent implements OnInit, OnDestroy {
     const line = this.subtitlesLine?.find((subtitle) => subtitle.start <= seconds && subtitle.end > seconds);
     
     if (line) {
-      if (seconds > this.currentEnd || seconds < (this.currentEnd - (line.end - line.start))) {
+      if (this.currentEnd !== line.end) {
         this.currentEnd = line.end;
         this.viewerState.updateCaption(line.text);
       }

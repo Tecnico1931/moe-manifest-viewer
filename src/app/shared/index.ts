@@ -11,6 +11,7 @@ export * from './services/keyboard.service';
 export * from './utils/user-agent.util';
 export * from './services/ga.service';
 export * from './services/drm-manager.service';
+export * from './services/hls-validation.service';
 
 /** models */
 export * from './models/manifest-response';
@@ -23,3 +24,4 @@ export * from './models/dash-segment.model';
 export * from './models/viewer';
 export * from './models/metric.model';
 export * from './models/video-players';
+export * from './models/hls-issue.model';

@@ -230,6 +230,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.appService.displaySegmentInspector$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleSegmentInspector);
     this.appService.displayStallDetector$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleStallDetector);
     this.appService.displayPlayerLogs$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.togglePlayerLogs);
+    this.appService.displayHlsIssues$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleHlsIssues);
     this.appService.pollInterval$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onIntervalChange);
     this.appService.showPolling$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.setPollingActive);
     this.appService.openSetManifest$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.openUrlFromAppService);
@@ -570,6 +571,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showScteDisplay: false,
         showStallDetector: false,
         showPlayerLogs: false,
+        showHlsIssues: false,
         showSubtitles: false,
       },
     });
@@ -1323,6 +1325,10 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showPlayerLogs', show);
   };
 
+  public toggleHlsIssues = (show: boolean) => {
+    this.setOption('showHlsIssues', show);
+  };
+
   public withCredentialsChange = (credentials: boolean) => {
     this.setOption('xhrCredentials', credentials);
   };
@@ -1415,6 +1421,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           showScteDisplay: false,
           showStallDetector: false,
           showPlayerLogs: false,
+          showHlsIssues: false,
           showExplode: false,
           showSubtitles: false,
         },
@@ -1440,6 +1447,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showScteDisplay: false,
         showStallDetector: false,
         showPlayerLogs: false,
+        showHlsIssues: false,
         showSubtitles: false,
       },
     });

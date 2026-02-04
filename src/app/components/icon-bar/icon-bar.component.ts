@@ -223,6 +223,7 @@ export class IconBarComponent implements OnInit {
         showScteDisplay: this.viewerState.showScteDisplay,
         showStallDetector: this.viewerState.showStallDetector,
         showPlayerLogs: this.viewerState.showPlayerLogs,
+        showHlsIssues: this.viewerState.showHlsIssues,
         showSubtitles: this.viewerState.showSubtitles,
       })
       .then(() => {

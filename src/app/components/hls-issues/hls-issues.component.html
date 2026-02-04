@@ -1,0 +1,90 @@
+<div class="hls-issues-container">
+  <div class="header" (click)="toggleExpand()">
+    <span class="title">
+      <i class="material-icons expand-icon">{{ isExpanded ? 'expand_more' : 'chevron_right' }}</i>
+      HLS Spec Validation
+    </span>
+    <span class="summary" *ngIf="validationResult">
+      <span class="badge error" *ngIf="validationResult.summary.errors > 0">{{ validationResult.summary.errors }} errors</span>
+      <span class="badge warning" *ngIf="validationResult.summary.warnings > 0">{{ validationResult.summary.warnings }} warnings</span>
+      <span class="badge info" *ngIf="validationResult.summary.info > 0">{{ validationResult.summary.info }} info</span>
+      <span class="badge valid" *ngIf="validationResult.isValid && validationResult.summary.warnings === 0 && validationResult.summary.info === 0">
+        <i class="material-icons valid-icon">check_circle</i> Valid
+      </span>
+    </span>
+  </div>
+
+  <div class="content" *ngIf="isExpanded">
+    <div class="no-manifest" *ngIf="!validationResult">
+      <p>Load an HLS manifest to validate against RFC 8216bis specification.</p>
+    </div>
+
+    <div class="validation-content" *ngIf="validationResult">
+      <div class="toolbar">
+        <div class="filters">
+          <button
+            class="filter-btn"
+            [class.active]="filterSeverity === 'all'"
+            (click)="setFilter('all')"
+          >
+            All ({{ validationResult.issues.length }})
+          </button>
+          <button
+            class="filter-btn error"
+            [class.active]="filterSeverity === 'error'"
+            (click)="setFilter('error')"
+            *ngIf="validationResult.summary.errors > 0"
+          >
+            Errors ({{ validationResult.summary.errors }})
+          </button>
+          <button
+            class="filter-btn warning"
+            [class.active]="filterSeverity === 'warning'"
+            (click)="setFilter('warning')"
+            *ngIf="validationResult.summary.warnings > 0"
+          >
+            Warnings ({{ validationResult.summary.warnings }})
+          </button>
+          <button
+            class="filter-btn info"
+            [class.active]="filterSeverity === 'info'"
+            (click)="setFilter('info')"
+            *ngIf="validationResult.summary.info > 0"
+          >
+            Info ({{ validationResult.summary.info }})
+          </button>
+        </div>
+        <button class="revalidate-btn" (click)="revalidate()" title="Re-validate manifest">
+          <i class="material-icons">refresh</i>
+        </button>
+      </div>
+
+      <div class="issues-list" *ngIf="filteredIssues.length > 0">
+        <div class="issue" *ngFor="let issue of filteredIssues" [class]="issue.severity">
+          <div class="issue-header">
+            <i class="material-icons severity-icon" [class]="issue.severity">{{ getSeverityIcon(issue.severity) }}</i>
+            <span class="issue-code">[{{ issue.code }}]</span>
+            <span class="issue-message">{{ issue.message }}</span>
+            <span class="issue-category">{{ getCategoryLabel(issue.category) }}</span>
+          </div>
+          <div class="issue-details" *ngIf="issue.details">
+            {{ issue.details }}
+          </div>
+          <div class="issue-meta">
+            <span class="line-number" *ngIf="issue.lineNumber">Line {{ issue.lineNumber }}</span>
+            <span class="spec-ref" *ngIf="issue.specReference">{{ issue.specReference }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-issues" *ngIf="filteredIssues.length === 0 && validationResult.issues.length > 0">
+        <p>No issues match the current filter.</p>
+      </div>
+
+      <div class="all-valid" *ngIf="validationResult.issues.length === 0">
+        <i class="material-icons success-icon">check_circle</i>
+        <p>No issues found. The manifest appears to be valid.</p>
+      </div>
+    </div>
+  </div>
+</div>

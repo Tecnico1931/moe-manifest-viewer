@@ -5,7 +5,7 @@ import { enableProdMode } from '@angular/core';
 import { environment } from './environments/environment';
 import { AppModule } from './app/';
 
-let isBlacklisted = true;
+let isBlacklisted = false;
 
 // whitelisted domains
 const hn = [

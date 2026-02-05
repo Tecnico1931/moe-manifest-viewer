@@ -138,6 +138,7 @@ export class ViewerState {
   public audioTracks$ = new BehaviorSubject<AudioTrack[]>([]);
   public selectedAudioTrack$ = new Subject<AudioTrack>();
   public selectAudioTrack$ = new Subject<number>();
+  public fragments$ = new BehaviorSubject<any[]>([]);
   public playerConfigChanged$ = new Subject<string>();
   public playerSelectedChanged$ = new Subject<VideoPlayers>();
   public isLive: boolean;
@@ -341,6 +342,10 @@ export class ViewerState {
 
   public setVideoElement(el: HTMLVideoElement | null): void {
     this.videoElement = el;
+  }
+
+  public updateFragments(fragments: any[]): void {
+    this.fragments$.next(fragments);
   }
 
   public setCMCDOptions(data: CMCDOptions) {

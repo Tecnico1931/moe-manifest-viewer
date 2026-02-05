@@ -341,6 +341,9 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
 
   private onLevelLoaded = (event: string, data: HlsTypes.LevelLoadedData) => {
     this.viewerState.setTotalDuration(data.details.totalduration);
+    if (data.details.fragments) {
+      this.viewerState.updateFragments(data.details.fragments);
+    }
   };
 
   private onLevelSwitched = (event: string, data: HlsTypes.LevelSwitchedData) => {

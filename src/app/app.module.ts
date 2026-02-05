@@ -62,6 +62,8 @@ import { ScteDisplayComponent } from './components/scte-display/scte-display.com
 import { SubtitlesComponent } from './components/subtitles/subtitles.component';
 import { HlsIssuesComponent } from './components/hls-issues/hls-issues.component';
 import { HlsValidationService } from './shared/services/hls-validation.service';
+import { ClipComponent } from './components/clip/clip.component';
+import { ClipService } from './shared/services/clip.service';
 
 declare global {
   var Shaka: typeof Shakajs;
@@ -101,6 +103,7 @@ declare global {
     ScteDisplayComponent,
     PlayerConfigComponent,
     HlsIssuesComponent,
+    ClipComponent,
   ],
   imports: [
     BrowserModule,
@@ -126,6 +129,7 @@ declare global {
     GoogleAnalyticsEventsService,
     Md5,
     HlsValidationService,
+    ClipService,
   ],
   entryComponents: [AppComponent],
   bootstrap: [AppComponent],

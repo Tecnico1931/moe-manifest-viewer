@@ -1,0 +1,310 @@
+@import '../../../app/shared/utils/vars.scss';
+
+.clip-container {
+  padding: 10px;
+  font-size: 12px;
+  color: #ddd;
+}
+
+.clip-unsupported {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255, 152, 0, 0.15);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: 4px;
+  color: #ffb74d;
+
+  i {
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.clip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clip-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.section-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #aaa;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.time-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.time-input-group {
+  flex: 1;
+
+  label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    color: #999;
+  }
+}
+
+.time-input-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.time-input {
+  width: 80px;
+  padding: 4px 6px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #2a2a2a;
+  color: #ddd;
+  font-size: 12px;
+  font-family: monospace;
+
+  &:focus {
+    outline: none;
+    border-color: #4fc3f7;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.mark-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 6px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #333;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+
+  i {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: #444;
+    border-color: #4fc3f7;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.time-display {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  color: #777;
+  font-family: monospace;
+}
+
+.time-divider {
+  display: flex;
+  align-items: center;
+  padding-top: 18px;
+  color: #666;
+
+  i {
+    font-size: 16px;
+  }
+}
+
+.clip-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #888;
+
+  strong {
+    color: #ddd;
+  }
+}
+
+.audio-select {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #2a2a2a;
+  color: #ddd;
+  font-size: 12px;
+
+  &:focus {
+    outline: none;
+    border-color: #4fc3f7;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.no-tracks {
+  font-size: 11px;
+  color: #777;
+  font-style: italic;
+}
+
+.clip-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+
+  i {
+    font-size: 16px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.record-btn {
+  background: #c62828;
+  color: #fff;
+  border-color: #c62828;
+
+  &:hover:not(:disabled) {
+    background: #e53935;
+  }
+}
+
+.cancel-btn {
+  background: #ef6c00;
+  color: #fff;
+  border-color: #ef6c00;
+
+  &:hover:not(:disabled) {
+    background: #f57c00;
+  }
+}
+
+.reset-btn {
+  background: #333;
+  color: #ddd;
+
+  &:hover:not(:disabled) {
+    background: #444;
+  }
+}
+
+.clip-progress {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #c62828;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 11px;
+  color: #ddd;
+  display: flex;
+  align-items: center;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.recording-icon {
+  font-size: 12px;
+  color: #c62828;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.progress-note {
+  font-size: 10px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.clip-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+
+  &.done {
+    background: rgba(76, 175, 80, 0.15);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #81c784;
+  }
+
+  &.error {
+    background: rgba(244, 67, 54, 0.15);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #e57373;
+  }
+
+  i {
+    font-size: 18px;
+  }
+}

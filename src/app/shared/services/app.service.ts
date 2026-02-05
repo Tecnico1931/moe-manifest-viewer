@@ -29,6 +29,7 @@ export class AppService {
   public displayStallDetector$ = new Subject<boolean>();
   public displayPlayerLogs$ = new Subject<boolean>();
   public displayHlsIssues$ = new Subject<boolean>();
+  public displayClip$ = new Subject<boolean>();
   public openRelmMenu$ = new Subject<boolean>();
   public relmUrl$ = new Subject<string>();
   public openSetManifest$ = new Subject<string>();
@@ -113,6 +114,10 @@ export class AppService {
 
   public toggleHlsIssuesService(val: boolean): void {
     this.displayHlsIssues$.next(val);
+  }
+
+  public toggleClipService(val: boolean): void {
+    this.displayClip$.next(val);
   }
 
   public setPollInterval(val: number): void {

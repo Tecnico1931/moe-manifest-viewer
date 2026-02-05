@@ -9,6 +9,7 @@
     viewerState.segmentInspector.show ||
     viewerState.showStallDetector ||
     viewerState.showHlsIssues ||
+    viewerState.showClip ||
     viewerState.showVideo ||
     viewerState.showScteDisplay ||
     viewerState.showSubtitles
@@ -59,6 +60,10 @@
 
   <app-tab *ngIf="viewerState.showHlsIssues && type === 'hls'" tabTitle="{{ tabName.HLSISSUES }}">
     <app-hls-issues [viewerReset$]="viewerReset$" [manifestUpdate$]="manifestUpdate$" [viewerState]="viewerState"></app-hls-issues>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showClip && viewerState.showVideo" tabTitle="{{ tabName.CLIP }}">
+    <app-clip [viewerState]="viewerState"></app-clip>
   </app-tab>
 
   <app-tab *ngIf="!useNative && viewerState.showPlayerLogs" tabTitle="{{ tabName.PLAYERLOGS }}">

@@ -275,6 +275,9 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     this.hls.on(Hls.Events.MEDIA_DETACHED, this.onMediaDetached);
     this.hls.on(Hls.Events.KEY_LOADING, this.showDrmError);
     this.hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, this.onSubtitleUpdate);
+    this.hls.on(Hls.Events.AUDIO_TRACK_LOADED, this.onAudioTracksUpdated);
+    this.viewerState.setVideoElement(this.video.nativeElement);
+    this.viewerState.selectAudioTrack$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onAudioTrackSelectRequest);
   }
 
   private showDrmError = (error) => {
@@ -300,6 +303,42 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     this.video.nativeElement.play();
     if (isLevel) {
       this.switchBandwidth(`${this.availableRenditions[startLevel].bitrate}`);
+    }
+    this.exposeAudioTracks();
+  };
+
+  private exposeAudioTracks = () => {
+    if (this.hls && this.hls.audioTracks && this.hls.audioTracks.length > 0) {
+      const tracks = this.hls.audioTracks.map((t, i) => ({
+        id: t.id !== undefined ? t.id : i,
+        name: t.name || `Track ${i + 1}`,
+        lang: t.lang,
+        default: t.default,
+      }));
+      this.viewerState.updateAudioTracks(tracks);
+      const activeIdx = this.hls.audioTrack;
+      if (activeIdx >= 0 && activeIdx < tracks.length) {
+        this.viewerState.updateSelectedAudioTrack(tracks[activeIdx]);
+      }
+    }
+  };
+
+  private onAudioTracksUpdated = () => {
+    this.exposeAudioTracks();
+  };
+
+  private onAudioTrackSelectRequest = (trackId: number) => {
+    if (this.hls) {
+      const idx = this.hls.audioTracks.findIndex((t) => (t.id !== undefined ? t.id : 0) === trackId);
+      if (idx >= 0) {
+        this.hls.audioTrack = idx;
+        const tracks = this.hls.audioTracks;
+        this.viewerState.updateSelectedAudioTrack({
+          id: trackId,
+          name: tracks[idx].name || `Track ${idx + 1}`,
+          lang: tracks[idx].lang,
+        });
+      }
     }
   };
 

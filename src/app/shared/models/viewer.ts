@@ -24,6 +24,7 @@ export interface ViewerOptionTypes {
   showStallDetector: boolean;
   showPlayerLogs: boolean;
   showHlsIssues: boolean;
+  showClip: boolean;
   showSubtitles: boolean;
   xhrCredentials: boolean;
   globalTokenActive: boolean;

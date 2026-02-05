@@ -231,6 +231,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.appService.displayStallDetector$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleStallDetector);
     this.appService.displayPlayerLogs$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.togglePlayerLogs);
     this.appService.displayHlsIssues$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleHlsIssues);
+    this.appService.displayClip$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleClip);
     this.appService.pollInterval$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onIntervalChange);
     this.appService.showPolling$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.setPollingActive);
     this.appService.openSetManifest$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.openUrlFromAppService);
@@ -572,6 +573,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showStallDetector: false,
         showPlayerLogs: false,
         showHlsIssues: false,
+        showClip: false,
         showSubtitles: false,
       },
     });
@@ -1329,6 +1331,10 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showHlsIssues', show);
   };
 
+  public toggleClip = (show: boolean) => {
+    this.setOption('showClip', show);
+  };
+
   public withCredentialsChange = (credentials: boolean) => {
     this.setOption('xhrCredentials', credentials);
   };
@@ -1422,6 +1428,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           showStallDetector: false,
           showPlayerLogs: false,
           showHlsIssues: false,
+          showClip: false,
           showExplode: false,
           showSubtitles: false,
         },
@@ -1448,6 +1455,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showStallDetector: false,
         showPlayerLogs: false,
         showHlsIssues: false,
+        showClip: false,
         showSubtitles: false,
       },
     });

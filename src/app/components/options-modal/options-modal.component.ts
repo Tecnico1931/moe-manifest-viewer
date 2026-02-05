@@ -52,6 +52,7 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public displayStallDetector: boolean;
   public displayPlayerLogs: boolean;
   public displayHlsIssues: boolean;
+  public displayClip: boolean;
   public seconds = 6;
   public optionsChecked: { prop: string; value: boolean }[] = new Array();
 
@@ -156,6 +157,10 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
       this.displayHlsIssues = val;
     });
 
+    this.appService.displayClip$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayClip = val;
+    });
+
     this.appService.useGlobalToken$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.useGlobalToken = val;
     });
@@ -216,6 +221,11 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
         case 'displayHlsIssues':
           if (vars[urlVar]) {
             this.appService.toggleHlsIssuesService(true);
+          }
+          break;
+        case 'displayClip':
+          if (vars[urlVar]) {
+            this.appService.toggleClipService(true);
           }
           break;
         case 'scrolling':
@@ -473,6 +483,9 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
           break;
         case 'showHlsIssues':
           this.appService.toggleHlsIssuesService(viewer.options[option]);
+          break;
+        case 'showClip':
+          this.appService.toggleClipService(viewer.options[option]);
       }
     });
     this.appService.setViewerId('', viewer.id);

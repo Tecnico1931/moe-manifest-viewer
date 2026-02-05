@@ -43,9 +43,9 @@ jobs:
 
       - name: Build Angular app
         run: |
-          # Build with base href set to repository name for GitHub Pages
-          # The base href will be /<repo-name>/ for project pages
-          npx ng build --configuration=production --base-href /${{ github.event.repository.name }}/
+          # Build with base href set to root for custom domain
+          # Custom domains serve from root path, not /repo-name/
+          npx ng build --configuration=production --base-href /
 
       - name: Add 404.html for SPA routing
         run: cp dist/index.html dist/404.html

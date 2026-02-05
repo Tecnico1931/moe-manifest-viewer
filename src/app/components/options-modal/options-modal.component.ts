@@ -53,6 +53,7 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public displayPlayerLogs: boolean;
   public displayHlsIssues: boolean;
   public displayClip: boolean;
+  public displayWhisperSubtitles: boolean;
   public seconds = 6;
   public optionsChecked: { prop: string; value: boolean }[] = new Array();
 
@@ -159,6 +160,10 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
 
     this.appService.displayClip$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.displayClip = val;
+    });
+
+    this.appService.displayWhisperSubtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayWhisperSubtitles = val;
     });
 
     this.appService.useGlobalToken$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
@@ -486,6 +491,9 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
           break;
         case 'showClip':
           this.appService.toggleClipService(viewer.options[option]);
+          break;
+        case 'showWhisperSubtitles':
+          this.appService.toggleWhisperSubtitlesService(viewer.options[option]);
       }
     });
     this.appService.setViewerId('', viewer.id);

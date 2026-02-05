@@ -13,4 +13,5 @@ export enum TabObjectName {
   SUBTITLES = 'Subtitles Viewer',
   HLSISSUES = 'HLS Issues',
   CLIP = 'Clip',
+  WHISPER = 'AI Subtitles',
 }

@@ -30,6 +30,7 @@ export class AppService {
   public displayPlayerLogs$ = new Subject<boolean>();
   public displayHlsIssues$ = new Subject<boolean>();
   public displayClip$ = new Subject<boolean>();
+  public displayWhisperSubtitles$ = new Subject<boolean>();
   public openRelmMenu$ = new Subject<boolean>();
   public relmUrl$ = new Subject<string>();
   public openSetManifest$ = new Subject<string>();
@@ -118,6 +119,10 @@ export class AppService {
 
   public toggleClipService(val: boolean): void {
     this.displayClip$.next(val);
+  }
+
+  public toggleWhisperSubtitlesService(val: boolean): void {
+    this.displayWhisperSubtitles$.next(val);
   }
 
   public setPollInterval(val: number): void {

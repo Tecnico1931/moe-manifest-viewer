@@ -12,6 +12,7 @@ export * from './utils/user-agent.util';
 export * from './services/ga.service';
 export * from './services/drm-manager.service';
 export * from './services/hls-validation.service';
+export * from './services/clip.service';
 
 /** models */
 export * from './models/manifest-response';

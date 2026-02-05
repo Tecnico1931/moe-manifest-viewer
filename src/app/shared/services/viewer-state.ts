@@ -23,6 +23,13 @@ export interface Subtitles {
   url: string;
 }
 
+export interface AudioTrack {
+  id: number;
+  name: string;
+  lang?: string;
+  default?: boolean;
+}
+
 export interface CMCDOptions {
   enabled: boolean;
   sessionId: string;
@@ -56,6 +63,7 @@ export class ViewerState {
   public _showPlayerLogs: boolean;
   public _showScteDisplay: boolean;
   public _showHlsIssues: boolean;
+  public _showClip: boolean;
   public _showPolling: boolean;
   public _showExplode = true;
   public _isMasterOpen: boolean;
@@ -89,6 +97,9 @@ export class ViewerState {
   public syncScteData = false;
 
   public protectedStream = false;
+  public audioTracks: AudioTrack[] = [];
+  public selectedAudioTrack: AudioTrack | null = null;
+  public videoElement: HTMLVideoElement | null = null;
 
   // EVENTS
   public videoSource$ = new BehaviorSubject<string>('');
@@ -124,6 +135,9 @@ export class ViewerState {
   public shakaDashFragmentCompleted$ = new Subject<number>();
   public scteData$ = new BehaviorSubject<SCTE35Data>({ data: '' });
   public cmcdOptions$ = new Subject<CMCDOptions>();
+  public audioTracks$ = new BehaviorSubject<AudioTrack[]>([]);
+  public selectedAudioTrack$ = new Subject<AudioTrack>();
+  public selectAudioTrack$ = new Subject<number>();
   public playerConfigChanged$ = new Subject<string>();
   public playerSelectedChanged$ = new Subject<VideoPlayers>();
   public isLive: boolean;
@@ -311,6 +325,24 @@ export class ViewerState {
     this.shakaDashFragmentCompleted$.next(data);
   };
 
+  public updateAudioTracks(tracks: AudioTrack[]): void {
+    this.audioTracks = tracks;
+    this.audioTracks$.next(tracks);
+  }
+
+  public updateSelectedAudioTrack(track: AudioTrack): void {
+    this.selectedAudioTrack = track;
+    this.selectedAudioTrack$.next(track);
+  }
+
+  public requestAudioTrackChange(trackId: number): void {
+    this.selectAudioTrack$.next(trackId);
+  }
+
+  public setVideoElement(el: HTMLVideoElement | null): void {
+    this.videoElement = el;
+  }
+
   public setCMCDOptions(data: CMCDOptions) {
     this._cmcdOptions = data;
     this.cmcdOptions$.next(data);
@@ -375,6 +407,9 @@ export class ViewerState {
   }
   public get showHlsIssues(): boolean {
     return this._showHlsIssues;
+  }
+  public get showClip(): boolean {
+    return this._showClip;
   }
   public get name(): string {
     return this._name;

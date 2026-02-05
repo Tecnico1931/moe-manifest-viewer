@@ -15,6 +15,7 @@ export enum VarNames {
   SHOWSTALLDETECTOR = 'showStallDetector',
   SHOWPLAYERLOGS = 'showPlayerLogs',
   SHOWHLSISSUES = 'showHlsIssues',
+  SHOWCLIP = 'showClip',
   SCROLLING = 'scrolling',
   XHRCREDENTIALS = 'xhrCredentials',
   MUTED = 'muted',
@@ -41,6 +42,7 @@ export class UrlVars {
   public displayStallDetector: boolean;
   public displayPlayerLogs: boolean;
   public displayHlsIssues: boolean;
+  public displayClip: boolean;
   public scrolling: ScrollTypes;
   public credentials: boolean;
   public muted: boolean;
@@ -66,6 +68,7 @@ export class UrlVars {
     this.displayStallDetector = this.checkForProperty(obj, VarNames.SHOWSTALLDETECTOR);
     this.displayPlayerLogs = this.checkForProperty(obj, VarNames.SHOWPLAYERLOGS);
     this.displayHlsIssues = this.checkForProperty(obj, VarNames.SHOWHLSISSUES);
+    this.displayClip = this.checkForProperty(obj, VarNames.SHOWCLIP);
     this.scrolling = this.checkForProperty(obj, VarNames.SCROLLING, false) ? obj[VarNames.SCROLLING] : ScrollTypes.AUTO_SCROLL;
     this.credentials = this.checkForProperty(obj, VarNames.XHRCREDENTIALS);
     this.muted = this.checkForProperty(obj, VarNames.MUTED);

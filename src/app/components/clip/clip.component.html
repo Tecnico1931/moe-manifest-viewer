@@ -65,7 +65,9 @@
       </div>
 
       <div class="clip-info">
-        <span class="clip-duration">Clip duration: <strong>{{ formatTime(clipDuration) }}</strong></span>
+        <span class="clip-duration"
+          >Clip duration: <strong>{{ formatTime(clipDuration) }}</strong></span
+        >
         <span class="total-duration">Total: {{ formatTime(videoDuration) }}</span>
       </div>
     </div>
@@ -95,27 +97,19 @@
       <button
         class="action-btn record-btn"
         (click)="startClip()"
-        [disabled]="clipState === 'recording' || clipState === 'processing' || clipDuration <= 0"
+        [disabled]="clipState === 'processing' || clipDuration <= 0"
         *ngIf="clipState !== 'recording'"
       >
         <i class="material-icons">fiber_manual_record</i>
         Record Clip (.{{ fileExtension }})
       </button>
 
-      <button
-        class="action-btn cancel-btn"
-        (click)="cancelClip()"
-        *ngIf="clipState === 'recording'"
-      >
+      <button class="action-btn cancel-btn" (click)="cancelClip()" *ngIf="clipState === 'recording'">
         <i class="material-icons">stop</i>
         Cancel Recording
       </button>
 
-      <button
-        class="action-btn reset-btn"
-        (click)="resetClip()"
-        [disabled]="clipState === 'recording'"
-      >
+      <button class="action-btn reset-btn" (click)="resetClip()" [disabled]="clipState === 'recording'">
         <i class="material-icons">replay</i>
         Reset
       </button>
@@ -129,13 +123,11 @@
       <div class="progress-label">
         <span *ngIf="clipState === 'recording'">
           <i class="material-icons recording-icon">fiber_manual_record</i>
-          Recording... {{ progress | number:'1.0-0' }}%
+          Recording... {{ progress | number: '1.0-0' }}%
         </span>
         <span *ngIf="clipState === 'processing'">Processing and downloading...</span>
       </div>
-      <div class="progress-note" *ngIf="clipState === 'recording'">
-        The video will play in real-time during recording.
-      </div>
+      <div class="progress-note" *ngIf="clipState === 'recording'">The video will play in real-time during recording.</div>
     </div>
 
     <!-- Status Messages -->

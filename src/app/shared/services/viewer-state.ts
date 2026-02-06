@@ -64,6 +64,7 @@ export class ViewerState {
   public _showScteDisplay: boolean;
   public _showHlsIssues: boolean;
   public _showClip: boolean;
+  public _showWhisperSubtitles: boolean;
   public _showPolling: boolean;
   public _showExplode = true;
   public _isMasterOpen: boolean;
@@ -138,6 +139,7 @@ export class ViewerState {
   public audioTracks$ = new BehaviorSubject<AudioTrack[]>([]);
   public selectedAudioTrack$ = new Subject<AudioTrack>();
   public selectAudioTrack$ = new Subject<number>();
+  public fragments$ = new BehaviorSubject<any[]>([]);
   public playerConfigChanged$ = new Subject<string>();
   public playerSelectedChanged$ = new Subject<VideoPlayers>();
   public isLive: boolean;
@@ -343,6 +345,10 @@ export class ViewerState {
     this.videoElement = el;
   }
 
+  public updateFragments(fragments: any[]): void {
+    this.fragments$.next(fragments);
+  }
+
   public setCMCDOptions(data: CMCDOptions) {
     this._cmcdOptions = data;
     this.cmcdOptions$.next(data);
@@ -410,6 +416,9 @@ export class ViewerState {
   }
   public get showClip(): boolean {
     return this._showClip;
+  }
+  public get showWhisperSubtitles(): boolean {
+    return this._showWhisperSubtitles;
   }
   public get name(): string {
     return this._name;

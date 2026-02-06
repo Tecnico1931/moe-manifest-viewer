@@ -13,6 +13,7 @@ export * from './services/ga.service';
 export * from './services/drm-manager.service';
 export * from './services/hls-validation.service';
 export * from './services/clip.service';
+export * from './services/whisper.service';
 
 /** models */
 export * from './models/manifest-response';

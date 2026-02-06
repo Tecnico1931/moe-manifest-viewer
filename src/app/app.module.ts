@@ -64,6 +64,8 @@ import { HlsIssuesComponent } from './components/hls-issues/hls-issues.component
 import { HlsValidationService } from './shared/services/hls-validation.service';
 import { ClipComponent } from './components/clip/clip.component';
 import { ClipService } from './shared/services/clip.service';
+import { WhisperSubtitlesComponent } from './components/whisper-subtitles/whisper-subtitles.component';
+import { WhisperService } from './shared/services/whisper.service';
 
 declare global {
   var Shaka: typeof Shakajs;
@@ -104,6 +106,7 @@ declare global {
     PlayerConfigComponent,
     HlsIssuesComponent,
     ClipComponent,
+    WhisperSubtitlesComponent,
   ],
   imports: [
     BrowserModule,
@@ -130,6 +133,7 @@ declare global {
     Md5,
     HlsValidationService,
     ClipService,
+    WhisperService,
   ],
   entryComponents: [AppComponent],
   bootstrap: [AppComponent],

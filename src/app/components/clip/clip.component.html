@@ -1,10 +1,5 @@
 <div class="clip-container">
-  <div class="clip-unsupported" *ngIf="!isSupported">
-    <i class="material-icons">warning</i>
-    <p>Video clipping is not supported in this browser. Please use Chrome or Edge.</p>
-  </div>
-
-  <div class="clip-content" *ngIf="isSupported">
+  <div class="clip-content">
     <!-- In/Out Point Controls -->
     <div class="clip-section">
       <div class="section-title">Clip Range</div>
@@ -17,7 +12,7 @@
               class="time-input"
               [(ngModel)]="inPoint"
               (change)="onInPointChange()"
-              [disabled]="clipState === 'recording'"
+              [disabled]="clipState === 'downloading'"
               min="0"
               [max]="videoDuration"
               step="0.1"
@@ -25,7 +20,7 @@
             <button
               class="mark-btn"
               (click)="setInPointFromPlayhead()"
-              [disabled]="clipState === 'recording'"
+              [disabled]="clipState === 'downloading'"
               title="Set from current playhead"
             >
               <i class="material-icons">flag</i> Mark
@@ -46,7 +41,7 @@
               class="time-input"
               [(ngModel)]="outPoint"
               (change)="onOutPointChange()"
-              [disabled]="clipState === 'recording'"
+              [disabled]="clipState === 'downloading'"
               min="0"
               [max]="videoDuration"
               step="0.1"
@@ -54,7 +49,7 @@
             <button
               class="mark-btn"
               (click)="setOutPointFromPlayhead()"
-              [disabled]="clipState === 'recording'"
+              [disabled]="clipState === 'downloading'"
               title="Set from current playhead"
             >
               <i class="material-icons">flag</i> Mark
@@ -68,7 +63,7 @@
         <span class="clip-duration"
           >Clip duration: <strong>{{ formatTime(clipDuration) }}</strong></span
         >
-        <span class="total-duration">Total: {{ formatTime(videoDuration) }}</span>
+        <span class="total-duration">Segments: {{ segmentCount }} | Total: {{ formatTime(videoDuration) }}</span>
       </div>
     </div>
 
@@ -79,7 +74,7 @@
         class="audio-select"
         [(ngModel)]="selectedAudioTrackId"
         (change)="onAudioTrackChange()"
-        [disabled]="clipState === 'recording'"
+        [disabled]="clipState === 'downloading'"
       >
         <option *ngFor="let track of audioTracks" [ngValue]="track.id">
           {{ track.name }}{{ track.lang ? ' (' + track.lang + ')' : '' }}{{ track.default ? ' - Default' : '' }}
@@ -97,37 +92,36 @@
       <button
         class="action-btn record-btn"
         (click)="startClip()"
-        [disabled]="clipState === 'processing' || clipDuration <= 0"
-        *ngIf="clipState !== 'recording'"
+        [disabled]="clipState === 'processing' || clipDuration <= 0 || segmentCount === 0"
+        *ngIf="clipState !== 'downloading'"
       >
-        <i class="material-icons">fiber_manual_record</i>
-        Record Clip (.{{ fileExtension }})
+        <i class="material-icons">content_cut</i>
+        Clip {{ segmentCount }} Segments
       </button>
 
-      <button class="action-btn cancel-btn" (click)="cancelClip()" *ngIf="clipState === 'recording'">
+      <button class="action-btn cancel-btn" (click)="cancelClip()" *ngIf="clipState === 'downloading'">
         <i class="material-icons">stop</i>
-        Cancel Recording
+        Cancel
       </button>
 
-      <button class="action-btn reset-btn" (click)="resetClip()" [disabled]="clipState === 'recording'">
+      <button class="action-btn reset-btn" (click)="resetClip()" [disabled]="clipState === 'downloading'">
         <i class="material-icons">replay</i>
         Reset
       </button>
     </div>
 
     <!-- Progress -->
-    <div class="clip-progress" *ngIf="clipState === 'recording' || clipState === 'processing'">
+    <div class="clip-progress" *ngIf="clipState === 'downloading' || clipState === 'processing'">
       <div class="progress-bar">
         <div class="progress-fill" [style.width.%]="progress"></div>
       </div>
       <div class="progress-label">
-        <span *ngIf="clipState === 'recording'">
-          <i class="material-icons recording-icon">fiber_manual_record</i>
-          Recording... {{ progress | number: '1.0-0' }}%
+        <span *ngIf="clipState === 'downloading'">
+          <i class="material-icons recording-icon">cloud_download</i>
+          Downloading segments... {{ progress | number: '1.0-0' }}%
         </span>
-        <span *ngIf="clipState === 'processing'">Processing and downloading...</span>
+        <span *ngIf="clipState === 'processing'">Concatenating and saving...</span>
       </div>
-      <div class="progress-note" *ngIf="clipState === 'recording'">The video will play in real-time during recording.</div>
     </div>
 
     <!-- Status Messages -->

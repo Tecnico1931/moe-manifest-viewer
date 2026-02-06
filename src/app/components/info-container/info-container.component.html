@@ -10,6 +10,7 @@
     viewerState.showStallDetector ||
     viewerState.showHlsIssues ||
     viewerState.showClip ||
+    viewerState.showWhisperSubtitles ||
     viewerState.showVideo ||
     viewerState.showScteDisplay ||
     viewerState.showSubtitles
@@ -64,6 +65,10 @@
 
   <app-tab *ngIf="viewerState.showClip && viewerState.showVideo" tabTitle="{{ tabName.CLIP }}">
     <app-clip [viewerState]="viewerState"></app-clip>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showWhisperSubtitles && viewerState.showVideo" tabTitle="{{ tabName.WHISPER }}">
+    <app-whisper-subtitles [viewerState]="viewerState"></app-whisper-subtitles>
   </app-tab>
 
   <app-tab *ngIf="!useNative && viewerState.showPlayerLogs" tabTitle="{{ tabName.PLAYERLOGS }}">

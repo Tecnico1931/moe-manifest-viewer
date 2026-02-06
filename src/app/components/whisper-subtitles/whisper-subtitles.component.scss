@@ -1,0 +1,425 @@
+@import '../../../app/shared/utils/vars.scss';
+
+.whisper-container {
+  padding: 8px;
+  color: #ccc;
+  font-size: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.whisper-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.whisper-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.model-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.model-select,
+.setting-select {
+  flex: 1;
+  padding: 4px 6px;
+  background: #1a1a2e;
+  color: #ccc;
+  border: 1px solid #333;
+  border-radius: 3px;
+  font-size: 11px;
+  outline: none;
+
+  &:focus {
+    border-color: #5865f2;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.model-note {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+}
+
+.settings-row {
+  display: flex;
+  gap: 8px;
+}
+
+.setting-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  label {
+    font-size: 10px;
+    color: #888;
+  }
+}
+
+.time-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.time-input-group {
+  flex: 1;
+
+  label {
+    display: block;
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 3px;
+  }
+}
+
+.time-input-row {
+  display: flex;
+  gap: 3px;
+}
+
+.time-input {
+  flex: 1;
+  padding: 3px 5px;
+  background: #1a1a2e;
+  color: #ccc;
+  border: 1px solid #333;
+  border-radius: 3px;
+  font-size: 11px;
+  width: 60px;
+  outline: none;
+
+  &:focus {
+    border-color: #5865f2;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.time-display {
+  font-size: 10px;
+  color: #666;
+  margin-top: 2px;
+  display: block;
+}
+
+.time-divider {
+  padding-top: 12px;
+  color: #555;
+
+  i {
+    font-size: 14px;
+  }
+}
+
+.mark-btn {
+  padding: 3px 5px;
+  background: #2a2a4a;
+  color: #aaa;
+  border: 1px solid #333;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  i {
+    font-size: 14px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #3a3a5a;
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.mic-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #888;
+
+  i {
+    font-size: 18px;
+    color: #5865f2;
+  }
+}
+
+.whisper-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  transition: background 0.2s;
+
+  i {
+    font-size: 14px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.load-btn {
+  background: #5865f2;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #4752c4;
+  }
+}
+
+.transcribe-btn {
+  background: #3ba55c;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #2d8049;
+  }
+}
+
+.stop-btn {
+  background: #ed4245;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #c03537;
+  }
+}
+
+.cancel-btn {
+  background: #ed4245;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #c03537;
+  }
+}
+
+.overlay-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #aaa;
+  cursor: pointer;
+  margin-left: auto;
+
+  input {
+    cursor: pointer;
+  }
+}
+
+.whisper-progress {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.progress-bar {
+  height: 4px;
+  background: #1a1a2e;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #5865f2;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 11px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  i {
+    font-size: 14px;
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.recording-pulse {
+  color: #ed4245;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.mic-active {
+  border-left: 3px solid #ed4245;
+}
+
+.captions-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+.caption-item {
+  display: flex;
+  gap: 8px;
+  padding: 3px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(88, 101, 242, 0.1);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.caption-time {
+  font-family: monospace;
+  font-size: 10px;
+  color: #5865f2;
+  white-space: nowrap;
+  min-width: 60px;
+  padding-top: 1px;
+}
+
+.caption-text {
+  flex: 1;
+  font-size: 11px;
+  color: #ddd;
+  line-height: 1.4;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  background: #2a2a4a;
+  color: #aaa;
+  border: 1px solid #333;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+
+  i {
+    font-size: 12px;
+  }
+
+  &:hover {
+    background: #3a3a5a;
+    color: #fff;
+  }
+}
+
+.clear-btn {
+  &:hover {
+    background: #4a2a2a;
+    color: #ed4245;
+  }
+}
+
+.whisper-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+
+  i {
+    font-size: 16px;
+  }
+
+  &.done {
+    background: rgba(59, 165, 92, 0.1);
+    color: #3ba55c;
+    border-left: 3px solid #3ba55c;
+  }
+
+  &.error {
+    background: rgba(237, 66, 69, 0.1);
+    color: #ed4245;
+    border-left: 3px solid #ed4245;
+  }
+
+  &.info {
+    background: rgba(88, 101, 242, 0.1);
+    color: #8899ee;
+    border-left: 3px solid #5865f2;
+  }
+}

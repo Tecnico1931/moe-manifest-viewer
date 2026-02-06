@@ -187,6 +187,11 @@
         <input type="checkbox" [class.active]="displayClip" />
         <span class="checkmark"></span>
       </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleWhisperSubtitlesService', !displayWhisperSubtitles)"
+        >AI Subtitles (Whisper)
+        <input type="checkbox" [class.active]="displayWhisperSubtitles" />
+        <span class="checkmark"></span>
+      </label>
       <div class="listButton">
         <button class="clearSettingsCookieButton" (click)="activateClearSettingsConfirmationPanel()">{{ settingsClearButtonText }}</button>
       </div>

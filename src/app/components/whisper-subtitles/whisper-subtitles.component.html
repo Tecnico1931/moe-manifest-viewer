@@ -1,0 +1,231 @@
+<div class="whisper-container">
+  <div class="whisper-content">
+    <!-- Model Selection -->
+    <div class="whisper-section">
+      <div class="section-title">AI Model (Whisper)</div>
+      <div class="model-controls">
+        <select
+          class="model-select"
+          [(ngModel)]="selectedModelId"
+          [disabled]="whisperState === 'loading-model' || whisperState === 'transcribing'"
+        >
+          <option *ngFor="let model of models" [ngValue]="model.id">{{ model.label }} ({{ model.size }})</option>
+        </select>
+        <button
+          class="action-btn load-btn"
+          (click)="loadModel()"
+          [disabled]="whisperState === 'loading-library' || whisperState === 'loading-model' || whisperState === 'transcribing'"
+        >
+          <i class="material-icons">cloud_download</i>
+          {{ isModelLoaded() ? 'Reload Model' : 'Load Model' }}
+        </button>
+      </div>
+      <div class="model-note">Models are downloaded once and cached in your browser. Runs entirely on-device.</div>
+    </div>
+
+    <!-- Model Loading Progress -->
+    <div class="whisper-progress" *ngIf="whisperState === 'loading-library' || whisperState === 'loading-model'">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="whisperState === 'loading-library' ? 0 : modelProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span *ngIf="whisperState === 'loading-library'">
+          <i class="material-icons spin">sync</i>
+          Loading AI library...
+        </span>
+        <span *ngIf="whisperState === 'loading-model'">
+          <i class="material-icons spin">sync</i>
+          Downloading model... {{ modelProgress }}%
+        </span>
+      </div>
+    </div>
+
+    <!-- Transcription Controls (only when model is loaded) -->
+    <div *ngIf="isModelLoaded()">
+      <!-- Mode & Task Selection -->
+      <div class="whisper-section">
+        <div class="section-title">Transcription Settings</div>
+        <div class="settings-row">
+          <div class="setting-group">
+            <label>Source</label>
+            <select class="setting-select" [(ngModel)]="mode" [disabled]="whisperState === 'transcribing'">
+              <option value="segments">Stream Segments (fast)</option>
+              <option value="microphone">Microphone (real-time)</option>
+            </select>
+          </div>
+          <div class="setting-group">
+            <label>Task</label>
+            <select class="setting-select" [(ngModel)]="task" [disabled]="whisperState === 'transcribing'">
+              <option value="transcribe">Transcribe</option>
+              <option value="translate">Translate to English</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segment Range (only for segments mode) -->
+      <div class="whisper-section" *ngIf="mode === 'segments'">
+        <div class="section-title">Time Range</div>
+        <div class="time-controls">
+          <div class="time-input-group">
+            <label>In Point</label>
+            <div class="time-input-row">
+              <input
+                type="number"
+                class="time-input"
+                [(ngModel)]="inPoint"
+                [disabled]="whisperState === 'transcribing'"
+                min="0"
+                [max]="videoDuration"
+                step="0.1"
+              />
+              <button
+                class="mark-btn"
+                (click)="setInPointFromPlayhead()"
+                [disabled]="whisperState === 'transcribing'"
+                title="Set from current playhead"
+              >
+                <i class="material-icons">flag</i>
+              </button>
+            </div>
+            <span class="time-display">{{ formatTime(inPoint) }}</span>
+          </div>
+
+          <div class="time-divider">
+            <i class="material-icons">arrow_forward</i>
+          </div>
+
+          <div class="time-input-group">
+            <label>Out Point</label>
+            <div class="time-input-row">
+              <input
+                type="number"
+                class="time-input"
+                [(ngModel)]="outPoint"
+                [disabled]="whisperState === 'transcribing'"
+                min="0"
+                [max]="videoDuration"
+                step="0.1"
+              />
+              <button
+                class="mark-btn"
+                (click)="setOutPointFromPlayhead()"
+                [disabled]="whisperState === 'transcribing'"
+                title="Set from current playhead"
+              >
+                <i class="material-icons">flag</i>
+              </button>
+            </div>
+            <span class="time-display">{{ formatTime(outPoint) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Microphone Note -->
+      <div class="whisper-section mic-note" *ngIf="mode === 'microphone'">
+        <i class="material-icons">mic</i>
+        <span>Audio will be captured from your microphone. Play the video with speakers on for best results.</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="whisper-actions">
+        <button
+          class="action-btn transcribe-btn"
+          (click)="startTranscription()"
+          [disabled]="whisperState === 'transcribing' || whisperState === 'loading-model'"
+          *ngIf="!(mode === 'microphone' && isMicActive)"
+        >
+          <i class="material-icons">{{ mode === 'segments' ? 'subtitles' : 'mic' }}</i>
+          {{ task === 'translate' ? 'Translate' : 'Transcribe' }}
+          {{ mode === 'segments' ? 'Segments' : 'from Mic' }}
+        </button>
+
+        <button class="action-btn stop-btn" (click)="stopMicrophone()" *ngIf="mode === 'microphone' && isMicActive">
+          <i class="material-icons">mic_off</i>
+          Stop Listening
+        </button>
+
+        <button
+          class="action-btn cancel-btn"
+          (click)="cancelTranscription()"
+          *ngIf="whisperState === 'transcribing' && mode === 'segments'"
+        >
+          <i class="material-icons">stop</i>
+          Cancel
+        </button>
+
+        <label class="overlay-toggle" *ngIf="captions.length > 0">
+          <input type="checkbox" [checked]="showOverlay" (change)="toggleOverlay()" />
+          Show on video
+        </label>
+      </div>
+
+      <!-- Transcription Progress -->
+      <div class="whisper-progress" *ngIf="whisperState === 'transcribing' && mode === 'segments'">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="transcriptionProgress"></div>
+        </div>
+        <div class="progress-label">
+          <span *ngIf="transcriptionProgress <= 50">
+            <i class="material-icons spin">sync</i>
+            Downloading audio... {{ transcriptionProgress * 2 }}%
+          </span>
+          <span *ngIf="transcriptionProgress > 50 && transcriptionProgress < 100">
+            <i class="material-icons spin">sync</i>
+            Running AI transcription...
+          </span>
+        </div>
+      </div>
+
+      <!-- Mic Active Indicator -->
+      <div class="whisper-progress mic-active" *ngIf="whisperState === 'transcribing' && mode === 'microphone'">
+        <div class="progress-label">
+          <i class="material-icons recording-pulse">mic</i>
+          <span>Listening... speak clearly near the microphone.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="whisper-section" *ngIf="captions.length > 0">
+      <div class="section-title">
+        Subtitles ({{ captions.length }} segments)
+        <div class="export-buttons">
+          <button class="export-btn" (click)="exportVTT()" title="Export as WebVTT"><i class="material-icons">save_alt</i> VTT</button>
+          <button class="export-btn" (click)="exportSRT()" title="Export as SRT"><i class="material-icons">save_alt</i> SRT</button>
+          <button class="export-btn clear-btn" (click)="clearCaptions()" title="Clear all captions">
+            <i class="material-icons">delete</i>
+          </button>
+        </div>
+      </div>
+      <div class="captions-list">
+        <div
+          class="caption-item"
+          *ngFor="let caption of captions"
+          (click)="seekToCaption(caption)"
+          [title]="caption.start > 0 ? 'Click to seek to ' + formatTime(caption.start) : ''"
+        >
+          <span class="caption-time" *ngIf="caption.start > 0">{{ formatTime(caption.start) }}</span>
+          <span class="caption-text">{{ caption.text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div class="whisper-status done" *ngIf="whisperState === 'done' && captions.length > 0">
+      <i class="material-icons">check_circle</i>
+      Transcription complete. {{ captions.length }} subtitle segments generated.
+    </div>
+
+    <div class="whisper-status error" *ngIf="errorMessage">
+      <i class="material-icons">error</i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Not loaded state -->
+    <div class="whisper-status info" *ngIf="!isModelLoaded() && whisperState === 'idle'">
+      <i class="material-icons">info</i>
+      Load an AI model above to start generating subtitles. Models run entirely in your browser.
+    </div>
+  </div>
+</div>

@@ -41,6 +41,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
       showPlayerLogs: false,
       showHlsIssues: false,
       showClip: false,
+      showWhisperSubtitles: false,
       showSubtitles: false,
     };
     this.addViewer({ url: '', options: options }, -1);
@@ -142,6 +143,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
             showPlayerLogs: lastViewer.viewerState.showPlayerLogs,
             showHlsIssues: lastViewer.viewerState.showHlsIssues,
             showClip: lastViewer.viewerState.showClip,
+            showWhisperSubtitles: lastViewer.viewerState.showWhisperSubtitles,
             showSubtitles: lastViewer.viewerState.showSubtitles,
           },
         };
@@ -168,6 +170,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
           showHlsIssues: false,
           showClip: false,
           showSubtitles: false,
+          showWhisperSubtitles: false,
         },
       };
       this.addViewer(emptyViewer, this.viewers.length - 1);

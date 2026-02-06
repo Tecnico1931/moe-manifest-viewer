@@ -24,16 +24,16 @@ export class ClipComponent implements OnInit, OnDestroy {
   public clipState: ClipState = 'idle';
   public progress = 0;
   public errorMessage = '';
-  public isSupported = false;
-  public fileExtension = 'webm';
+  public isSupported = true;
+  public segmentCount = 0;
 
+  private fragments: any[] = [];
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private clipService: ClipService) {}
 
   public ngOnInit(): void {
     this.isSupported = this.clipService.isSupported();
-    this.fileExtension = this.clipService.getFileExtension();
 
     this.viewerState.totalDuration$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((duration) => {
       this.videoDuration = duration;
@@ -41,6 +41,11 @@ export class ClipComponent implements OnInit, OnDestroy {
         this.outPoint = duration;
       }
       this.updateClipDuration();
+    });
+
+    this.viewerState.fragments$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((frags) => {
+      this.fragments = frags;
+      this.updateSegmentCount();
     });
 
     this.viewerState.audioTracks$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((tracks) => {
@@ -121,22 +126,19 @@ export class ClipComponent implements OnInit, OnDestroy {
   }
 
   public startClip(): void {
-    if (!this.viewerState.videoElement) {
-      this.errorMessage = 'No video element available. Make sure video is playing.';
+    if (this.fragments.length === 0) {
+      this.errorMessage = 'No segments available. Make sure a stream is loaded and playing.';
       return;
     }
 
     this.errorMessage = '';
 
-    // Select audio track before recording
+    // Select audio track before clipping
     if (this.selectedAudioTrackId !== null) {
       this.viewerState.requestAudioTrackChange(this.selectedAudioTrackId);
     }
 
-    this.clipService.startClip(this.viewerState.videoElement, {
-      inPoint: this.inPoint,
-      outPoint: this.outPoint,
-    });
+    this.clipService.startClip(this.fragments, { inPoint: this.inPoint, outPoint: this.outPoint }, this.viewerState.xhrCredentials);
   }
 
   public cancelClip(): void {
@@ -170,5 +172,17 @@ export class ClipComponent implements OnInit, OnDestroy {
 
   private updateClipDuration(): void {
     this.clipDuration = Math.max(0, this.outPoint - this.inPoint);
+    this.updateSegmentCount();
+  }
+
+  private updateSegmentCount(): void {
+    if (this.fragments.length > 0) {
+      this.segmentCount = this.clipService.getFragmentsInRange(this.fragments, {
+        inPoint: this.inPoint,
+        outPoint: this.outPoint,
+      }).length;
+    } else {
+      this.segmentCount = 0;
+    }
   }
 }

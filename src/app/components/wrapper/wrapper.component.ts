@@ -26,7 +26,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
     const id = this.generateId(this.idLength);
     const options: ViewerOptionTypes = {
       name: DefaultViewerName,
-      showVideo: false,
+      showVideo: true,
       muteVideo: false,
       useNative: false,
       showHelp: false,
@@ -154,7 +154,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
         url: '',
         options: {
           name: DefaultViewerName,
-          showVideo: false,
+          showVideo: true,
           muteVideo: false,
           useNative: false,
           showHelp: false,

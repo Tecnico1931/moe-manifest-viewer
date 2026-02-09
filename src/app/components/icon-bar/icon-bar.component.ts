@@ -52,6 +52,7 @@ export class IconBarComponent implements OnInit {
   @Output() public onToggleStallDetector = new EventEmitter<boolean>();
   @Output() public onTogglePlayerLogs = new EventEmitter<boolean>();
   @Output() public onToggleHlsIssues = new EventEmitter<boolean>();
+  @Output() public onToggleClip = new EventEmitter<boolean>();
   @Output() public onToggleUseGlobalToken = new EventEmitter<boolean>();
   @Output() public onTogglePolling = new EventEmitter<boolean>();
   @Output() public onToggleSubtitles = new EventEmitter<boolean>();
@@ -177,6 +178,12 @@ export class IconBarComponent implements OnInit {
     this.onToggleHlsIssues.emit(toggled);
     this.viewerState.updateActiveTab('HLS Issues', toggled);
     this.submitEvent(this.GA_CLICK, 'ToggleHlsIssues:' + toggled, this.GA_ICON_BAR);
+  };
+
+  public toggleClip = (toggled: boolean) => {
+    this.onToggleClip.emit(toggled);
+    this.viewerState.updateActiveTab('Clip', toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleClip:' + toggled, this.GA_ICON_BAR);
   };
 
   public toggleUseGlobalToken = (toggled: boolean) => {

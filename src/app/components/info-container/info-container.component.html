@@ -59,7 +59,7 @@
     <app-stall-detector [viewerReset$]="viewerReset$" [manifestUpdate$]="manifestUpdate$" [viewerState]="viewerState"></app-stall-detector>
   </app-tab>
 
-  <app-tab *ngIf="viewerState.showHlsIssues && type === 'hls'" tabTitle="{{ tabName.HLSISSUES }}">
+  <app-tab *ngIf="viewerState.showHlsIssues" tabTitle="{{ tabName.HLSISSUES }}">
     <app-hls-issues [viewerReset$]="viewerReset$" [manifestUpdate$]="manifestUpdate$" [viewerState]="viewerState"></app-hls-issues>
   </app-tab>
 

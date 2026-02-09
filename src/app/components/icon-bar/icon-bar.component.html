@@ -130,6 +130,10 @@
       <em class="material-icons" [class.iconActive]="viewerState.showHlsIssues">warning</em>
       <span class="iconText">Show HLS Issues <span *ngIf="viewerState.showHlsIssues">&#9989;</span></span>
     </div>
+    <div class="iconWrapper" (click)="toggleClip(!viewerState.showClip)" *ngIf="viewerState.showVideo">
+      <em class="material-icons" [class.iconActive]="viewerState.showClip">content_cut</em>
+      <span class="iconText">Show Clip Tool <span *ngIf="viewerState.showClip">&#9989;</span></span>
+    </div>
     <div class="iconWrapper" (click)="toggleUseGlobalToken(!viewerState.globalTokenActive)">
       <em class="material-icons" [class.iconActive]="viewerState.globalTokenActive">&#xE0DA;</em>
       <span class="iconText">Global Token <span *ngIf="viewerState.globalTokenActive">&#9989;</span></span>

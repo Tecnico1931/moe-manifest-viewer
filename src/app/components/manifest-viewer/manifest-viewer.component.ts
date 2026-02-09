@@ -560,7 +560,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
       url: '',
       options: {
         name: DefaultViewerName,
-        showVideo: false,
+        showVideo: true,
         muteVideo: false,
         useNative: false,
         showHelp: false,
@@ -1420,7 +1420,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         },
         options: {
           name: DefaultViewerName,
-          showVideo: false,
+          showVideo: true,
           muteVideo: false,
           useNative: false,
           showHelp: false,
@@ -1448,7 +1448,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
       url: url,
       options: {
         name: DefaultViewerName,
-        showVideo: false,
+        showVideo: true,
         muteVideo: false,
         useNative: false,
         showHelp: false,

@@ -143,6 +143,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
   public activeBandwidth = -1;
   public useNative = false;
   public possibleNative: boolean;
+  public currentSegmentUrl: string = '';
   public masterManifest: ManifestLineObject[];
   public cachedMasterManifest: ParsedManifest;
   public masterVttManifest: {
@@ -576,6 +577,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showHlsIssues: false,
         showClip: false,
         showWhisperSubtitles: false,
+        showFrameOverlay: false,
         showSubtitles: false,
       },
     });
@@ -1337,6 +1339,10 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showClip', show);
   };
 
+  public toggleFrameOverlay = (show: boolean) => {
+    this.setOption('showFrameOverlay', show);
+  };
+
   public toggleWhisperSubtitles = (show: boolean) => {
     this.setOption('showWhisperSubtitles', show);
   };
@@ -1436,6 +1442,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           showHlsIssues: false,
           showClip: false,
           showExplode: false,
+          showFrameOverlay: false,
           showSubtitles: false,
           showWhisperSubtitles: false,
         },
@@ -1464,6 +1471,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showHlsIssues: false,
         showClip: false,
         showWhisperSubtitles: false,
+        showFrameOverlay: false,
         showSubtitles: false,
       },
     });

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:w3c.github.io)",
+      "WebFetch(domain:aomediacodec.github.io)",
+      "WebFetch(domain:www.rfc-editor.org)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:yumichan.net)",
+      "WebFetch(domain:ffmpeg.org)",
+      "WebFetch(domain:blog.mozilla.org)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:chromium.googlesource.com)",
+      "Bash(git checkout:*)",
+      "Bash(npm install:*)",
+      "Bash(npx ng build:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

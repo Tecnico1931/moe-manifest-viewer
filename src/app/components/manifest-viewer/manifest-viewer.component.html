@@ -143,6 +143,7 @@
         (onTogglePlayerLogs)="togglePlayerLogs($event)"
         (onToggleHlsIssues)="toggleHlsIssues($event)"
         (onToggleClip)="toggleClip($event)"
+        (onToggleFrameOverlay)="toggleFrameOverlay($event)"
         (onToggleUseGlobalToken)="onUseGlobalTokenChange($event)"
         (onTogglePolling)="setPollingActive($event)"
         (onSetPollIntervalTime)="onIntervalChange($event)"
@@ -227,7 +228,8 @@
         viewerState.showStallDetector ||
         viewerState.showVideo ||
         viewerState.showScteDisplay ||
-        viewerState.showSubtitles
+        viewerState.showSubtitles ||
+        viewerState.showFrameOverlay
       "
       [class.onlyViewer]="isOnlyViewer"
     >
@@ -241,7 +243,8 @@
           viewerState.showStallDetector ||
           viewerState.showPlayerLogs ||
           viewerState.showScteDisplay ||
-          viewerState.showSubtitles
+          viewerState.showSubtitles ||
+          viewerState.showFrameOverlay
         "
         [class.videoShowing]="viewerState.showVideo"
         [class.onlyViewer]="isOnlyViewer"
@@ -260,6 +263,9 @@
             (seek)="scrollToObject($event)"
             (loadLevelRequest)="onPlayerBandwidthSelect($event, '')"
           ></app-info-container>
+        </div>
+        <div class="frameOverlayContainer" *ngIf="viewerState.showFrameOverlay">
+          <app-frame-overlay [viewerState]="viewerState" [segmentUrl]="currentSegmentUrl"></app-frame-overlay>
         </div>
       </div>
       <div

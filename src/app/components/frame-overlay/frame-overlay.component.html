@@ -1,9 +1,30 @@
 <div class="frame-overlay-container">
   <div class="frame-overlay-header">
-    <h3>Frame Analysis</h3>
-    <button class="analyze-button" (click)="analyzeSegment()" [disabled]="isAnalyzing || !segmentUrl">
-      {{ isAnalyzing ? 'Analyzing...' : 'Analyze Segment' }}
-    </button>
+    <div class="header-left">
+      <h3>Frame Analysis</h3>
+      <div class="auto-analyze-toggle" *ngIf="segmentUrl">
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="autoAnalyzeEnabled" (change)="toggleAutoAnalyze()" />
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Auto-analyze on segment change</span>
+        <span class="segment-counter" *ngIf="autoAnalyzeEnabled && segmentChangeCount > 0">
+          ({{ segmentChangeCount }} segments analyzed)
+        </span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="analyze-button" (click)="analyzeSegment()" [disabled]="isAnalyzing || !segmentUrl">
+        <i class="material-icons">{{ isAnalyzing ? 'refresh' : 'play_arrow' }}</i>
+        {{ isAnalyzing ? 'Analyzing...' : 'Analyze Segment' }}
+      </button>
+      <button class="export-button" (click)="exportFrameData()" [disabled]="!frameData" title="Export frame data as JSON">
+        <i class="material-icons">download</i>
+      </button>
+      <button class="copy-button" (click)="copyFrameDataToClipboard()" [disabled]="!frameData" title="Copy summary to clipboard">
+        <i class="material-icons">content_copy</i>
+      </button>
+    </div>
   </div>
 
   <div class="frame-overlay-content">
@@ -35,8 +56,33 @@
           <span class="stat-value">{{ frameData.gopSize | number: '1.1-1' }}</span>
         </div>
         <div class="stat-item">
+          <span class="stat-label">Frame Rate:</span>
+          <span class="stat-value">{{ getFrameRate() }} fps</span>
+        </div>
+        <div class="stat-item">
           <span class="stat-label">Duration:</span>
           <span class="stat-value">{{ formatTime(frameData.duration) }}</span>
+        </div>
+      </div>
+
+      <!-- GOP Visualization -->
+      <div class="gop-visualization" *ngIf="calculateGOPStructure().length > 0">
+        <h4>
+          GOP Structure <span class="gop-count">({{ calculateGOPStructure().length }} GOPs)</span>
+        </h4>
+        <div class="gop-chart">
+          <div
+            *ngFor="let gop of calculateGOPStructure(); let i = index"
+            class="gop-bar"
+            [title]="'GOP ' + (i + 1) + ': ' + gop.size + ' frames'"
+          >
+            <div class="gop-bar-fill" [style.height.%]="(gop.size / frameData.totalFrames) * 100 * calculateGOPStructure().length">
+              <span class="gop-size">{{ gop.size }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="gop-legend">
+          <span>Each bar represents one GOP (Group of Pictures)</span>
         </div>
       </div>
 
@@ -90,8 +136,18 @@
     </div>
 
     <div class="loading-indicator" *ngIf="isAnalyzing">
-      <i class="material-icons spinning">refresh</i>
-      <span>Analyzing segment...</span>
+      <div class="loading-spinner">
+        <i class="material-icons spinning">refresh</i>
+      </div>
+      <div class="loading-text">
+        <span class="loading-title">Analyzing segment...</span>
+        <span class="loading-subtitle">Detecting container type and extracting frame data</span>
+      </div>
+      <div class="loading-progress">
+        <div class="progress-bar">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
     </div>
 
     <div class="no-data" *ngIf="!frameData && !isAnalyzing && !errorMessage">

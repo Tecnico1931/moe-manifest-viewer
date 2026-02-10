@@ -145,6 +145,58 @@
   }
 }
 
+.frame-navigation-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  background: $white;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  margin: 12px 0;
+
+  .nav-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: $lightgray;
+    color: $darkgray;
+    border: 1px solid $gray;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    .material-icons {
+      font-size: 18px;
+    }
+
+    &:hover:not(:disabled) {
+      background: $gray;
+      border-color: darken($gray, 10%);
+    }
+
+    &:active:not(:disabled) {
+      background: darken($gray, 5%);
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      background: $lightgray;
+      color: $gray;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
 .timeline-legend {
   display: flex;
   gap: 16px;

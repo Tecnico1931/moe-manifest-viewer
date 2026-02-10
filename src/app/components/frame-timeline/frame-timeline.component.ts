@@ -121,4 +121,88 @@ export class FrameTimelineComponent implements OnInit, OnDestroy {
     const seconds = ms / 1000;
     return seconds.toFixed(3) + 's';
   }
+
+  public previousFrame() {
+    if (!this.frameData || this.currentFrameIndex <= 0) {
+      return;
+    }
+    const prevFrame = this.frameData.frames[this.currentFrameIndex - 1];
+    this.seekToFrame(prevFrame.pts);
+  }
+
+  public nextFrame() {
+    if (!this.frameData || this.currentFrameIndex >= this.frameData.frames.length - 1) {
+      return;
+    }
+    const nextFrame = this.frameData.frames[this.currentFrameIndex + 1];
+    this.seekToFrame(nextFrame.pts);
+  }
+
+  public previousKeyframe() {
+    if (!this.frameData || this.currentFrameIndex <= 0) {
+      return;
+    }
+
+    // Find previous I-frame
+    for (let i = this.currentFrameIndex - 1; i >= 0; i--) {
+      if (this.frameData.frames[i].isKeyframe) {
+        this.seekToFrame(this.frameData.frames[i].pts);
+        return;
+      }
+    }
+  }
+
+  public nextKeyframe() {
+    if (!this.frameData || this.currentFrameIndex >= this.frameData.frames.length - 1) {
+      return;
+    }
+
+    // Find next I-frame
+    for (let i = this.currentFrameIndex + 1; i < this.frameData.frames.length; i++) {
+      if (this.frameData.frames[i].isKeyframe) {
+        this.seekToFrame(this.frameData.frames[i].pts);
+        return;
+      }
+    }
+  }
+
+  private seekToFrame(pts: number) {
+    if (!this.viewerState.videoElement) {
+      return;
+    }
+    // Convert ms to seconds
+    this.viewerState.updateTime(pts / 1000);
+  }
+
+  public canGoPrevious(): boolean {
+    return this.frameData !== null && this.currentFrameIndex > 0;
+  }
+
+  public canGoNext(): boolean {
+    return this.frameData !== null && this.currentFrameIndex < this.frameData.frames.length - 1;
+  }
+
+  public hasPreviousKeyframe(): boolean {
+    if (!this.frameData || this.currentFrameIndex <= 0) {
+      return false;
+    }
+    for (let i = this.currentFrameIndex - 1; i >= 0; i--) {
+      if (this.frameData.frames[i].isKeyframe) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public hasNextKeyframe(): boolean {
+    if (!this.frameData || this.currentFrameIndex >= this.frameData.frames.length - 1) {
+      return false;
+    }
+    for (let i = this.currentFrameIndex + 1; i < this.frameData.frames.length; i++) {
+      if (this.frameData.frames[i].isKeyframe) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

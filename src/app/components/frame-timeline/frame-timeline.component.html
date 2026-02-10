@@ -44,6 +44,29 @@
     <span class="frame-detail"> #{{ currentFrameIndex + 1 }} @ {{ formatTime(frameData.frames[currentFrameIndex].pts) }} </span>
   </div>
 
+  <div class="frame-navigation-controls" *ngIf="frameData">
+    <div class="nav-group">
+      <button class="nav-button" (click)="previousKeyframe()" [disabled]="!hasPreviousKeyframe()" title="Previous I-frame">
+        <i class="material-icons">skip_previous</i>
+        <span>Prev I-frame</span>
+      </button>
+      <button class="nav-button" (click)="previousFrame()" [disabled]="!canGoPrevious()" title="Previous frame">
+        <i class="material-icons">chevron_left</i>
+        <span>Prev Frame</span>
+      </button>
+    </div>
+    <div class="nav-group">
+      <button class="nav-button" (click)="nextFrame()" [disabled]="!canGoNext()" title="Next frame">
+        <span>Next Frame</span>
+        <i class="material-icons">chevron_right</i>
+      </button>
+      <button class="nav-button" (click)="nextKeyframe()" [disabled]="!hasNextKeyframe()" title="Next I-frame">
+        <span>Next I-frame</span>
+        <i class="material-icons">skip_next</i>
+      </button>
+    </div>
+  </div>
+
   <div class="timeline-legend">
     <div class="legend-item">
       <div class="legend-color keyframe-color"></div>

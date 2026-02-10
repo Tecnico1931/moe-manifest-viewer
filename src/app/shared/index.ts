@@ -14,6 +14,7 @@ export * from './services/drm-manager.service';
 export * from './services/hls-validation.service';
 export * from './services/clip.service';
 export * from './services/whisper.service';
+export * from './services/frame-analyzer.service';
 
 /** models */
 export * from './models/manifest-response';

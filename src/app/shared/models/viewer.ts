@@ -26,6 +26,7 @@ export interface ViewerOptionTypes {
   showHlsIssues: boolean;
   showClip: boolean;
   showWhisperSubtitles: boolean;
+  showFrameOverlay: boolean;
   showSubtitles: boolean;
   xhrCredentials: boolean;
   globalTokenActive: boolean;

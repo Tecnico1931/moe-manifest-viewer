@@ -66,6 +66,9 @@ import { ClipComponent } from './components/clip/clip.component';
 import { ClipService } from './shared/services/clip.service';
 import { WhisperSubtitlesComponent } from './components/whisper-subtitles/whisper-subtitles.component';
 import { WhisperService } from './shared/services/whisper.service';
+import { FrameOverlayComponent } from './components/frame-overlay/frame-overlay.component';
+import { FrameTimelineComponent } from './components/frame-timeline/frame-timeline.component';
+import { FrameAnalyzerService } from './shared/services/frame-analyzer.service';
 
 declare global {
   var Shaka: typeof Shakajs;
@@ -107,6 +110,8 @@ declare global {
     HlsIssuesComponent,
     ClipComponent,
     WhisperSubtitlesComponent,
+    FrameOverlayComponent,
+    FrameTimelineComponent,
   ],
   imports: [
     BrowserModule,
@@ -134,6 +139,7 @@ declare global {
     HlsValidationService,
     ClipService,
     WhisperService,
+    FrameAnalyzerService,
   ],
   entryComponents: [AppComponent],
   bootstrap: [AppComponent],

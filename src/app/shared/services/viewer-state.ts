@@ -65,6 +65,7 @@ export class ViewerState {
   public _showHlsIssues: boolean;
   public _showClip: boolean;
   public _showWhisperSubtitles: boolean;
+  public _showFrameOverlay: boolean;
   public _showPolling: boolean;
   public _showExplode = true;
   public _isMasterOpen: boolean;
@@ -419,6 +420,9 @@ export class ViewerState {
   }
   public get showWhisperSubtitles(): boolean {
     return this._showWhisperSubtitles;
+  }
+  public get showFrameOverlay(): boolean {
+    return this._showFrameOverlay;
   }
   public get name(): string {
     return this._name;

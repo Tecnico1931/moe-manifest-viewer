@@ -1,0 +1,162 @@
+<div class="frame-overlay-container">
+  <div class="frame-overlay-header">
+    <div class="header-left">
+      <h3>Frame Analysis</h3>
+      <div class="auto-analyze-toggle" *ngIf="segmentUrl">
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="autoAnalyzeEnabled" (change)="toggleAutoAnalyze()" />
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Auto-analyze on segment change</span>
+        <span class="segment-counter" *ngIf="autoAnalyzeEnabled && segmentChangeCount > 0">
+          ({{ segmentChangeCount }} segments analyzed)
+        </span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="analyze-button" (click)="analyzeSegment()" [disabled]="isAnalyzing || !segmentUrl">
+        <i class="material-icons">{{ isAnalyzing ? 'refresh' : 'play_arrow' }}</i>
+        {{ isAnalyzing ? 'Analyzing...' : 'Analyze Segment' }}
+      </button>
+      <button class="export-button" (click)="exportFrameData()" [disabled]="!frameData" title="Export frame data as JSON">
+        <i class="material-icons">download</i>
+      </button>
+      <button class="copy-button" (click)="copyFrameDataToClipboard()" [disabled]="!frameData" title="Copy summary to clipboard">
+        <i class="material-icons">content_copy</i>
+      </button>
+    </div>
+  </div>
+
+  <div class="frame-overlay-content">
+    <div class="error-message" *ngIf="errorMessage">
+      <i class="material-icons">error</i>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <div class="frame-info-panel" *ngIf="frameData && !isAnalyzing">
+      <div class="frame-stats">
+        <div class="stat-item">
+          <span class="stat-label">Container:</span>
+          <span class="stat-value">{{ frameData.containerType | uppercase }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Frames:</span>
+          <span class="stat-value">{{ frameData.totalFrames }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">I-Frames (Keyframes):</span>
+          <span class="stat-value keyframe">{{ frameData.keyframeCount }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">P/B-Frames:</span>
+          <span class="stat-value">{{ frameData.totalFrames - frameData.keyframeCount }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Avg GOP Size:</span>
+          <span class="stat-value">{{ frameData.gopSize | number: '1.1-1' }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Frame Rate:</span>
+          <span class="stat-value">{{ getFrameRate() }} fps</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Duration:</span>
+          <span class="stat-value">{{ formatTime(frameData.duration) }}</span>
+        </div>
+      </div>
+
+      <!-- GOP Visualization -->
+      <div class="gop-visualization" *ngIf="calculateGOPStructure().length > 0">
+        <h4>
+          GOP Structure <span class="gop-count">({{ calculateGOPStructure().length }} GOPs)</span>
+        </h4>
+        <div class="gop-chart">
+          <div
+            *ngFor="let gop of calculateGOPStructure(); let i = index"
+            class="gop-bar"
+            [title]="'GOP ' + (i + 1) + ': ' + gop.size + ' frames'"
+          >
+            <div class="gop-bar-fill" [style.height.%]="(gop.size / frameData.totalFrames) * 100 * calculateGOPStructure().length">
+              <span class="gop-size">{{ gop.size }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="gop-legend">
+          <span>Each bar represents one GOP (Group of Pictures)</span>
+        </div>
+      </div>
+
+      <div class="frame-timeline">
+        <div class="timeline-label">Frame Timeline (Green = I-frames, Gray = P/B-frames):</div>
+        <div class="timeline-container">
+          <div
+            *ngFor="let frame of frameData.frames; let i = index"
+            class="frame-bar"
+            [class.keyframe]="frame.isKeyframe"
+            [style.width.%]="getFrameWidth()"
+            [title]="frame.type + ' @ ' + formatTime(frame.pts) + ' (' + formatSize(frame.size) + ')'"
+          ></div>
+        </div>
+      </div>
+
+      <div class="toggle-details">
+        <button (click)="toggleDetails()">
+          {{ showDetails ? 'Hide Details' : 'Show Details' }}
+        </button>
+      </div>
+
+      <div class="frame-details" *ngIf="showDetails">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Type</th>
+              <th>PTS</th>
+              <th>DTS</th>
+              <th>Duration</th>
+              <th>Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let frame of frameData.frames; let i = index" [class.keyframe-row]="frame.isKeyframe">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <span class="frame-type" [class.keyframe-badge]="frame.isKeyframe">
+                  {{ frame.type }}
+                </span>
+              </td>
+              <td>{{ formatTime(frame.pts) }}</td>
+              <td>{{ formatTime(frame.dts) }}</td>
+              <td>{{ frame.duration }}ms</td>
+              <td>{{ formatSize(frame.size) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="loading-indicator" *ngIf="isAnalyzing">
+      <div class="loading-spinner">
+        <i class="material-icons spinning">refresh</i>
+      </div>
+      <div class="loading-text">
+        <span class="loading-title">Analyzing segment...</span>
+        <span class="loading-subtitle">Detecting container type and extracting frame data</span>
+      </div>
+      <div class="loading-progress">
+        <div class="progress-bar">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-data" *ngIf="!frameData && !isAnalyzing && !errorMessage">
+      <i class="material-icons">info</i>
+      <p>Click "Analyze Segment" to inspect frame types in the current video segment.</p>
+      <p class="note">Note: Supports MP4/fMP4 (DASH) and MPEG-TS (HLS) segments.</p>
+    </div>
+  </div>
+
+  <!-- Real-time video timeline -->
+  <app-frame-timeline [viewerState]="viewerState" [segmentUrl]="segmentUrl"></app-frame-timeline>
+</div>

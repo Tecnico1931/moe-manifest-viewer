@@ -134,6 +134,10 @@
       <em class="material-icons" [class.iconActive]="viewerState.showClip">content_cut</em>
       <span class="iconText">Show Clip Tool <span *ngIf="viewerState.showClip">&#9989;</span></span>
     </div>
+    <div class="iconWrapper" (click)="toggleFrameOverlay(!viewerState.showFrameOverlay)">
+      <em class="material-icons" [class.iconActive]="viewerState.showFrameOverlay">video_label</em>
+      <span class="iconText">Show Frame Overlay <span *ngIf="viewerState.showFrameOverlay">&#9989;</span></span>
+    </div>
     <div class="iconWrapper" (click)="toggleUseGlobalToken(!viewerState.globalTokenActive)">
       <em class="material-icons" [class.iconActive]="viewerState.globalTokenActive">&#xE0DA;</em>
       <span class="iconText">Global Token <span *ngIf="viewerState.globalTokenActive">&#9989;</span></span>

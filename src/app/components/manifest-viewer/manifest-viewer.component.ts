@@ -143,6 +143,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
   public activeBandwidth = -1;
   public useNative = false;
   public possibleNative: boolean;
+  public currentSegmentUrl: string = '';
   public masterManifest: ManifestLineObject[];
   public cachedMasterManifest: ParsedManifest;
   public masterVttManifest: {
@@ -247,16 +248,31 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
 
   public subscribeToEvents(): void {
     this.viewerState.urlChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.updateUrl);
-    this.viewerState.fragLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => this.mapFragStatus(data, 'fragLoaded'));
-    this.viewerState.fragLoading$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => this.mapFragStatus(data, 'fragLoading'));
-    this.viewerState.fragChanged$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => this.mapFragStatus(data, 'fragLoaded'));
+    this.viewerState.fragLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
+      this.mapFragStatus(data, 'fragLoaded');
+      this.updateCurrentSegmentUrl(data);
+    });
+    this.viewerState.fragLoading$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
+      this.mapFragStatus(data, 'fragLoading');
+      this.updateCurrentSegmentUrl(data);
+    });
+    this.viewerState.fragChanged$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
+      this.mapFragStatus(data, 'fragLoaded');
+      this.updateCurrentSegmentUrl(data);
+    });
     this.viewerState.hlsError$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.hlsError);
     this.viewerState.currentBandwidth$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.handleBandwidthChange);
     this.viewerState.currentDisplayTime$.pipe(takeUntil(this.ngUnsubscribe), sample(interval(1000))).subscribe(this.onTimeUpdate);
     this.viewerState.manifestLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onManifestLoaded);
     this.viewerState.subsLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onSubtitlesLoaded);
-    this.viewerState.dashFragLoading$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onDashFragLoading);
-    this.viewerState.dashFragLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onDashFragLoaded);
+    this.viewerState.dashFragLoading$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
+      this.onDashFragLoading(data);
+      this.updateCurrentSegmentUrlDash(data);
+    });
+    this.viewerState.dashFragLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
+      this.onDashFragLoaded(data);
+      this.updateCurrentSegmentUrlDash(data);
+    });
     this.viewerState.dashFragLoadAbandon$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onDashFragLoadAbandon);
     this.viewerState.bandwidthUpdated$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onBandwidthUpdate);
     this.viewerState.currentSource$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => (this.currentSource = data));
@@ -576,6 +592,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showHlsIssues: false,
         showClip: false,
         showWhisperSubtitles: false,
+        showFrameOverlay: false,
         showSubtitles: false,
       },
     });
@@ -960,6 +977,40 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     return url.valid && currentUrl.valid && url.origin === currentUrl.origin ? assets + 1 : assets;
   };
 
+  private updateCurrentSegmentUrl = (data: any) => {
+    try {
+      // HLS fragment URL
+      if (data.frag && data.frag.baseurl) {
+        this.currentSegmentUrl = data.frag.baseurl;
+        console.log('Updated current segment URL (HLS):', this.currentSegmentUrl);
+      }
+      // Alternative: try to get URL from frag.url
+      else if (data.frag && data.frag.url) {
+        this.currentSegmentUrl = data.frag.url;
+        console.log('Updated current segment URL (HLS alt):', this.currentSegmentUrl);
+      }
+    } catch (error) {
+      console.error('Error updating segment URL:', error);
+    }
+  };
+
+  private updateCurrentSegmentUrlDash = (data: any) => {
+    try {
+      // DASH segment URL
+      if (data && data.url) {
+        this.currentSegmentUrl = data.url;
+        console.log('Updated current segment URL (DASH):', this.currentSegmentUrl);
+      }
+      // Alternative: try full URL
+      else if (data && data.fullUrl) {
+        this.currentSegmentUrl = data.fullUrl;
+        console.log('Updated current segment URL (DASH alt):', this.currentSegmentUrl);
+      }
+    } catch (error) {
+      console.error('Error updating DASH segment URL:', error);
+    }
+  };
+
   private mapFragStatus = (data: HlsTypes.FragLoadedData | HlsTypes.FragLoadingData, status: string) => {
     let trequest = 0;
     let tload = 0;
@@ -1337,6 +1388,10 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showClip', show);
   };
 
+  public toggleFrameOverlay = (show: boolean) => {
+    this.setOption('showFrameOverlay', show);
+  };
+
   public toggleWhisperSubtitles = (show: boolean) => {
     this.setOption('showWhisperSubtitles', show);
   };
@@ -1436,6 +1491,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           showHlsIssues: false,
           showClip: false,
           showExplode: false,
+          showFrameOverlay: false,
           showSubtitles: false,
           showWhisperSubtitles: false,
         },
@@ -1464,6 +1520,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showHlsIssues: false,
         showClip: false,
         showWhisperSubtitles: false,
+        showFrameOverlay: false,
         showSubtitles: false,
       },
     });

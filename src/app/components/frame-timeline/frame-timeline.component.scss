@@ -1,0 +1,428 @@
+@import '../../shared/utils/vars.scss';
+
+.frame-timeline-container {
+  background: $white;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  padding: 16px;
+  margin: 16px 0;
+  transition: all 0.3s ease;
+
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 32px;
+    overflow-y: auto;
+
+    .timeline-header {
+      h4 {
+        color: $white;
+        font-size: 20px;
+      }
+
+      .timeline-stats .stat {
+        color: rgba(255, 255, 255, 0.8);
+
+        .keyframe-text {
+          color: $green;
+        }
+      }
+    }
+
+    .timeline-container {
+      height: 120px;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .timeline-labels {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .current-frame-info {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      strong {
+        color: $white;
+      }
+
+      .frame-detail {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    .frame-navigation-controls {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+
+      .nav-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: $white;
+        border-color: rgba(255, 255, 255, 0.2);
+
+        &:hover:not(:disabled) {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        &:disabled {
+          background: rgba(255, 255, 255, 0.05);
+          color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+
+    .timeline-legend {
+      border-top-color: rgba(255, 255, 255, 0.2);
+
+      .legend-item {
+        color: rgba(255, 255, 255, 0.8);
+
+        .legend-color {
+          border-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+  }
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+
+  h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: $darkgray;
+  }
+
+  .timeline-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    flex: 1;
+    justify-content: center;
+
+    .stat {
+      color: $mediumgray;
+
+      .keyframe-text {
+        color: $green;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .fullscreen-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: $lightgray;
+    color: $darkgray;
+    border: 1px solid $gray;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 40px;
+    height: 40px;
+
+    .material-icons {
+      font-size: 20px;
+    }
+
+    &:hover {
+      background: $gray;
+      border-color: darken($gray, 10%);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .fullscreen & .fullscreen-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: $white;
+    border-color: rgba(255, 255, 255, 0.2);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.timeline-wrapper {
+  cursor: pointer;
+  user-select: none;
+}
+
+.timeline-container {
+  position: relative;
+  height: 60px;
+  background: $lightgray;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+
+  .frame-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: $gray;
+    border-right: 1px solid $white;
+    transition: all 0.2s;
+
+    &.keyframe {
+      background: $green;
+    }
+
+    &.current {
+      background: $blue;
+      z-index: 2;
+      box-shadow: 0 0 8px rgba($blue, 0.5);
+    }
+
+    &:hover {
+      opacity: 0.8;
+      z-index: 1;
+    }
+  }
+
+  .playhead {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    pointer-events: none;
+
+    .playhead-line {
+      position: absolute;
+      width: 2px;
+      height: 100%;
+      background: $red;
+      box-shadow: 0 0 4px rgba($red, 0.5);
+    }
+
+    .playhead-handle {
+      position: absolute;
+      top: -4px;
+      left: -5px;
+      width: 12px;
+      height: 12px;
+      background: $red;
+      border: 2px solid $white;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: $mediumgray;
+  padding: 0 4px;
+}
+
+.current-frame-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: $lightgray;
+  border-radius: 4px;
+  margin: 12px 0;
+  font-size: 13px;
+
+  strong {
+    color: $darkgray;
+  }
+
+  .frame-type {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    background: $gray;
+    color: $darkgray;
+
+    &.keyframe-badge {
+      background: $green;
+      color: $white;
+    }
+  }
+
+  .frame-detail {
+    color: $mediumgray;
+  }
+}
+
+.frame-navigation-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  background: $white;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  margin: 12px 0;
+
+  .nav-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: $lightgray;
+    color: $darkgray;
+    border: 1px solid $gray;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    .material-icons {
+      font-size: 18px;
+    }
+
+    &:hover:not(:disabled) {
+      background: $gray;
+      border-color: darken($gray, 10%);
+    }
+
+    &:active:not(:disabled) {
+      background: darken($gray, 5%);
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      background: $lightgray;
+      color: $gray;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
+.timeline-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid $gray;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $mediumgray;
+
+    .legend-color {
+      width: 20px;
+      height: 12px;
+      border-radius: 2px;
+      border: 1px solid $gray;
+
+      &.keyframe-color {
+        background: $green;
+      }
+
+      &.pb-frame-color {
+        background: $gray;
+      }
+
+      &.current-color {
+        background: $blue;
+      }
+    }
+  }
+}
+
+.keyboard-shortcuts {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+
+  .shortcut-title {
+    font-weight: 600;
+    color: $white;
+  }
+
+  .shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: $white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.no-timeline-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  color: $mediumgray;
+  background: $lightgray;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  margin: 16px 0;
+
+  .material-icons {
+    font-size: 48px;
+    margin-bottom: 12px;
+    color: $blue;
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 14px;
+
+    &.hint {
+      font-size: 12px;
+      color: $gray;
+      margin-top: 8px;
+    }
+  }
+}

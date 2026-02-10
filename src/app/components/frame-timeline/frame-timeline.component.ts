@@ -13,15 +13,15 @@ export class FrameTimelineComponent implements OnInit, OnDestroy {
   @Input() public segmentUrl: string;
 
   public frameData: FrameAnalysisResult | null = null;
-  public currentTime: number = 0;
-  public currentFrameIndex: number = -1;
-  public isFullscreen: boolean = false;
+  public currentTime = 0;
+  public currentFrameIndex = -1;
+  public isFullscreen = false;
 
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private frameAnalyzerService: FrameAnalyzerService) {}
 
-  ngOnInit() {
+  public ngOnInit() {
     // Subscribe to frame data from the analyzer service
     this.frameAnalyzerService.currentFrameData.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
       this.frameData = data;
@@ -37,7 +37,7 @@ export class FrameTimelineComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.ngUnsubscribe.next();
     // Remove keyboard event listener if it exists
     if (this.isFullscreen) {

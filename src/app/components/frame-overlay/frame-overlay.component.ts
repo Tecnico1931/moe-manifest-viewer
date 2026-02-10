@@ -17,7 +17,7 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
   public errorMessage: string | null = null;
   public showDetails = false;
   public autoAnalyzeEnabled = false;
-  public lastAnalyzedUrl: string = '';
+  public lastAnalyzedUrl = '';
   public segmentChangeCount = 0;
   public analysisHistory: Array<{ url: string; timestamp: number; frameCount: number }> = [];
 
@@ -26,7 +26,7 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(private frameAnalyzerService: FrameAnalyzerService, private copyService: CopyService) {}
 
-  ngOnInit() {
+  public ngOnInit() {
     this.frameAnalyzerService.isAnalyzing.pipe(takeUntil(this.ngUnsubscribe)).subscribe((analyzing) => {
       this.isAnalyzing = analyzing;
     });
@@ -45,7 +45,7 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  ngOnChanges(changes: any) {
+  public ngOnChanges(changes: any) {
     // Detect segment URL changes
     if (changes.segmentUrl && changes.segmentUrl.currentValue) {
       const newUrl = changes.segmentUrl.currentValue;
@@ -55,7 +55,7 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.frameAnalyzerService.reset();
   }

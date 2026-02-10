@@ -1,0 +1,67 @@
+<div class="frame-timeline-container" *ngIf="frameData">
+  <div class="timeline-header">
+    <h4>Video Timeline - Frame Analysis</h4>
+    <div class="timeline-stats">
+      <span class="stat">Frames: {{ frameData.totalFrames }}</span>
+      <span class="stat"
+        >I-frames: <span class="keyframe-text">{{ frameData.keyframeCount }}</span></span
+      >
+      <span class="stat">Duration: {{ formatTime(frameData.duration) }}</span>
+    </div>
+  </div>
+
+  <div class="timeline-wrapper" (click)="onTimelineClick($event)">
+    <div class="timeline-container">
+      <!-- Frame markers -->
+      <div
+        *ngFor="let frame of frameData.frames; let i = index"
+        class="frame-marker"
+        [class.keyframe]="frame.isKeyframe"
+        [class.current]="i === currentFrameIndex"
+        [style.left.%]="getFramePosition(i)"
+        [style.width.%]="getFrameWidth()"
+        [title]="frame.type + ' @ ' + formatTime(frame.pts)"
+      ></div>
+
+      <!-- Current playhead -->
+      <div class="playhead" [style.left.%]="getCurrentPlayheadPosition()">
+        <div class="playhead-line"></div>
+        <div class="playhead-handle"></div>
+      </div>
+    </div>
+
+    <div class="timeline-labels">
+      <span class="label-start">0:00</span>
+      <span class="label-end">{{ formatTime(frameData.duration) }}</span>
+    </div>
+  </div>
+
+  <div class="current-frame-info" *ngIf="currentFrameIndex >= 0 && frameData.frames[currentFrameIndex]">
+    <strong>Current Frame:</strong>
+    <span class="frame-type" [class.keyframe-badge]="frameData.frames[currentFrameIndex].isKeyframe">
+      {{ frameData.frames[currentFrameIndex].type }}
+    </span>
+    <span class="frame-detail"> #{{ currentFrameIndex + 1 }} @ {{ formatTime(frameData.frames[currentFrameIndex].pts) }} </span>
+  </div>
+
+  <div class="timeline-legend">
+    <div class="legend-item">
+      <div class="legend-color keyframe-color"></div>
+      <span>I-frame (Keyframe)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color pb-frame-color"></div>
+      <span>P/B-frame</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color current-color"></div>
+      <span>Current Frame</span>
+    </div>
+  </div>
+</div>
+
+<div class="no-timeline-data" *ngIf="!frameData">
+  <i class="material-icons">videocam</i>
+  <p>Load and analyze a segment to see the real-time frame timeline</p>
+  <p class="hint">The timeline will automatically update as the video plays</p>
+</div>

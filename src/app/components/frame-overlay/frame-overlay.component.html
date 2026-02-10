@@ -15,6 +15,10 @@
     <div class="frame-info-panel" *ngIf="frameData && !isAnalyzing">
       <div class="frame-stats">
         <div class="stat-item">
+          <span class="stat-label">Container:</span>
+          <span class="stat-value">{{ frameData.containerType | uppercase }}</span>
+        </div>
+        <div class="stat-item">
           <span class="stat-label">Total Frames:</span>
           <span class="stat-value">{{ frameData.totalFrames }}</span>
         </div>
@@ -93,7 +97,10 @@
     <div class="no-data" *ngIf="!frameData && !isAnalyzing && !errorMessage">
       <i class="material-icons">info</i>
       <p>Click "Analyze Segment" to inspect frame types in the current video segment.</p>
-      <p class="note">Note: This works with MP4/fMP4 segments (DASH). MPEG-TS support coming soon.</p>
+      <p class="note">Note: Supports MP4/fMP4 (DASH) and MPEG-TS (HLS) segments.</p>
     </div>
   </div>
+
+  <!-- Real-time video timeline -->
+  <app-frame-timeline [viewerState]="viewerState" [segmentUrl]="segmentUrl"></app-frame-timeline>
 </div>

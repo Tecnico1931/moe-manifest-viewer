@@ -58,19 +58,17 @@ export class FrameOverlayComponent implements OnInit, OnDestroy {
       const arrayBuffer = await response.arrayBuffer();
       console.log('Segment fetched, size:', arrayBuffer.byteLength);
 
-      this.frameAnalyzerService
-        .analyzeSegment(arrayBuffer)
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe(
-          (result) => {
-            console.log('Analysis complete:', result);
-            this.frameData = result;
-          },
-          (error) => {
-            console.error('Analysis error:', error);
-            this.errorMessage = `Analysis failed: ${error.message || 'Unknown error'}`;
-          }
-        );
+      const observable = await this.frameAnalyzerService.analyzeSegment(arrayBuffer);
+      observable.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+        (result) => {
+          console.log('Analysis complete:', result);
+          this.frameData = result;
+        },
+        (error) => {
+          console.error('Analysis error:', error);
+          this.errorMessage = `Analysis failed: ${error.message || 'Unknown error'}`;
+        }
+      );
     } catch (error) {
       console.error('Fetch error:', error);
       this.errorMessage = `Failed to fetch segment: ${error.message || 'Unknown error'}`;

@@ -15,7 +15,8 @@
       "Bash(git checkout:*)",
       "Bash(npm install:*)",
       "Bash(npx ng build:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nMOEV-0000 Add frame analysis overlay feature\n\nImplemented frame-level video segment analysis using mp4box.js:\n\n- Added FrameAnalyzerService to parse MP4/fMP4 segments and extract frame metadata\n- Created FrameOverlayComponent with visual timeline showing I-frames vs P/B-frames\n- Added toggle button in icon-bar to show/hide frame overlay\n- Displays frame statistics: total frames, keyframes, GOP size, duration\n- Shows detailed frame table with PTS, DTS, size, and type\n- Integrated into manifest-viewer component\n- Added showFrameOverlay flag to ViewerState and ViewerOptionTypes\n\nKey features:\n- Visual frame timeline with color-coded bars \\(green=I-frames, gray=P/B-frames\\)\n- Supports MP4/fMP4 segments \\(DASH streams\\)\n- Error handling for fetch failures and unsupported formats\n- MPEG-TS support planned for future iteration\n\nDependencies:\n- Added mp4box package for segment parsing\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

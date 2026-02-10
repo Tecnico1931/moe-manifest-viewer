@@ -67,6 +67,7 @@ import { ClipService } from './shared/services/clip.service';
 import { WhisperSubtitlesComponent } from './components/whisper-subtitles/whisper-subtitles.component';
 import { WhisperService } from './shared/services/whisper.service';
 import { FrameOverlayComponent } from './components/frame-overlay/frame-overlay.component';
+import { FrameTimelineComponent } from './components/frame-timeline/frame-timeline.component';
 import { FrameAnalyzerService } from './shared/services/frame-analyzer.service';
 
 declare global {
@@ -110,6 +111,7 @@ declare global {
     ClipComponent,
     WhisperSubtitlesComponent,
     FrameOverlayComponent,
+    FrameTimelineComponent,
   ],
   imports: [
     BrowserModule,

@@ -46,6 +46,7 @@
     "json-view": "0.4.0",
     "material-design-icons": "3.0.1",
     "mp4box": "^2.3.0",
+    "mux.js": "^6.3.0",
     "ng-chartist": "4.1.0",
     "ng-click-outside": "6.0.0",
     "ngx-toastr": "^13.2.1",

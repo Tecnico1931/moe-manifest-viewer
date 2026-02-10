@@ -248,6 +248,7 @@ export class IconBarComponent implements OnInit {
         showClip: this.viewerState.showClip,
         showSubtitles: this.viewerState.showSubtitles,
         showWhisperSubtitles: this.viewerState.showWhisperSubtitles,
+        showFrameOverlay: this.viewerState.showFrameOverlay,
       })
       .then(() => {
         this.storeViewerText = 'Stored ✅';

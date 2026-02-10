@@ -1,4 +1,4 @@
-<div class="frame-timeline-container" *ngIf="frameData">
+<div class="frame-timeline-container" *ngIf="frameData" [class.fullscreen]="isFullscreen">
   <div class="timeline-header">
     <h4>Video Timeline - Frame Analysis</h4>
     <div class="timeline-stats">
@@ -8,6 +8,9 @@
       >
       <span class="stat">Duration: {{ formatTime(frameData.duration) }}</span>
     </div>
+    <button class="fullscreen-button" (click)="toggleFullscreen()" [title]="isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'">
+      <i class="material-icons">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</i>
+    </button>
   </div>
 
   <div class="timeline-wrapper" (click)="onTimelineClick($event)">
@@ -80,6 +83,13 @@
       <div class="legend-color current-color"></div>
       <span>Current Frame</span>
     </div>
+  </div>
+
+  <div class="keyboard-shortcuts" *ngIf="isFullscreen">
+    <span class="shortcut-title">Keyboard Shortcuts:</span>
+    <span class="shortcut-item"><kbd>←</kbd> / <kbd>→</kbd> Frame</span>
+    <span class="shortcut-item"><kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd> I-frame</span>
+    <span class="shortcut-item"><kbd>Esc</kbd> Exit fullscreen</span>
   </div>
 </div>
 

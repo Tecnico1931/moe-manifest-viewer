@@ -6,6 +6,92 @@
   border-radius: 4px;
   padding: 16px;
   margin: 16px 0;
+  transition: all 0.3s ease;
+
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 32px;
+    overflow-y: auto;
+
+    .timeline-header {
+      h4 {
+        color: $white;
+        font-size: 20px;
+      }
+
+      .timeline-stats .stat {
+        color: rgba(255, 255, 255, 0.8);
+
+        .keyframe-text {
+          color: $green;
+        }
+      }
+    }
+
+    .timeline-container {
+      height: 120px;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .timeline-labels {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .current-frame-info {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      strong {
+        color: $white;
+      }
+
+      .frame-detail {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    .frame-navigation-controls {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+
+      .nav-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: $white;
+        border-color: rgba(255, 255, 255, 0.2);
+
+        &:hover:not(:disabled) {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        &:disabled {
+          background: rgba(255, 255, 255, 0.05);
+          color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+
+    .timeline-legend {
+      border-top-color: rgba(255, 255, 255, 0.2);
+
+      .legend-item {
+        color: rgba(255, 255, 255, 0.8);
+
+        .legend-color {
+          border-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+  }
 }
 
 .timeline-header {
@@ -13,6 +99,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  gap: 16px;
 
   h4 {
     margin: 0;
@@ -25,6 +112,8 @@
     display: flex;
     gap: 16px;
     font-size: 13px;
+    flex: 1;
+    justify-content: center;
 
     .stat {
       color: $mediumgray;
@@ -33,6 +122,44 @@
         color: $green;
         font-weight: 600;
       }
+    }
+  }
+
+  .fullscreen-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: $lightgray;
+    color: $darkgray;
+    border: 1px solid $gray;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 40px;
+    height: 40px;
+
+    .material-icons {
+      font-size: 20px;
+    }
+
+    &:hover {
+      background: $gray;
+      border-color: darken($gray, 10%);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .fullscreen & .fullscreen-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: $white;
+    border-color: rgba(255, 255, 255, 0.2);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
   }
 }
@@ -229,6 +356,43 @@
         background: $blue;
       }
     }
+  }
+}
+
+.keyboard-shortcuts {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+
+  .shortcut-title {
+    font-weight: 600;
+    color: $white;
+  }
+
+  .shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: $white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 }
 

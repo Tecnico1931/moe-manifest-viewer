@@ -15,6 +15,7 @@ export class FrameTimelineComponent implements OnInit, OnDestroy {
   public frameData: FrameAnalysisResult | null = null;
   public currentTime: number = 0;
   public currentFrameIndex: number = -1;
+  public isFullscreen: boolean = false;
 
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -38,6 +39,10 @@ export class FrameTimelineComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
+    // Remove keyboard event listener if it exists
+    if (this.isFullscreen) {
+      document.removeEventListener('keydown', this.handleKeydown);
+    }
   }
 
   private updateCurrentFrame() {
@@ -205,4 +210,46 @@ export class FrameTimelineComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
+  public toggleFullscreen() {
+    this.isFullscreen = !this.isFullscreen;
+
+    if (this.isFullscreen) {
+      // Add keyboard event listener for Escape key
+      document.addEventListener('keydown', this.handleKeydown);
+      // Prevent body scroll when in fullscreen
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Remove keyboard event listener
+      document.removeEventListener('keydown', this.handleKeydown);
+      // Restore body scroll
+      document.body.style.overflow = '';
+    }
+  }
+
+  private handleKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && this.isFullscreen) {
+      this.toggleFullscreen();
+    } else if (this.frameData) {
+      // Keyboard shortcuts for frame navigation
+      switch (event.key) {
+        case 'ArrowLeft':
+          if (event.shiftKey) {
+            this.previousKeyframe();
+          } else {
+            this.previousFrame();
+          }
+          event.preventDefault();
+          break;
+        case 'ArrowRight':
+          if (event.shiftKey) {
+            this.nextKeyframe();
+          } else {
+            this.nextFrame();
+          }
+          event.preventDefault();
+          break;
+      }
+    }
+  };
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ViewerState } from '../../shared';
+import { ViewerState, formatTimestamp } from '../../shared';
 import { WhisperService, WhisperState, WhisperCaption, WhisperModelInfo, WhisperTask } from '../../shared/services/whisper.service';
 
 @Component({
@@ -168,28 +168,12 @@ export class WhisperSubtitlesComponent implements OnInit, OnDestroy {
     this.downloadFile(srt, 'subtitles.srt', 'text/srt');
   }
 
-  public formatTime(seconds: number): string {
-    if (isNaN(seconds) || seconds < 0) {
-      return '00:00.00';
-    }
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-    const ms = Math.floor((seconds % 1) * 100);
-    if (h > 0) {
-      return this.pad(h) + ':' + this.pad(m) + ':' + this.pad(s) + '.' + this.pad(ms);
-    }
-    return this.pad(m) + ':' + this.pad(s) + '.' + this.pad(ms);
-  }
+  public formatTime = formatTimestamp;
 
   public seekToCaption(caption: WhisperCaption): void {
     if (caption.start > 0) {
       this.viewerState.updateTime(caption.start);
     }
-  }
-
-  private pad(n: number): string {
-    return n < 10 ? '0' + n : '' + n;
   }
 
   private downloadFile(content: string, filename: string, mimeType: string): void {

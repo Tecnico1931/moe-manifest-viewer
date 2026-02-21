@@ -267,11 +267,11 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.viewerState.subsLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onSubtitlesLoaded);
     this.viewerState.dashFragLoading$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
       this.onDashFragLoading(data);
-      this.updateCurrentSegmentUrlDash(data);
+      this.updateCurrentSegmentUrl(data, 'dash');
     });
     this.viewerState.dashFragLoaded$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data) => {
       this.onDashFragLoaded(data);
-      this.updateCurrentSegmentUrlDash(data);
+      this.updateCurrentSegmentUrl(data, 'dash');
     });
     this.viewerState.dashFragLoadAbandon$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onDashFragLoadAbandon);
     this.viewerState.bandwidthUpdated$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onBandwidthUpdate);
@@ -977,37 +977,23 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     return url.valid && currentUrl.valid && url.origin === currentUrl.origin ? assets + 1 : assets;
   };
 
-  private updateCurrentSegmentUrl = (data: any) => {
+  private updateCurrentSegmentUrl = (data: any, type: 'hls' | 'dash' = 'hls') => {
     try {
-      // HLS fragment URL
-      if (data.frag && data.frag.baseurl) {
-        this.currentSegmentUrl = data.frag.baseurl;
-        console.log('Updated current segment URL (HLS):', this.currentSegmentUrl);
-      }
-      // Alternative: try to get URL from frag.url
-      else if (data.frag && data.frag.url) {
-        this.currentSegmentUrl = data.frag.url;
-        console.log('Updated current segment URL (HLS alt):', this.currentSegmentUrl);
+      if (type === 'hls') {
+        if (data.frag && data.frag.baseurl) {
+          this.currentSegmentUrl = data.frag.baseurl;
+        } else if (data.frag && data.frag.url) {
+          this.currentSegmentUrl = data.frag.url;
+        }
+      } else {
+        if (data && data.url) {
+          this.currentSegmentUrl = data.url;
+        } else if (data && data.fullUrl) {
+          this.currentSegmentUrl = data.fullUrl;
+        }
       }
     } catch (error) {
       console.error('Error updating segment URL:', error);
-    }
-  };
-
-  private updateCurrentSegmentUrlDash = (data: any) => {
-    try {
-      // DASH segment URL
-      if (data && data.url) {
-        this.currentSegmentUrl = data.url;
-        console.log('Updated current segment URL (DASH):', this.currentSegmentUrl);
-      }
-      // Alternative: try full URL
-      else if (data && data.fullUrl) {
-        this.currentSegmentUrl = data.fullUrl;
-        console.log('Updated current segment URL (DASH alt):', this.currentSegmentUrl);
-      }
-    } catch (error) {
-      console.error('Error updating DASH segment URL:', error);
     }
   };
 

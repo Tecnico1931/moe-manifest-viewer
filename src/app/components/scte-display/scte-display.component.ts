@@ -43,6 +43,10 @@ export class ScteDisplayComponent implements AfterViewInit, OnDestroy {
     this.updateJsonView(view.dom);
   };
 
+  public close(): void {
+    this.viewerState.setOption('showScteDisplay', false);
+  }
+
   public updateJsonView(dom: HTMLDivElement) {
     if (this.jsonView && this.jsonView.nativeElement) {
       this.jsonView.nativeElement.innerHTML = '';

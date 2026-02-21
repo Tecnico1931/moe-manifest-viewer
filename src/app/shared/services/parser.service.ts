@@ -263,6 +263,8 @@ export class ParserService {
       } else if (scteCueData || scteDaterangeData) {
         let scteData = scteCueData;
         let scteDataType = SCTE35DataTypes.SCTE35_CUE;
+        const isScteRelatedDaterange =
+          scteDaterangeData && (scteDaterangeData.includes('SCTE35-OUT') || scteDaterangeData.includes('SCTE35-IN'));
         if (scteDaterangeData) {
           scteData = scteDaterangeData;
           scteDataType = SCTE35DataTypes.SCTE35_DATERANGE;
@@ -270,7 +272,7 @@ export class ParserService {
         baseObj = {
           ...baseObj,
           startTime: info.duration || 0,
-          scteData: this.parseStce35Data(scteData, scteDataType),
+          ...(scteCueData || isScteRelatedDaterange ? { scteData: this.parseStce35Data(scteData, scteDataType) } : {}),
         };
       } else if (otherCueData && otherCueData.includes('TYPE="scte35"')) {
         baseObj = {

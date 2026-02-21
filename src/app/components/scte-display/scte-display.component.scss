@@ -1,5 +1,25 @@
 @import '../../shared/utils/vars';
 
+.scte-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scte-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #aaa;
+  padding: 2px 6px;
+  line-height: 1;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
 .content {
   width: 100%;
 }

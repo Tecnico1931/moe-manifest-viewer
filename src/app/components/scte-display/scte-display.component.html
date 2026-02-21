@@ -1,6 +1,9 @@
-<div>
-  <label for="scteSync">Sync SCTE Data</label>:
-  <input type="checkbox" name="scteSync" [(ngModel)]="viewerState.syncScteData" />
+<div class="scte-header">
+  <div class="scte-sync">
+    <label for="scteSync">Sync SCTE Data</label>:
+    <input type="checkbox" name="scteSync" [(ngModel)]="viewerState.syncScteData" />
+  </div>
+  <button class="scte-close-btn" title="Close SCTE Display" (click)="close()">&#x2715;</button>
 </div>
 <br />
 <div class="content">

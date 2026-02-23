@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FrameAnalyzerService, FrameAnalysisResult, FrameInfo, ViewerState } from '../../shared';
+import { FrameAnalyzerService, FrameAnalysisResult, FrameInfo, ViewerState, formatTimeMs } from '../../shared';
 
 @Component({
   selector: 'app-frame-timeline',
@@ -119,13 +119,9 @@ export class FrameTimelineComponent implements OnInit, OnDestroy {
 
     // Seek video to target time (convert ms to seconds)
     this.viewerState.updateTime(targetTime / 1000);
-    console.log('Seeking to time:', targetTime / 1000, 'seconds');
   }
 
-  public formatTime(ms: number): string {
-    const seconds = ms / 1000;
-    return seconds.toFixed(3) + 's';
-  }
+  public formatTime = formatTimeMs;
 
   public previousFrame() {
     if (!this.frameData || this.currentFrameIndex <= 0) {

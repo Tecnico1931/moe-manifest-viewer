@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ViewerState, AudioTrack } from '../../shared';
+import { ViewerState, AudioTrack, formatTimestamp } from '../../shared';
 import { ClipService, ClipState } from '../../shared/services/clip.service';
 
 @Component({
@@ -152,23 +152,7 @@ export class ClipComponent implements OnInit, OnDestroy {
     this.updateClipDuration();
   }
 
-  public formatTime(seconds: number): string {
-    if (isNaN(seconds) || seconds < 0) {
-      return '00:00.00';
-    }
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-    const ms = Math.floor((seconds % 1) * 100);
-    if (h > 0) {
-      return `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}.${this.pad(ms)}`;
-    }
-    return `${this.pad(m)}:${this.pad(s)}.${this.pad(ms)}`;
-  }
-
-  private pad(n: number): string {
-    return n < 10 ? '0' + n : '' + n;
-  }
+  public formatTime = formatTimestamp;
 
   private updateClipDuration(): void {
     this.clipDuration = Math.max(0, this.outPoint - this.inPoint);

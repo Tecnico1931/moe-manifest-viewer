@@ -28,3 +28,4 @@ export * from './models/viewer';
 export * from './models/metric.model';
 export * from './models/video-players';
 export * from './models/hls-issue.model';
+export * from './utils/format.util';

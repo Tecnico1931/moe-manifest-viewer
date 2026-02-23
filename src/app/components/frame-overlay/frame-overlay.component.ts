@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, OnChanges, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
-import { FrameAnalyzerService, FrameAnalysisResult, ViewerState, CopyService } from '../../shared';
+import { FrameAnalyzerService, FrameAnalysisResult, ViewerState, CopyService, formatTimeMs, formatSize } from '../../shared';
 
 @Component({
   selector: 'app-frame-overlay',
@@ -38,7 +38,6 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
     // Set up segment change detection with debounce (500ms)
     this.segmentChangeSubject.pipe(debounceTime(500), takeUntil(this.ngUnsubscribe)).subscribe((url) => {
       if (this.autoAnalyzeEnabled && url && url !== this.lastAnalyzedUrl) {
-        console.log('Auto-analyzing new segment:', url);
         this.segmentChangeCount++;
         this.analyzeSegment();
       }
@@ -70,7 +69,6 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
     this.frameData = null;
 
     try {
-      console.log('Fetching segment:', this.segmentUrl);
       const response = await fetch(this.segmentUrl, {
         credentials: this.viewerState.xhrCredentials ? 'include' : 'same-origin',
       });
@@ -80,12 +78,9 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
       }
 
       const arrayBuffer = await response.arrayBuffer();
-      console.log('Segment fetched, size:', arrayBuffer.byteLength);
-
       const observable = await this.frameAnalyzerService.analyzeSegment(arrayBuffer);
       observable.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
         (result) => {
-          console.log('Analysis complete:', result);
           this.frameData = result;
           this.lastAnalyzedUrl = this.segmentUrl;
 
@@ -114,7 +109,6 @@ export class FrameOverlayComponent implements OnInit, OnDestroy, OnChanges {
 
   public toggleAutoAnalyze() {
     this.autoAnalyzeEnabled = !this.autoAnalyzeEnabled;
-    console.log('Auto-analyze:', this.autoAnalyzeEnabled ? 'enabled' : 'disabled');
   }
 
   public exportFrameData() {
@@ -244,18 +238,6 @@ ${this.calculateGOPStructure()
     return 100 / this.frameData.totalFrames;
   }
 
-  public formatTime(ms: number): string {
-    const seconds = ms / 1000;
-    return seconds.toFixed(3) + 's';
-  }
-
-  public formatSize(bytes: number): string {
-    if (bytes < 1024) {
-      return bytes + ' B';
-    } else if (bytes < 1024 * 1024) {
-      return (bytes / 1024).toFixed(2) + ' KB';
-    } else {
-      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-    }
-  }
+  public formatTime = formatTimeMs;
+  public formatSize = formatSize;
 }

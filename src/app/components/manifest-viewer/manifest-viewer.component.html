@@ -143,6 +143,11 @@
         (onTogglePlayerLogs)="togglePlayerLogs($event)"
         (onToggleHlsIssues)="toggleHlsIssues($event)"
         (onToggleClip)="toggleClip($event)"
+        (onToggleBitrateAudit)="toggleBitrateAudit($event)"
+        (onToggleStartup)="toggleStartup($event)"
+        (onToggleLadderCheck)="toggleLadderCheck($event)"
+        (onToggleAudioCompare)="toggleAudioCompare($event)"
+        (onToggleEdgeView)="toggleEdgeView($event)"
         (onToggleFrameOverlay)="toggleFrameOverlay($event)"
         (onToggleUseGlobalToken)="onUseGlobalTokenChange($event)"
         (onTogglePolling)="setPollingActive($event)"
@@ -229,6 +234,11 @@
         viewerState.showVideo ||
         viewerState.showScteDisplay ||
         viewerState.showSubtitles ||
+        viewerState.showBitrateAudit ||
+        viewerState.showStartup ||
+        viewerState.showLadderCheck ||
+        viewerState.showAudioCompare ||
+        viewerState.showEdgeView ||
         viewerState.showFrameOverlay
       "
       [class.onlyViewer]="isOnlyViewer"
@@ -244,6 +254,11 @@
           viewerState.showPlayerLogs ||
           viewerState.showScteDisplay ||
           viewerState.showSubtitles ||
+          viewerState.showBitrateAudit ||
+          viewerState.showStartup ||
+          viewerState.showLadderCheck ||
+          viewerState.showAudioCompare ||
+          viewerState.showEdgeView ||
           viewerState.showFrameOverlay
         "
         [class.videoShowing]="viewerState.showVideo"

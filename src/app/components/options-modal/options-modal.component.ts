@@ -54,6 +54,11 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public displayHlsIssues: boolean;
   public displayClip: boolean;
   public displayWhisperSubtitles: boolean;
+  public displayBitrateAudit: boolean;
+  public displayStartup: boolean;
+  public displayLadderCheck: boolean;
+  public displayAudioCompare: boolean;
+  public displayEdgeView: boolean;
   public seconds = 6;
   public optionsChecked: { prop: string; value: boolean }[] = new Array();
 
@@ -166,6 +171,26 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
       this.displayWhisperSubtitles = val;
     });
 
+    this.appService.displayBitrateAudit$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayBitrateAudit = val;
+    });
+
+    this.appService.displayStartup$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayStartup = val;
+    });
+
+    this.appService.displayLadderCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayLadderCheck = val;
+    });
+
+    this.appService.displayAudioCompare$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayAudioCompare = val;
+    });
+
+    this.appService.displayEdgeView$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayEdgeView = val;
+    });
+
     this.appService.useGlobalToken$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.useGlobalToken = val;
     });
@@ -231,6 +256,31 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
         case 'displayClip':
           if (vars[urlVar]) {
             this.appService.toggleClipService(true);
+          }
+          break;
+        case 'displayBitrateAudit':
+          if (vars[urlVar]) {
+            this.appService.toggleBitrateAuditService(true);
+          }
+          break;
+        case 'displayStartup':
+          if (vars[urlVar]) {
+            this.appService.toggleStartupService(true);
+          }
+          break;
+        case 'displayLadderCheck':
+          if (vars[urlVar]) {
+            this.appService.toggleLadderCheckService(true);
+          }
+          break;
+        case 'displayAudioCompare':
+          if (vars[urlVar]) {
+            this.appService.toggleAudioCompareService(true);
+          }
+          break;
+        case 'displayEdgeView':
+          if (vars[urlVar]) {
+            this.appService.toggleEdgeViewService(true);
           }
           break;
         case 'scrolling':
@@ -494,6 +544,21 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
           break;
         case 'showWhisperSubtitles':
           this.appService.toggleWhisperSubtitlesService(viewer.options[option]);
+          break;
+        case 'showBitrateAudit':
+          this.appService.toggleBitrateAuditService(viewer.options[option]);
+          break;
+        case 'showStartup':
+          this.appService.toggleStartupService(viewer.options[option]);
+          break;
+        case 'showLadderCheck':
+          this.appService.toggleLadderCheckService(viewer.options[option]);
+          break;
+        case 'showAudioCompare':
+          this.appService.toggleAudioCompareService(viewer.options[option]);
+          break;
+        case 'showEdgeView':
+          this.appService.toggleEdgeViewService(viewer.options[option]);
       }
     });
     this.appService.setViewerId('', viewer.id);

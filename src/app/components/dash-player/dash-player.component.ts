@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 import { TabObjectName } from 'src/app/shared/models/tabs.model';
 import { VideoPlayers } from '../../shared/models/video-players';
+import { RequestLogService } from '../../shared/services/request-log.service';
 import { CMCDTransitionModes } from '../../shared/utils/cmcd-filter';
 
 declare var dashjs: any;
@@ -102,7 +103,8 @@ export class DashPlayerComponent implements OnInit, OnDestroy {
     private urlVarsService: UrlVarsService,
     public appService: AppService,
     public loggerService: LoggerService,
-    private drmManager: DrmManagerService
+    private drmManager: DrmManagerService,
+    private requestLog: RequestLogService
   ) {}
 
   public ngOnInit() {
@@ -402,6 +404,7 @@ export class DashPlayerComponent implements OnInit, OnDestroy {
   };
 
   private onFragLoadComplete = (data): void => {
+    this.requestLog.recordDashRequest(data?.request);
     if (data && data.request && (data.request.mediaType === 'video' || (data.request && data.request.mediaType === 'audio'))) {
       this.viewerState.onDashFragLoaded(data.request);
     }

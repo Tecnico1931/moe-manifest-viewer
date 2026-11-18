@@ -40,6 +40,11 @@ import { CMCDComponent } from './components/cmcd/cmcd.component';
 import { PlayerConfigComponent } from './components/player-config/player-config.component';
 import { MetricsDropdownComponent } from './components/metrics-dropdown/metrics-dropdown.component';
 import { StallDetectorComponent } from './components/stall-detector/stall-detector.component';
+import { BitrateAuditComponent } from './components/bitrate-audit/bitrate-audit.component';
+import { StartupWaterfallComponent } from './components/startup-waterfall/startup-waterfall.component';
+import { LadderCheckComponent } from './components/ladder-check/ladder-check.component';
+import { AudioCompareComponent } from './components/audio-compare/audio-compare.component';
+import { EdgeViewComponent } from './components/edge-view/edge-view.component';
 import { SubtitlesViewerComponent } from './components/subtitles-viewer/subtitles-viewer.component';
 import { InfoContainerComponent } from './components/info-container/info-container.component';
 import { ErrorDisplayComponent } from './components/error-display/error-display.component';
@@ -92,6 +97,11 @@ declare global {
     CMCDComponent,
     MetricsDropdownComponent,
     StallDetectorComponent,
+    BitrateAuditComponent,
+    StartupWaterfallComponent,
+    LadderCheckComponent,
+    AudioCompareComponent,
+    EdgeViewComponent,
     SubtitlesViewerComponent,
     SubtitlesComponent,
     InfoContainerComponent,

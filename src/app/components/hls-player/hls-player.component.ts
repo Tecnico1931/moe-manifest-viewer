@@ -9,7 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 import * as HlsTypes from 'hls.js';
 import Hls from 'hls.js';
 import { CMCDFilter, CMCDTransitionModes, CMCDHeaders } from '../../shared/utils/cmcd-filter';
-import { customXhrLoader } from './hls-player.custom-loader';
+import { createRecordingLoader } from './hls-player.custom-loader';
+import { RequestLogService } from '../../shared/services/request-log.service';
 import { VideoPlayers } from '../../shared/models/video-players';
 
 @Component({
@@ -61,7 +62,8 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     private appService: AppService,
     private loggerService: LoggerService,
     private drmManager: DrmManagerService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private requestLog: RequestLogService
   ) {}
 
   public ngOnInit() {
@@ -185,7 +187,7 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
       console.log('[HlsPlayerComponent > initHls] DRM all set. ', this.drmInfo);
     }
     this.setCMCD();
-    this.hlsConfig.loader = customXhrLoader;
+    this.hlsConfig.loader = createRecordingLoader(this.requestLog);
     this.hlsConfig.xhrSetup = this.filterCMCDRequest;
   };
 
@@ -266,6 +268,7 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
 
   private setHlsPlayerListeners() {
     this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed);
+    this.hls.on(Hls.Events.MANIFEST_PARSED, this.logDeclaredLadder);
     this.hls.on(Hls.Events.LEVEL_LOADED, this.onLevelLoaded);
     this.hls.on(Hls.Events.LEVEL_SWITCHED, this.onLevelSwitched);
     this.hls.on(Hls.Events.FRAG_LOADED, this.onFragLoaded);
@@ -305,6 +308,28 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
       this.switchBandwidth(`${this.availableRenditions[startLevel].bitrate}`);
     }
     this.exposeAudioTracks();
+  };
+
+  /** Feeds the master playlist's declared ladder (BANDWIDTH, RESOLUTION, CODECS, ...) to the request log. */
+  private logDeclaredLadder = (event: string, data: HlsTypes.ManifestParsedData) => {
+    this.requestLog.setLevels(
+      this.hls.levels.map((level) => {
+        const attrs: any = level.attrs || {};
+        return {
+          bandwidth: level.bitrate,
+          averageBandwidth: attrs['AVERAGE-BANDWIDTH'] ? Number(attrs['AVERAGE-BANDWIDTH']) : undefined,
+          resolution: attrs.RESOLUTION || (level.width && level.height ? `${level.width}x${level.height}` : undefined),
+          codecs: attrs.CODECS,
+          audioGroup: attrs.AUDIO,
+        };
+      })
+    );
+    const audioTracks: { name?: string; groupId?: string }[] = [];
+    // hls.audioTracks only lists the active group at this point; the event carries every track in the manifest
+    (data.audioTracks || []).forEach((track, i) => {
+      audioTracks[track.id !== undefined ? track.id : i] = { name: track.name, groupId: track.groupId };
+    });
+    this.requestLog.setAudioTracks(audioTracks);
   };
 
   private exposeAudioTracks = () => {

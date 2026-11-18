@@ -44,6 +44,11 @@ export class WrapperComponent implements OnInit, OnDestroy {
       showWhisperSubtitles: false,
       showFrameOverlay: false,
       showSubtitles: false,
+      showBitrateAudit: false,
+      showStartup: false,
+      showLadderCheck: false,
+      showAudioCompare: false,
+      showEdgeView: false,
     };
     this.addViewer({ url: '', options: options }, -1);
     this.subscribeToCommands();
@@ -147,6 +152,11 @@ export class WrapperComponent implements OnInit, OnDestroy {
             showWhisperSubtitles: lastViewer.viewerState.showWhisperSubtitles,
             showFrameOverlay: lastViewer.viewerState.showFrameOverlay,
             showSubtitles: lastViewer.viewerState.showSubtitles,
+            showBitrateAudit: lastViewer.viewerState.showBitrateAudit,
+            showStartup: lastViewer.viewerState.showStartup,
+            showLadderCheck: lastViewer.viewerState.showLadderCheck,
+            showAudioCompare: lastViewer.viewerState.showAudioCompare,
+            showEdgeView: lastViewer.viewerState.showEdgeView,
           },
         };
         this.addViewer(previousViewer, this.viewers.length - 1);
@@ -174,6 +184,11 @@ export class WrapperComponent implements OnInit, OnDestroy {
           showFrameOverlay: false,
           showSubtitles: false,
           showWhisperSubtitles: false,
+          showBitrateAudit: false,
+          showStartup: false,
+          showLadderCheck: false,
+          showAudioCompare: false,
+          showEdgeView: false,
         },
       };
       this.addViewer(emptyViewer, this.viewers.length - 1);

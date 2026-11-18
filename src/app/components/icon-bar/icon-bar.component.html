@@ -134,6 +134,26 @@
       <em class="material-icons" [class.iconActive]="viewerState.showClip">content_cut</em>
       <span class="iconText">Show Clip Tool <span *ngIf="viewerState.showClip">&#9989;</span></span>
     </div>
+    <div class="iconWrapper" (click)="toggleBitrateAudit(!viewerState.showBitrateAudit)" *ngIf="type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showBitrateAudit">fact_check</em>
+      <span class="iconText">Show Declared vs Delivered <span *ngIf="viewerState.showBitrateAudit">&#9989;</span></span>
+    </div>
+    <div class="iconWrapper" (click)="toggleStartup(!viewerState.showStartup)" *ngIf="type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showStartup">timer</em>
+      <span class="iconText">Show Startup Waterfall <span *ngIf="viewerState.showStartup">&#9989;</span></span>
+    </div>
+    <div class="iconWrapper" (click)="toggleLadderCheck(!viewerState.showLadderCheck)" *ngIf="type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showLadderCheck">stacked_bar_chart</em>
+      <span class="iconText">Show Ladder Check <span *ngIf="viewerState.showLadderCheck">&#9989;</span></span>
+    </div>
+    <div class="iconWrapper" (click)="toggleAudioCompare(!viewerState.showAudioCompare)" *ngIf="type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showAudioCompare">graphic_eq</em>
+      <span class="iconText">Show Audio Tracks <span *ngIf="viewerState.showAudioCompare">&#9989;</span></span>
+    </div>
+    <div class="iconWrapper" (click)="toggleEdgeView(!viewerState.showEdgeView)" *ngIf="type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showEdgeView">dns</em>
+      <span class="iconText">Show Akamai Edge <span *ngIf="viewerState.showEdgeView">&#9989;</span></span>
+    </div>
     <div class="iconWrapper" (click)="toggleFrameOverlay(!viewerState.showFrameOverlay)">
       <em class="material-icons" [class.iconActive]="viewerState.showFrameOverlay">video_label</em>
       <span class="iconText">Show Frame Overlay <span *ngIf="viewerState.showFrameOverlay">&#9989;</span></span>

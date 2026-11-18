@@ -31,6 +31,11 @@ export class AppService {
   public displayHlsIssues$ = new Subject<boolean>();
   public displayClip$ = new Subject<boolean>();
   public displayWhisperSubtitles$ = new Subject<boolean>();
+  public displayBitrateAudit$ = new Subject<boolean>();
+  public displayStartup$ = new Subject<boolean>();
+  public displayLadderCheck$ = new Subject<boolean>();
+  public displayAudioCompare$ = new Subject<boolean>();
+  public displayEdgeView$ = new Subject<boolean>();
   public openRelmMenu$ = new Subject<boolean>();
   public relmUrl$ = new Subject<string>();
   public openSetManifest$ = new Subject<string>();
@@ -123,6 +128,26 @@ export class AppService {
 
   public toggleWhisperSubtitlesService(val: boolean): void {
     this.displayWhisperSubtitles$.next(val);
+  }
+
+  public toggleBitrateAuditService(val: boolean): void {
+    this.displayBitrateAudit$.next(val);
+  }
+
+  public toggleStartupService(val: boolean): void {
+    this.displayStartup$.next(val);
+  }
+
+  public toggleLadderCheckService(val: boolean): void {
+    this.displayLadderCheck$.next(val);
+  }
+
+  public toggleAudioCompareService(val: boolean): void {
+    this.displayAudioCompare$.next(val);
+  }
+
+  public toggleEdgeViewService(val: boolean): void {
+    this.displayEdgeView$.next(val);
   }
 
   public setPollInterval(val: number): void {

@@ -192,6 +192,31 @@
         <input type="checkbox" [class.active]="displayWhisperSubtitles" />
         <span class="checkmark"></span>
       </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleBitrateAuditService', !displayBitrateAudit)"
+        >Show Declared vs Delivered
+        <input type="checkbox" [class.active]="displayBitrateAudit" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleStartupService', !displayStartup)"
+        >Show Startup Waterfall
+        <input type="checkbox" [class.active]="displayStartup" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleLadderCheckService', !displayLadderCheck)"
+        >Show Ladder Check
+        <input type="checkbox" [class.active]="displayLadderCheck" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleAudioCompareService', !displayAudioCompare)"
+        >Show Audio Tracks
+        <input type="checkbox" [class.active]="displayAudioCompare" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleEdgeViewService', !displayEdgeView)"
+        >Show Akamai Edge
+        <input type="checkbox" [class.active]="displayEdgeView" />
+        <span class="checkmark"></span>
+      </label>
       <div class="listButton">
         <button class="clearSettingsCookieButton" (click)="activateClearSettingsConfirmationPanel()">{{ settingsClearButtonText }}</button>
       </div>

@@ -11,6 +11,11 @@
     viewerState.showHlsIssues ||
     viewerState.showClip ||
     viewerState.showWhisperSubtitles ||
+    viewerState.showBitrateAudit ||
+    viewerState.showStartup ||
+    viewerState.showLadderCheck ||
+    viewerState.showAudioCompare ||
+    viewerState.showEdgeView ||
     viewerState.showVideo ||
     viewerState.showScteDisplay ||
     viewerState.showSubtitles
@@ -69,6 +74,26 @@
 
   <app-tab *ngIf="viewerState.showWhisperSubtitles && viewerState.showVideo" tabTitle="{{ tabName.WHISPER }}">
     <app-whisper-subtitles [viewerState]="viewerState"></app-whisper-subtitles>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showBitrateAudit" tabTitle="{{ tabName.BITRATEAUDIT }}">
+    <app-bitrate-audit [viewerState]="viewerState"></app-bitrate-audit>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showStartup" tabTitle="{{ tabName.STARTUP }}">
+    <app-startup-waterfall [viewerState]="viewerState"></app-startup-waterfall>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showLadderCheck" tabTitle="{{ tabName.LADDERCHECK }}">
+    <app-ladder-check [viewerState]="viewerState"></app-ladder-check>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showAudioCompare" tabTitle="{{ tabName.AUDIOCOMPARE }}">
+    <app-audio-compare [viewerState]="viewerState"></app-audio-compare>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showEdgeView" tabTitle="{{ tabName.EDGEVIEW }}">
+    <app-edge-view [viewerState]="viewerState"></app-edge-view>
   </app-tab>
 
   <app-tab *ngIf="!useNative && viewerState.showPlayerLogs" tabTitle="{{ tabName.PLAYERLOGS }}">

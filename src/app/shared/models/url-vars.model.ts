@@ -16,6 +16,11 @@ export enum VarNames {
   SHOWPLAYERLOGS = 'showPlayerLogs',
   SHOWHLSISSUES = 'showHlsIssues',
   SHOWCLIP = 'showClip',
+  SHOWBITRATEAUDIT = 'showBitrateAudit',
+  SHOWSTARTUP = 'showStartup',
+  SHOWLADDERCHECK = 'showLadderCheck',
+  SHOWAUDIOCOMPARE = 'showAudioCompare',
+  SHOWEDGEVIEW = 'showEdgeView',
   SCROLLING = 'scrolling',
   XHRCREDENTIALS = 'xhrCredentials',
   MUTED = 'muted',
@@ -43,6 +48,11 @@ export class UrlVars {
   public displayPlayerLogs: boolean;
   public displayHlsIssues: boolean;
   public displayClip: boolean;
+  public displayBitrateAudit: boolean;
+  public displayStartup: boolean;
+  public displayLadderCheck: boolean;
+  public displayAudioCompare: boolean;
+  public displayEdgeView: boolean;
   public scrolling: ScrollTypes;
   public credentials: boolean;
   public muted: boolean;
@@ -69,6 +79,11 @@ export class UrlVars {
     this.displayPlayerLogs = this.checkForProperty(obj, VarNames.SHOWPLAYERLOGS);
     this.displayHlsIssues = this.checkForProperty(obj, VarNames.SHOWHLSISSUES);
     this.displayClip = this.checkForProperty(obj, VarNames.SHOWCLIP);
+    this.displayBitrateAudit = this.checkForProperty(obj, VarNames.SHOWBITRATEAUDIT);
+    this.displayStartup = this.checkForProperty(obj, VarNames.SHOWSTARTUP);
+    this.displayLadderCheck = this.checkForProperty(obj, VarNames.SHOWLADDERCHECK);
+    this.displayAudioCompare = this.checkForProperty(obj, VarNames.SHOWAUDIOCOMPARE);
+    this.displayEdgeView = this.checkForProperty(obj, VarNames.SHOWEDGEVIEW);
     this.scrolling = this.checkForProperty(obj, VarNames.SCROLLING, false) ? obj[VarNames.SCROLLING] : ScrollTypes.AUTO_SCROLL;
     this.credentials = this.checkForProperty(obj, VarNames.XHRCREDENTIALS);
     this.muted = this.checkForProperty(obj, VarNames.MUTED);

@@ -1,4 +1,5 @@
 import * as HlsTypes from 'hls.js';
+import { BeginInit, RequestLogService, RequestRecord, parseResponseHeaders } from '../../shared/services/request-log.service';
 
 const AGE_HEADER_LINE_REGEX = /^age:\s*[\d.]+\s*$/m;
 
@@ -14,6 +15,40 @@ class LoadStats implements HlsTypes.LoaderStats {
   buffering: HlsTypes.HlsProgressivePerformanceTiming = { start: 0, first: 0, end: 0 };
 }
 
+/** Maps an hls.js loader context (playlist, fragment or key) onto the request log's kind and metadata. */
+const classifyContext = (context: HlsTypes.LoaderContext): Omit<BeginInit, 'url'> => {
+  const ctx = context as any;
+  if (ctx.keyInfo) {
+    return { kind: 'key', sn: typeof ctx.frag?.sn === 'number' ? ctx.frag.sn : undefined };
+  }
+  if (ctx.frag) {
+    const frag = ctx.frag;
+    // hls.js 1.3 loads the EXT-X-MAP init segment as a fragment with sn 0 and no EXTINF duration (not 'initSegment').
+    const isInit = frag.sn === 'initSegment' || !frag.duration;
+    const sn = typeof frag.sn === 'number' ? frag.sn : undefined;
+    const durationSec = isInit ? undefined : frag.duration;
+    if (frag.type === 'audio') {
+      return { kind: isInit ? 'init' : 'audio-segment', audioTrackId: frag.level, sn, durationSec };
+    }
+    if (frag.type === 'subtitle') {
+      return { kind: 'subtitle-segment', sn, durationSec };
+    }
+    return { kind: isInit ? 'init' : 'video-segment', level: frag.level, sn, durationSec };
+  }
+  switch (ctx.type) {
+    case 'manifest':
+      return { kind: 'master' };
+    case 'level':
+      return { kind: 'variant', level: ctx.level ?? undefined };
+    case 'audioTrack':
+      return { kind: 'audio-playlist', audioTrackId: ctx.id ?? undefined, audioGroup: ctx.groupId ?? undefined };
+    case 'subtitleTrack':
+      return { kind: 'subtitle-playlist' };
+    default:
+      return { kind: 'other' };
+  }
+};
+
 export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> {
   private xhrSetup: Function | null;
   private requestTimeout?: number;
@@ -25,6 +60,10 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
 
   private loader: XMLHttpRequest | null = null;
   public stats: HlsTypes.LoaderStats;
+
+  /** Set by subclasses made with createRecordingLoader; when present every request is logged. */
+  protected requestLog?: RequestLogService;
+  private requestId?: number;
 
   constructor(config /* HlsConfig */) {
     this.xhrSetup = config ? config.xhrSetup : null;
@@ -55,6 +94,9 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
 
   abort(): void {
     this.abortInternal();
+    if (this.stats.aborted) {
+      this.logUpdate({ error: 'aborted', tLoaded: self.performance.now() });
+    }
     if (this.callbacks?.onAbort) {
       this.callbacks.onAbort(this.stats, this.context, this.loader);
     }
@@ -73,6 +115,7 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
     this.config = config;
     this.callbacks = callbacks;
     this.retryDelay = config.retryDelay;
+    this.logStart();
     this.loadInternal();
   }
 
@@ -109,6 +152,7 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
       }
     } catch (e) {
       // IE11 throws an exception on xhr.open if attempting to access an HTTP resource over HTTPS
+      this.logUpdate({ error: e.message, tLoaded: self.performance.now() });
       this.callbacks!.onError({ code: xhr.status, text: e.message }, context, xhr);
       return;
     }
@@ -145,6 +189,8 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
       self.clearTimeout(this.requestTimeout);
       if (stats.loading.first === 0) {
         stats.loading.first = Math.max(self.performance.now(), stats.loading.start);
+        // Only CORS-exposed headers are readable here (see parseResponseHeaders).
+        this.logUpdate({ tFirstByte: stats.loading.first, status: xhr.status, headers: parseResponseHeaders(xhr.getAllResponseHeaders()) });
       }
 
       if (readyState === 4) {
@@ -165,6 +211,7 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
             len = data.length;
           }
           stats.loaded = stats.total = len;
+          this.logUpdate({ tLoaded: stats.loading.end, bytes: len, status, error: undefined });
 
           if (!this.callbacks) {
             return;
@@ -183,6 +230,7 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
 
           this.callbacks.onSuccess(response, stats, context, xhr);
         } else {
+          this.logUpdate({ status, error: xhr.statusText || `HTTP ${status}`, tLoaded: self.performance.now() });
           // if max nb of retries reached or if http status between 400 and 499 (such error cannot be recovered, retrying is useless), return error
           if (stats.retry >= config.maxRetry || (status >= 400 && status < 499)) {
             this.callbacks!.onError({ code: status, text: xhr.statusText }, context, xhr);
@@ -211,6 +259,7 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
     const callbacks = this.callbacks;
     if (callbacks) {
       this.abortInternal();
+      this.logUpdate({ error: 'timeout', tLoaded: self.performance.now() });
       callbacks.onTimeout(this.stats, this.context, this.loader);
     }
   }
@@ -232,4 +281,23 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
     }
     return result;
   }
+
+  private logStart(): void {
+    if (this.requestLog) {
+      const { url } = this.context;
+      this.requestId = this.requestLog.begin({ url, tRequest: this.stats.loading.start, ...classifyContext(this.context) });
+    }
+  }
+
+  private logUpdate(patch: Partial<RequestRecord>): void {
+    if (this.requestLog && this.requestId !== undefined) {
+      this.requestLog.update(this.requestId, patch);
+    }
+  }
 }
+
+/** Returns a loader class (for hls.js `config.loader`) that logs every request into `requestLog`. */
+export const createRecordingLoader = (requestLog: RequestLogService): typeof customXhrLoader =>
+  class extends customXhrLoader {
+    protected requestLog = requestLog;
+  };

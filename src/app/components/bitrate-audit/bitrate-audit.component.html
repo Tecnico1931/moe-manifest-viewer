@@ -1,2 +1,78 @@
-<h3>Declared vs delivered</h3>
-<p>Coming soon</p>
+<div class="header">
+  <h3>Declared vs delivered</h3>
+  <button class="copy" (click)="copyTsv()" [disabled]="!result.video.length">{{ copyLabel }}</button>
+</div>
+<p class="hint">Measured = sum(bytes×8) / sum(segment seconds). Declared BANDWIDTH and AVERAGE-BANDWIDTH include audio.</p>
+
+<p class="empty" *ngIf="!result.video.length">No renditions seen yet</p>
+
+<table *ngIf="result.video.length">
+  <thead>
+    <tr>
+      <th class="left">Rendition</th>
+      <th>Segs</th>
+      <th>Secs</th>
+      <th>BANDWIDTH</th>
+      <th>AVERAGE-BW</th>
+      <th>Avg kbps</th>
+      <th>Peak kbps</th>
+      <th>Avg / AVG-BW</th>
+      <th>Peak / BW</th>
+      <th class="left"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let row of result.video; trackBy: trackLevel">
+      <tr [class.few]="row.isFewSegments">
+        <td class="left">
+          {{ row.resolution || (row.level === undefined ? '—' : 'level ' + row.level) }}
+          <span class="tag" *ngIf="row.isTs" [title]="tsTooltip">TS</span>
+        </td>
+        <td>{{ row.segments }}</td>
+        <td>{{ fmt(row.seconds) }}</td>
+        <td>{{ fmt(row.bandwidthKbps) }}</td>
+        <td>{{ fmt(row.averageBandwidthKbps) }}</td>
+        <td>{{ fmt(row.avgKbps) }}</td>
+        <td>{{ fmt(row.peakKbps) }}</td>
+        <td [class.warn]="row.flagAvg && !row.audioTrack">{{ row.avgPct === undefined ? '—' : fmt(row.avgPct) + '%' }}</td>
+        <td [class.warn]="row.flagPeak && !row.audioTrack">{{ row.peakPct === undefined ? '—' : fmt(row.peakPct) + '%' }}</td>
+        <td class="left">
+          <span class="note" *ngIf="row.isFewSegments">few segments</span>
+          <span class="chip" *ngIf="row.flagAvg" title="Measured average is more than 10% above AVERAGE-BANDWIDTH">avg &gt; +10%</span>
+          <span class="chip" *ngIf="row.flagPeak" title="Measured peak segment bitrate is above BANDWIDTH">peak &gt; BW</span>
+        </td>
+      </tr>
+      <tr class="combined" *ngIf="row.audioTrack" [class.few]="row.isFewSegments">
+        <td class="left" colspan="5" [title]="'Video plus audio rendition ' + row.audioTrack.name + ' (highest-bitrate track in the audio group). Peak is the sum of both peaks, an upper bound.'">
+          video + audio vs declared ({{ row.audioTrack.name }}, {{ fmt(row.audioTrack.avgKbps) }} kbps)
+        </td>
+        <td>{{ fmt(row.combinedAvgKbps) }}</td>
+        <td>{{ fmt(row.combinedPeakKbps) }}</td>
+        <td [class.warn]="row.flagAvg">{{ row.combinedAvgPct === undefined ? '—' : fmt(row.combinedAvgPct) + '%' }}</td>
+        <td [class.warn]="row.flagPeak">{{ row.combinedPeakPct === undefined ? '—' : fmt(row.combinedPeakPct) + '%' }}</td>
+        <td></td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
+
+<table class="audio" *ngIf="result.audio.length">
+  <thead>
+    <tr>
+      <th class="left">Audio track</th>
+      <th>Segs</th>
+      <th>Secs</th>
+      <th>Avg kbps</th>
+      <th>Peak kbps</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let a of result.audio" [class.few]="a.segments < 3">
+      <td class="left">{{ a.name }} <span class="note" *ngIf="a.group">{{ a.group }}</span></td>
+      <td>{{ a.segments }}</td>
+      <td>{{ fmt(a.seconds) }}</td>
+      <td>{{ fmt(a.avgKbps) }}</td>
+      <td>{{ fmt(a.peakKbps) }}</td>
+    </tr>
+  </tbody>
+</table>

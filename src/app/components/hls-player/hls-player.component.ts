@@ -167,6 +167,9 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
   private configHls = () => {
     this.hlsConfig = {
       debug: this.loggerService,
+      // The single-file build is served with a CSP that blocks blob: workers (no worker-src), so hls.js would
+      // try a worker, fail and fall back to the main thread on every load. Go straight to the main thread.
+      enableWorker: false,
     };
     Hls.DefaultConfig.xhrSetup = (xhr: XMLHttpRequest) => {
       if (this.viewerState.xhrCredentials) {

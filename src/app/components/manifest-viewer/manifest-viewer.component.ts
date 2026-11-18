@@ -1183,7 +1183,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
   };
 
   private hlsError = (data: any) => {
-    console.warn('HLS ERROR ', data.type, data.details);
+    console.warn('HLS ERROR ', data.type, data.details, data.event || '', data.error || data.err || '');
     if (this.manifest && data.frag) {
       this.manifest.map((line) => {
         if (data.frag && line.startTime && Math.round(line.startTime) === Math.round(data.frag.start)) {

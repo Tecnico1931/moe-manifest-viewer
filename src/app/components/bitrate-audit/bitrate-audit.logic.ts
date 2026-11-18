@@ -17,6 +17,7 @@ export interface AuditRecord {
 
 export const MIN_SEGMENTS = 3;
 export const AVG_FLAG_RATIO = 1.1;
+export const COMBINED_PEAK_TOLERANCE = 1.05;
 
 export interface MediaStats {
   segments: number;
@@ -179,7 +180,11 @@ export const buildAudit = (records: AuditRecord[]): AuditResult => {
       combinedAvgPct: pct(combinedAvgKbps, averageBandwidthKbps),
       combinedPeakPct: pct(combinedPeakKbps, bandwidthKbps),
       flagAvg: effAvg !== undefined && averageBandwidthKbps !== undefined && effAvg > averageBandwidthKbps * AVG_FLAG_RATIO,
-      flagPeak: effPeak !== undefined && bandwidthKbps !== undefined && effPeak > bandwidthKbps,
+      // With separate audio the combined peak is a sum of two peaks (an upper bound), so allow 5% before flagging.
+      flagPeak:
+        effPeak !== undefined &&
+        bandwidthKbps !== undefined &&
+        effPeak > bandwidthKbps * (combinedPeakKbps !== undefined ? COMBINED_PEAK_TOLERANCE : 1),
       isFewSegments: stats.segments < MIN_SEGMENTS,
       cmcdBrKbps,
       flagCmcdBr: cmcdBrKbps !== undefined && bandwidthKbps !== undefined && cmcdBrKbps < bandwidthKbps * CMCD_BR_MIN_RATIO,

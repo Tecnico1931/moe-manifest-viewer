@@ -78,6 +78,8 @@ const topRung = (records: StartupRecord[], first?: StartupRecord, declaredRates:
   return { known, isTop: known && !!first && first.bandwidthDeclared === top };
 };
 
+const MAX_STEPS = 8;
+
 export const computeStartup = (
   records: StartupRecord[],
   sessionStart?: number,
@@ -90,21 +92,28 @@ export const computeStartup = (
   if (!master || start === undefined) {
     return empty;
   }
-  const variant = earliest(records, 'variant');
   const audioPlaylist = earliest(records, 'audio-playlist');
   const video = earliest(records, 'video-segment');
   const audio = earliest(records, 'audio-segment');
   const horizon = Math.max(video?.tLoaded ?? 0, audio?.tLoaded ?? 0) || Infinity;
-  const inits = records
-    .filter((r) => r.kind === 'init' && r.tRequest <= horizon)
-    .sort((a, b) => a.tRequest - b.tRequest)
-    .slice(0, 2);
+  // Every variant playlist and init segment requested before startup finished, in order: an ABR switch before
+  // the first segment (new playlist + new init) is often where the time goes, so it must be visible.
+  const before = (kind: string) =>
+    records.filter((r) => r.kind === kind && r.tRequest <= horizon).sort((a, b) => a.tRequest - b.tRequest);
+  const steps = [...before('variant'), ...before('init')].sort((a, b) => a.tRequest - b.tRequest).slice(0, MAX_STEPS);
 
+  const middle = [...steps, ...(audioPlaylist ? [audioPlaylist] : [])].sort((a, b) => a.tRequest - b.tRequest);
+  let nVariant = 0;
+  let nInit = 0;
   const rows: WaterfallRow[] = [
     toRow('master', 'master', master, start),
-    ...(variant ? [toRow('variant', 'variant', variant, start)] : []),
-    ...(audioPlaylist ? [toRow('audio-playlist', 'audio playlist', audioPlaylist, start)] : []),
-    ...inits.map((r, i) => toRow('init' + i, 'init', r, start)),
+    ...middle.map((r) =>
+      r.kind === 'audio-playlist'
+        ? toRow('audio-playlist', 'audio playlist', r, start)
+        : r.kind === 'init'
+        ? toRow('init' + nInit++, 'init', r, start)
+        : toRow('variant' + nVariant++, 'variant', r, start)
+    ),
     ...(video ? [toRow('video', 'video seg', video, start)] : []),
     ...(audio ? [toRow('audio', 'audio seg', audio, start)] : []),
   ];

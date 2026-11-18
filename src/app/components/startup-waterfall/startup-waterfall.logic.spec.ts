@@ -24,7 +24,7 @@ const rec = (kind: string, tRequest: number, tFirstByte?: number, tLoaded?: numb
   assert.strictEqual(r.joinMs, 500);
   assert.strictEqual(r.masterTtfbMs, 40);
   assert.strictEqual(r.isComplete, true);
-  assert.deepStrictEqual(r.rows.map((x) => x.key), ['master', 'variant', 'video']);
+  assert.deepStrictEqual(r.rows.map((x) => x.key), ['master', 'variant0', 'video']);
   assert.strictEqual(r.rows[2].ttfbMs, 90);
   assert.strictEqual(r.rows[2].downloadMs, 390);
   assert.strictEqual(r.startedOnRung, '640x360');
@@ -47,7 +47,7 @@ const rec = (kind: string, tRequest: number, tFirstByte?: number, tLoaded?: numb
   assert.strictEqual(pending.joinMs, undefined);
   const done = computeStartup([...base, rec('audio-segment', 90, 120, 600, { bytes: 90000 })], 0);
   assert.strictEqual(done.joinMs, 600);
-  assert.deepStrictEqual(done.rows.map((x) => x.key), ['master', 'variant', 'audio-playlist', 'init0', 'init1', 'video', 'audio']);
+  assert.deepStrictEqual(done.rows.map((x) => x.key), ['master', 'variant0', 'audio-playlist', 'init0', 'init1', 'video', 'audio']);
 }
 
 // 3. missing tFirstByte: whole bar is transfer, no ttfb; still computes join.
@@ -86,3 +86,22 @@ const rec = (kind: string, tRequest: number, tFirstByte?: number, tLoaded?: numb
 // 5. no master yet
 assert.strictEqual(computeStartup([rec('variant', 1)]).rows.length, 0);
 console.log('startup-waterfall.logic: all tests passed');
+
+// ABR switch before the first segment: the second playlist and its slow init must both be shown.
+{
+  const r = computeStartup(
+    [
+      rec('master', 0, 30, 40),
+      rec('variant', 45, 400, 420, { resolution: '960x540', bandwidthDeclared: 2168000 }),
+      rec('init', 425, 700, 760, { resolution: '960x540' }),
+      rec('variant', 765, 1050, 1090, { resolution: '480x270', bandwidthDeclared: 531000 }),
+      rec('init', 1100, 13600, 13650, { resolution: '480x270' }),
+      rec('video-segment', 13660, 13700, 14000, { resolution: '480x270', bandwidthDeclared: 531000, bytes: 268000 }),
+    ],
+    0
+  );
+  assert.deepStrictEqual(r.rows.map((x) => x.key), ['master', 'variant0', 'init0', 'variant1', 'init1', 'video']);
+  assert.strictEqual(r.joinMs, 14000);
+}
+console.log('startup-waterfall ABR-switch case: ok');
+

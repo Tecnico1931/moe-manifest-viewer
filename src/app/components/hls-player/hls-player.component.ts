@@ -15,7 +15,7 @@ import { VideoPlayers } from '../../shared/models/video-players';
 import { DeviceProfileService } from '../device-profile/device-profile.service';
 import { withDeviceProfileThrottle } from '../device-profile/device-profile.throttle-loader';
 import { capLevelIndex, hlsConfigOverrides, startLevelIndex } from '../device-profile/device-profile.logic';
-import { DeviceProfile } from '../../shared/models/device-profiles';
+import { DEVICE_PROFILES, DeviceProfile } from '../../shared/models/device-profiles';
 
 import { addAkamaiPragma } from '../edge-view/akamai-pragma';
 @Component({
@@ -544,7 +544,8 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
   };
 
   // --- device profiles (see components/device-profile) ---
-  private activeDeviceProfile: DeviceProfile;
+  // Start from Default so the player never reads an unset profile before the profile stream emits.
+  private activeDeviceProfile: DeviceProfile = DEVICE_PROFILES[0];
 
   private onDeviceProfileChange = (profile: DeviceProfile): void => {
     const changed = profile !== this.activeDeviceProfile;

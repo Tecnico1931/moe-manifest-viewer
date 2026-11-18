@@ -141,3 +141,20 @@ assert.strictEqual(seen('x-cache-key'), false);
 assert.strictEqual(seen('x-akamai-edgeworker-* / akamai-x-ew-*'), false);
 
 console.log('edge-view.logic.spec: all assertions passed');
+
+// Akamai-Request-BC breadcrumbs (exposed by amd-vod): origin hop = miss, edge only = hit.
+{
+  const { parseBreadcrumbs, classifyBreadcrumbs, breadcrumbRoute, classifyCache: cc } = require('./edge-view.logic');
+  const miss = '[a=23.192.144.201,b=713206276,c=g,n=US_NJ_PISCATAWAY,o=20940],[c=c,n=US_NJ_PISCATAWAY,o=20940],[c=w,n=DE_HE_FRANKFURT,o=20940],[c=w,n=DE_HE_FRANKFURT,o=20940],[a=56,c=o]';
+  const crumbs = parseBreadcrumbs(miss);
+  assert.strictEqual(crumbs.length, 5);
+  assert.strictEqual(crumbs[0].n, 'US_NJ_PISCATAWAY');
+  assert.strictEqual(classifyBreadcrumbs(crumbs).result, 'miss');
+  assert.strictEqual(breadcrumbRoute(crumbs), 'edge US_NJ_PISCATAWAY → tier c US_NJ_PISCATAWAY → tier w DE_HE_FRANKFURT → origin');
+  assert.strictEqual(classifyBreadcrumbs(parseBreadcrumbs('[a=1.2.3.4,b=1,c=g,n=US_NY_NEWYORK,o=20940]')).label, 'hit (edge)');
+  assert.strictEqual(classifyBreadcrumbs(parseBreadcrumbs('[c=g,n=X],[c=c,n=Y]')).label, 'hit (tier c)');
+  assert.strictEqual(cc({ 'akamai-request-bc': miss }).source, 'breadcrumbs');
+  assert.strictEqual(cc({ 'akamai-cache-status': 'Hit from child', 'akamai-request-bc': miss }).source, 'akamai-cache-status');
+  assert.strictEqual(classifyBreadcrumbs([]).result, 'unknown');
+  console.log('edge-view breadcrumbs: ok');
+}

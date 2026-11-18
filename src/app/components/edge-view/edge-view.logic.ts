@@ -5,7 +5,7 @@
 
 export type Headers = Record<string, string>;
 export type CacheResult = 'hit' | 'miss' | 'unknown';
-export type CacheSource = 'akamai-cache-status' | 'x-cache' | 'server-timing' | 'none';
+export type CacheSource = 'akamai-cache-status' | 'x-cache' | 'server-timing' | 'breadcrumbs' | 'none';
 
 /** Minimal shape of RequestRecord used here (kept structural so this file has no imports). */
 export interface EdgeRecordLike {
@@ -92,6 +92,7 @@ export const TRACKED_HEADERS: Array<{ name: string; needs: 'debug' | 'property' 
   { name: 'x-serial', needs: 'debug' },
   { name: 'akamai-cache-status', needs: 'property' },
   { name: 'akamai-grn', needs: 'property' },
+  { name: 'akamai-request-bc', needs: 'property' },
   { name: 'server-timing', needs: 'property' },
   { name: 'age', needs: 'property' },
   { name: 'cache-control', needs: 'property' },
@@ -114,6 +115,8 @@ export const EXPOSE_HEADERS_VALUE = [
   'via',
   'server',
   'x-pton-ew',
+  'x-pton-ew-bypass',
+  'x-akamai-cw',
 ].join(', ');
 
 export const PRAGMA_VALUE = [
@@ -207,6 +210,45 @@ export const parseXCache = (value?: string): { token?: string; edge?: string } =
  * Cache classification, most specific source first: akamai-cache-status, x-cache, server-timing cdn-cache.
  * akamai-cache-status "Miss from child, Hit from parent" counts as a hit: the origin was not contacted.
  */
+/** One hop from Akamai-Request-BC ("breadcrumbs"), e.g. [a=23.192.144.201,b=713206276,c=g,n=US_NJ_PISCATAWAY,o=20940]. */
+export interface Breadcrumb {
+  /** Component code: g = edge, o = origin; other letters are intermediate Akamai tiers, shown as-is. */
+  c?: string;
+  /** Location, e.g. US_NJ_PISCATAWAY. */
+  n?: string;
+  [key: string]: string | undefined;
+}
+
+export const parseBreadcrumbs = (value?: string): Breadcrumb[] =>
+  (value || '').match(/\[[^\]]*\]/g)?.map((hop) =>
+    hop
+      .slice(1, -1)
+      .split(',')
+      .map((kv) => kv.trim().split('='))
+      .reduce<Breadcrumb>((acc, [k, v]) => (k ? { ...acc, [k]: v } : acc), {})
+  ) || [];
+
+const hopName = (b: Breadcrumb): string => {
+  const what = b.c === 'g' ? 'edge' : b.c === 'o' ? 'origin' : `tier ${b.c || '?'}`;
+  return b.n ? `${what} ${b.n}` : what;
+};
+
+/** "edge US_NJ_PISCATAWAY → tier c US_NJ_PISCATAWAY → tier w DE_HE_FRANKFURT → origin" (repeated hops collapsed). */
+export const breadcrumbRoute = (crumbs: Breadcrumb[]): string =>
+  crumbs.map(hopName).filter((name, i, all) => i === 0 || name !== all[i - 1]).join(' → ');
+
+/** Akamai only adds hops it forwards to, so an origin hop means the request went to origin. */
+export const classifyBreadcrumbs = (crumbs: Breadcrumb[]): CacheInfo => {
+  if (!crumbs.length) {
+    return { result: 'unknown', label: '', source: 'none' };
+  }
+  if (crumbs.some((b) => b.c === 'o')) {
+    return { result: 'miss', label: 'origin', source: 'breadcrumbs' };
+  }
+  const tiers = crumbs.filter((b) => b.c && b.c !== 'g');
+  return { result: 'hit', label: tiers.length ? `hit (tier ${tiers[tiers.length - 1].c})` : 'hit (edge)', source: 'breadcrumbs' };
+};
+
 export const classifyCache = (headers: Headers = {}): CacheInfo => {
   const status = headers['akamai-cache-status'];
   if (status) {
@@ -225,7 +267,8 @@ export const classifyCache = (headers: Headers = {}): CacheInfo => {
   if (cdn?.desc && classifyToken(cdn.desc) !== 'unknown') {
     return { result: classifyToken(cdn.desc), label: cdn.desc.toUpperCase(), source: 'server-timing' };
   }
-  return { result: 'unknown', label: '', source: 'none' };
+  // amd-vod exposes Akamai-Request-BC (breadcrumbs) to browsers even when the cache headers aren't readable.
+  return classifyBreadcrumbs(parseBreadcrumbs(headers['akamai-request-bc']));
 };
 
 const isEwDebug = (name: string): boolean => EW_DEBUG_PREFIXES.some((p) => name.startsWith(p));
@@ -262,6 +305,7 @@ export const buildRow = (record: EdgeRecordLike): EdgeRow => {
   const timing = parseServerTiming(h['server-timing']);
   const durOf = (name: string) => timing.find((e) => e.name === name)?.dur;
   const xc = parseXCache(h['x-cache']);
+  const crumbs = parseBreadcrumbs(h['akamai-request-bc']);
   const ttfb = record.tFirstByte !== undefined ? record.tFirstByte - record.tRequest : undefined;
   const download = record.tLoaded !== undefined && record.tFirstByte !== undefined ? record.tLoaded - record.tFirstByte : undefined;
   const edgeWorker = edgeWorkerEntries(h);
@@ -275,6 +319,7 @@ export const buildRow = (record: EdgeRecordLike): EdgeRow => {
   add('x-serial', h['x-serial']);
   add('akamai-cache-status', h['akamai-cache-status']);
   add('akamai-grn', h['akamai-grn']);
+  add('route (akamai-request-bc)', crumbs.length ? breadcrumbRoute(crumbs) : undefined);
   add('server-timing', h['server-timing']);
   add('age', h['age']);
   add('cache-control', h['cache-control']);
@@ -292,7 +337,7 @@ export const buildRow = (record: EdgeRecordLike): EdgeRow => {
     status: record.status,
     cache: classifyCache(h),
     remoteCache: h['x-cache-remote'] ? parseXCache(h['x-cache-remote']).token : undefined,
-    servedBy: xc.edge || h['server'],
+    servedBy: xc.edge || (crumbs[0] && crumbs[0].c === 'g' ? crumbs[0].n : undefined) || h['server'],
     edgeWorker,
     hasEdgeWorker: edgeWorker.length > 0,
     age: toNumber(h['age']),

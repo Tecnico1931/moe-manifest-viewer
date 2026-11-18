@@ -17,7 +17,6 @@ export class AppService {
   public showHelp$ = new Subject<boolean>();
   public muteVideo$ = new BehaviorSubject<boolean>(this.urlVarsService.urlVars.muted);
   public showSubtitles$ = new Subject<boolean>();
-  public relm$ = new Subject<boolean>();
   public toggleScrolling$ = new BehaviorSubject<AppServiceScroll>({ currentScoll: ScrollTypes.NONE, viewerStateId: '' });
   public showPolling$ = new Subject<boolean>();
   public withCredentials$ = new Subject<boolean>();
@@ -36,8 +35,6 @@ export class AppService {
   public displayLadderCheck$ = new Subject<boolean>();
   public displayAudioCompare$ = new Subject<boolean>();
   public displayEdgeView$ = new Subject<boolean>();
-  public openRelmMenu$ = new Subject<boolean>();
-  public relmUrl$ = new Subject<string>();
   public openSetManifest$ = new Subject<string>();
   public updatePlayerConfig$ = new Subject<string>();
   public openSidebar$ = new Subject<boolean>();
@@ -71,10 +68,6 @@ export class AppService {
 
   public toggleShowSubtitles(val: boolean): void {
     this.showSubtitles$.next(val);
-  }
-
-  public enableRelm(val: boolean): void {
-    this.relm$.next(val);
   }
 
   public setScrolling(val: AppServiceScroll): void {
@@ -152,14 +145,6 @@ export class AppService {
 
   public setPollInterval(val: number): void {
     this.pollInterval$.next(val);
-  }
-
-  public toggleRelmMenu(val: boolean): void {
-    this.openRelmMenu$.next(val);
-  }
-
-  public emitRelm(val: string): void {
-    this.relmUrl$.next(val);
   }
 
   public toggleSidebar(val: boolean): void {

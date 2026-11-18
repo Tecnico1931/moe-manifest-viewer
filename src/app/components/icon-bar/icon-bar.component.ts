@@ -13,6 +13,7 @@ import {
   VideoPlayers,
 } from '../../shared';
 
+import { buildFeedbackMailto } from './feedback-mailto.logic';
 const { version: appVersion } = require('./../../../../package.json');
 
 @Component({
@@ -379,8 +380,12 @@ export class IconBarComponent implements OnInit {
 
   public openFeedbackPage = () => {
     this.submitEvent(this.GA_CLICK, 'OpenFeedbackPage', this.GA_ICON_BAR);
-    window.open('https://docs.google.com/forms/d/1z5lzDjGy5PLadpxp2awVU67KuLRnB9aJYzOqtzDoYAA/prefill');
+    window.open(this.generateFeedbackMailto(), '_self');
   };
+
+  public generateFeedbackMailto(): string {
+    return buildFeedbackMailto(this.version, this.currentUrl);
+  }
 
   public generateMetricsUrl(): string {
     if (this.type === 'dash') {

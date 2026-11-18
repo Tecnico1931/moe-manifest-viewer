@@ -8,7 +8,6 @@ import { AppService } from './shared';
 })
 export class AppComponent {
   public optionsMenuShow = true;
-  public showRelm = false;
 
   constructor(public keyBoardService: KeyboardService, public appService: AppService) {}
 
@@ -22,9 +21,5 @@ export class AppComponent {
 
   public setOptionsShow = (show: boolean) => {
     this.optionsMenuShow = show;
-  };
-
-  public setRelmShow = (show: boolean) => {
-    this.showRelm = show;
   };
 }

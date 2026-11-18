@@ -28,7 +28,6 @@ export enum VarNames {
   USEGLOBALTOKEN = 'globalToken',
   AUTOMATICPOLLING = 'automaticPolling',
   POLLINTERVAL = 'pollInterval',
-  ENABLERELM = 'relm',
   USEHLSJS = 'useHlsjs',
   AUTOLOAD = 'autoLoad',
   VIDEOPLAYER = 'videoPlayer',
@@ -59,7 +58,6 @@ export class UrlVars {
   public url: string;
   public automaticPolling: boolean;
   public pollInterval: number;
-  public relm: boolean;
   public useGlobalToken: boolean;
   public useHlsjs: boolean;
   public autoLoad: boolean;
@@ -99,7 +97,6 @@ export class UrlVars {
     this.useGlobalToken = this.checkForProperty(obj, VarNames.USEGLOBALTOKEN);
     this.automaticPolling = this.checkForProperty(obj, VarNames.AUTOMATICPOLLING);
     this.pollInterval = obj && !isNaN(Number(obj[VarNames.POLLINTERVAL])) ? Number(obj[VarNames.POLLINTERVAL]) : 6;
-    this.relm = this.checkForProperty(obj, VarNames.ENABLERELM);
     this.useHlsjs = this.checkForProperty(obj, VarNames.USEHLSJS);
     this.autoLoad = this.checkForProperty(obj, VarNames.AUTOLOAD);
     this.videoPlayer = this.checkForProperty(obj, VarNames.VIDEOPLAYER, false) ? obj[VarNames.VIDEOPLAYER] : VideoPlayers.NONE;

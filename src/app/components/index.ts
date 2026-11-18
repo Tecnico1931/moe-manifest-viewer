@@ -6,8 +6,6 @@ export * from './wrapper/wrapper.component';
 
 // stream-viewer
 export * from './manifest-viewer/manifest-viewer.component';
-// relm-menu
-export * from './relm-menu/relm-menu.component';
 
 // dash-player
 export * from './dash-player/dash-player.component';

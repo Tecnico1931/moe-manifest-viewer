@@ -14,7 +14,6 @@ import {
   DashPlayerComponent,
   WrapperComponent,
   ManifestViewerComponent,
-  RelmMenuComponent,
   OptionsModalComponent,
 } from './components';
 
@@ -86,8 +85,7 @@ declare global {
     DashPlayerComponent,
     WrapperComponent,
     ManifestViewerComponent,
-    RelmMenuComponent,
-    OptionsModalComponent,
+      OptionsModalComponent,
     PlayerOverlayComponent,
     VirtualScrollComponent,
     TextComponent,

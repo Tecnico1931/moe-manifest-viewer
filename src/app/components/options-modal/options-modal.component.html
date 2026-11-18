@@ -1,7 +1,7 @@
 <div id="options-wrapper" (clickOutside)="onClickOutside($event)">
   <div class="optionsSideHeading">
     <div class="logoDiv">
-      <div class="logoHolder" (click)="clickLogo()"></div>
+      <div class="logoHolder"></div>
     </div>
     <span id="optionsSideLabel">MOE:Viewer</span>
     <button *ngIf="termsCookieExists" id="leaveOptions" (click)="toggleOptions(false)">&times;</button>
@@ -225,12 +225,9 @@
         <button class="yesButton" (click)="clearSettingsCookie()">Yes</button>
         <button class="noButton" (click)="closeClearSettingsConfirmationPanel()">No</button>
       </div>
-      <div class="listButton" *ngIf="relm">
-        <button id="getRelm" class="option-button" name="relm" color="primary" (click)="relmClicked()">RE Live Manifester</button>
-      </div>
     </div>
     <div class="clearBoth"></div>
-    <div class="build-info">Version:&nbsp;{{ version }}</div>
+    <div class="build-info">Version:&nbsp;{{ version }}&nbsp;&middot;&nbsp;Peloton build</div>
   </div>
   <ng-template #acceptTermsBody>
     <div class="termsOfUse">

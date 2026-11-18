@@ -33,7 +33,6 @@ enum customLibraryScript {
 })
 export class OptionsModalComponent implements OnInit, OnDestroy {
   @Output() public close: EventEmitter<void> = new EventEmitter<void>();
-  @Output() public openRelm: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('urlInput', { static: true }) public urlInput: ElementRef;
 
@@ -43,7 +42,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public showVideo: boolean;
   public showHelp: boolean;
   public muteVideo: boolean;
-  public relm: boolean;
   public showPolling: boolean;
   public useNative = true;
 
@@ -133,9 +131,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
     });
     this.appService.muteVideo$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.muteVideo = val;
-    });
-    this.appService.relm$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
-      this.relm = val;
     });
     this.appService.showPolling$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.showPolling = val;
@@ -304,11 +299,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
             this.appService.toggleGlobalToken(true);
           }
           break;
-        case 'relm':
-          if (vars[urlVar]) {
-            this.appService.enableRelm(true);
-          }
-          break;
         case 'useHlsjs':
           if (vars[urlVar]) {
             this.appService.toggleNative(false);
@@ -360,15 +350,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public onIntervalChange(val: number): void {
     this.appService.setPollInterval(val);
   }
-
-  public relmClicked = () => {
-    this.openRelm.emit();
-    this.toggleOptions(false);
-  };
-
-  public clickLogo = () => {
-    window.open('http://www.realeyes.com', '_blank');
-  };
 
   public loadGlobalToken = (token: string) => {
     if (token) {

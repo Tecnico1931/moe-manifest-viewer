@@ -1,0 +1,191 @@
+@import '../../shared/utils/vars';
+
+.edge-view {
+  font-size: 12px;
+  color: $dark;
+  padding: 4px 8px;
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    h3 {
+      margin: 6px 0;
+    }
+  }
+
+  .chip {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .chip-warn {
+    background: lighten($loading-status-color, 35%);
+    color: darken($loading-status-color, 25%);
+    border: 1px solid $loading-status-color;
+  }
+
+  .kpis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .kpi {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    padding: 6px 10px;
+    background: $whitest;
+    border: 1px solid $light-gray;
+    border-radius: 4px;
+
+    .kpi-label {
+      color: $middle-color;
+      font-size: 11px;
+    }
+
+    .kpi-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .kpi-sub {
+      color: $middle-color;
+      font-size: 10px;
+    }
+  }
+
+  .filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+
+    .count {
+      color: $middle-color;
+    }
+  }
+
+  .table-wrap {
+    max-height: 320px;
+    overflow: auto;
+    border: 1px solid $light-gray;
+    border-radius: 4px;
+    background: $whitest;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+
+    th,
+    td {
+      padding: 3px 6px;
+      text-align: left;
+      border-bottom: 1px solid $off-white;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: $off-white;
+      z-index: 1;
+    }
+
+    .num {
+      text-align: right;
+    }
+
+    .path {
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bad {
+      color: $error-color;
+      font-weight: 600;
+    }
+
+    .ew-entry {
+      display: block;
+      font-family: monospace;
+    }
+
+    tr.row {
+      cursor: pointer;
+
+      &:hover {
+        background: lighten($off-white, 5%);
+      }
+    }
+
+    tr.pinned {
+      background: lighten($accent, 45%);
+    }
+
+    tr.details td {
+      white-space: normal;
+      word-break: break-all;
+      font-family: monospace;
+      background: $page-background;
+    }
+
+    .hname {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+  }
+
+  .cache {
+    font-family: monospace;
+  }
+
+  .cache-hit {
+    color: darken($green-color, 30%);
+    font-weight: 600;
+  }
+
+  .cache-miss {
+    color: darken($loading-status-color, 10%);
+    font-weight: 600;
+  }
+
+  .visibility {
+    margin-top: 10px;
+    padding: 6px 10px;
+    border: 1px solid $light-gray;
+    border-radius: 4px;
+    background: $whitest;
+
+    h4 {
+      margin: 0 0 4px;
+    }
+
+    code {
+      font-size: 11px;
+      word-break: break-word;
+    }
+
+    .missing {
+      margin: 4px 0;
+      padding-left: 18px;
+    }
+
+    .needs {
+      margin-left: 6px;
+      color: $middle-color;
+      font-size: 10px;
+    }
+  }
+
+  .empty {
+    color: $middle-color;
+  }
+}

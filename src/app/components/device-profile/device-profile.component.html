@@ -1,0 +1,7 @@
+<div *ngIf="mode === 'select'" class="deviceProfile" [title]="hlsOnly ? 'Device profiles apply to hls.js only' : summary">
+  <select [disabled]="hlsOnly" [value]="profile?.id" (change)="onSelect($event.target.value)" aria-label="Device profile">
+    <option *ngFor="let p of profiles" [value]="p.id" [selected]="p.id === profile?.id">{{ p.label }}</option>
+  </select>
+  <span *ngIf="hlsOnly" class="hlsOnly">HLS.js only</span>
+</div>
+<span *ngIf="mode === 'chip' && isActive" class="deviceProfileChip" [title]="summary">{{ profile.label }}</span>

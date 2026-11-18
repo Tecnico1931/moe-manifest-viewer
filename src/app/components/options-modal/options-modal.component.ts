@@ -33,7 +33,6 @@ enum customLibraryScript {
 })
 export class OptionsModalComponent implements OnInit, OnDestroy {
   @Output() public close: EventEmitter<void> = new EventEmitter<void>();
-  @Output() public openRelm: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('urlInput', { static: true }) public urlInput: ElementRef;
 
@@ -43,7 +42,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public showVideo: boolean;
   public showHelp: boolean;
   public muteVideo: boolean;
-  public relm: boolean;
   public showPolling: boolean;
   public useNative = true;
 
@@ -54,6 +52,11 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public displayHlsIssues: boolean;
   public displayClip: boolean;
   public displayWhisperSubtitles: boolean;
+  public displayBitrateAudit: boolean;
+  public displayStartup: boolean;
+  public displayLadderCheck: boolean;
+  public displayAudioCompare: boolean;
+  public displayEdgeView: boolean;
   public seconds = 6;
   public optionsChecked: { prop: string; value: boolean }[] = new Array();
 
@@ -129,9 +132,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
     this.appService.muteVideo$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.muteVideo = val;
     });
-    this.appService.relm$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
-      this.relm = val;
-    });
     this.appService.showPolling$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.showPolling = val;
     });
@@ -164,6 +164,26 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
 
     this.appService.displayWhisperSubtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.displayWhisperSubtitles = val;
+    });
+
+    this.appService.displayBitrateAudit$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayBitrateAudit = val;
+    });
+
+    this.appService.displayStartup$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayStartup = val;
+    });
+
+    this.appService.displayLadderCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayLadderCheck = val;
+    });
+
+    this.appService.displayAudioCompare$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayAudioCompare = val;
+    });
+
+    this.appService.displayEdgeView$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayEdgeView = val;
     });
 
     this.appService.useGlobalToken$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
@@ -233,6 +253,31 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
             this.appService.toggleClipService(true);
           }
           break;
+        case 'displayBitrateAudit':
+          if (vars[urlVar]) {
+            this.appService.toggleBitrateAuditService(true);
+          }
+          break;
+        case 'displayStartup':
+          if (vars[urlVar]) {
+            this.appService.toggleStartupService(true);
+          }
+          break;
+        case 'displayLadderCheck':
+          if (vars[urlVar]) {
+            this.appService.toggleLadderCheckService(true);
+          }
+          break;
+        case 'displayAudioCompare':
+          if (vars[urlVar]) {
+            this.appService.toggleAudioCompareService(true);
+          }
+          break;
+        case 'displayEdgeView':
+          if (vars[urlVar]) {
+            this.appService.toggleEdgeViewService(true);
+          }
+          break;
         case 'scrolling':
           this.appService.setScrolling({ currentScoll: vars[urlVar], viewerStateId: this.viewerStateId });
           break;
@@ -252,11 +297,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
         case 'useGlobalToken':
           if (vars[urlVar]) {
             this.appService.toggleGlobalToken(true);
-          }
-          break;
-        case 'relm':
-          if (vars[urlVar]) {
-            this.appService.enableRelm(true);
           }
           break;
         case 'useHlsjs':
@@ -310,15 +350,6 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public onIntervalChange(val: number): void {
     this.appService.setPollInterval(val);
   }
-
-  public relmClicked = () => {
-    this.openRelm.emit();
-    this.toggleOptions(false);
-  };
-
-  public clickLogo = () => {
-    window.open('http://www.realeyes.com', '_blank');
-  };
 
   public loadGlobalToken = (token: string) => {
     if (token) {
@@ -494,6 +525,21 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
           break;
         case 'showWhisperSubtitles':
           this.appService.toggleWhisperSubtitlesService(viewer.options[option]);
+          break;
+        case 'showBitrateAudit':
+          this.appService.toggleBitrateAuditService(viewer.options[option]);
+          break;
+        case 'showStartup':
+          this.appService.toggleStartupService(viewer.options[option]);
+          break;
+        case 'showLadderCheck':
+          this.appService.toggleLadderCheckService(viewer.options[option]);
+          break;
+        case 'showAudioCompare':
+          this.appService.toggleAudioCompareService(viewer.options[option]);
+          break;
+        case 'showEdgeView':
+          this.appService.toggleEdgeViewService(viewer.options[option]);
       }
     });
     this.appService.setViewerId('', viewer.id);

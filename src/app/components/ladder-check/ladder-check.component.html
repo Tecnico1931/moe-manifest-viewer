@@ -1,0 +1,138 @@
+<div class="lc">
+  <div class="lc-head">
+    <h3>Ladder check</h3>
+    <span class="lc-src" *ngIf="current.length">{{ current.length }} rungs ({{ currentSource }})</span>
+    <div class="lc-picker">
+      <button type="button" class="lc-btn" (click)="isPickerOpen = !isPickerOpen">
+        Compare ({{ selected.length }}/{{ maxReferences }}) &#9662;
+      </button>
+      <div class="lc-menu" *ngIf="isPickerOpen">
+        <label *ngFor="let ref of references" [class.disabled]="isDisabled(ref.name)" [title]="ref.note + ' ' + sourceLabel(ref)">
+          <input type="checkbox" [checked]="isSelected(ref.name)" [disabled]="isDisabled(ref.name)" (change)="toggleReference(ref.name)" />
+          <span class="lc-swatch" [style.background]="isSelected(ref.name) ? colorOf(ref.name) : 'transparent'"></span>
+          {{ ref.name }}
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <p class="lc-empty" *ngIf="!current.length">No declared ladder yet</p>
+
+  <ng-container *ngIf="current.length">
+    <div class="lc-chips">
+      <span *ngFor="let c of checks" class="lc-chip" [ngClass]="'lc-' + c.kind" [title]="c.detail">{{ c.label }}</span>
+      <span *ngIf="!checks.length" class="lc-chip lc-ok">no issues</span>
+    </div>
+
+    <svg class="lc-chart" [attr.viewBox]="'0 0 ' + width + ' ' + height" preserveAspectRatio="xMidYMid meet">
+      <g class="lc-grid">
+        <g *ngFor="let t of ticksX">
+          <line [attr.x1]="t.x" [attr.x2]="t.x" [attr.y1]="pad.top" [attr.y2]="height - pad.bottom"></line>
+          <text [attr.x]="t.x" [attr.y]="height - pad.bottom + 14" text-anchor="middle">{{ t.label }}</text>
+        </g>
+        <g *ngFor="let t of ticksY">
+          <line [attr.x1]="pad.left" [attr.x2]="width - pad.right" [attr.y1]="t.y" [attr.y2]="t.y"></line>
+          <text [attr.x]="pad.left - 6" [attr.y]="t.y + 3" text-anchor="end">{{ t.label }}</text>
+        </g>
+      </g>
+      <text class="lc-axis" [attr.x]="(width + pad.left) / 2" [attr.y]="height - 2" text-anchor="middle">bitrate (kbps, log)</text>
+      <text class="lc-axis" x="10" [attr.y]="height / 2" text-anchor="middle" [attr.transform]="'rotate(-90 10 ' + height / 2 + ')'">
+        height (px)
+      </text>
+
+      <g *ngFor="let ref of selectedRefs">
+        <path
+          [attr.d]="path(refPoints(ref))"
+          fill="none"
+          [attr.stroke]="colorOf(ref.name)"
+          stroke-width="1.5"
+          stroke-dasharray="4 3"
+          opacity="0.85"
+        ></path>
+        <circle
+          *ngFor="let p of refPoints(ref)"
+          [attr.cx]="x(p.bps)"
+          [attr.cy]="y(p.height)"
+          r="3"
+          [attr.fill]="colorOf(ref.name)"
+          opacity="0.8"
+        ></circle>
+      </g>
+      <path
+        [attr.d]="path(avgPoints())"
+        fill="none"
+        [attr.stroke]="currentColor"
+        stroke-width="1"
+        stroke-dasharray="2 2"
+        opacity="0.7"
+      ></path>
+      <path [attr.d]="path(currentPoints())" fill="none" [attr.stroke]="currentColor" stroke-width="2.5"></path>
+      <circle *ngFor="let p of currentPoints()" [attr.cx]="x(p.bps)" [attr.cy]="y(p.height)" r="4.5" [attr.fill]="currentColor">
+        <title>peak {{ kbps(p.bps) }} kbps, {{ p.height }}p</title>
+      </circle>
+      <rect
+        *ngFor="let p of avgPoints()"
+        [attr.x]="x(p.bps) - 3.5"
+        [attr.y]="y(p.height) - 3.5"
+        width="7"
+        height="7"
+        fill="#fff"
+        [attr.stroke]="currentColor"
+        stroke-width="1.5"
+      >
+        <title>avg {{ kbps(p.bps) }} kbps, {{ p.height }}p</title>
+      </rect>
+    </svg>
+
+    <div class="lc-legend">
+      <span><i class="lc-swatch" [style.background]="currentColor"></i>This stream (peak)</span>
+      <span><i class="lc-swatch lc-sq" [style.borderColor]="currentColor"></i>This stream (average)</span>
+      <span *ngFor="let ref of selectedRefs" [title]="ref.note + ' ' + sourceLabel(ref)"
+        ><i class="lc-swatch" [style.background]="colorOf(ref.name)"></i>{{ ref.name }}</span
+      >
+    </div>
+
+    <table class="lc-table">
+      <thead>
+        <tr>
+          <th>Res</th>
+          <th>Avg kbps</th>
+          <th>Peak kbps</th>
+          <th>Step</th>
+          <th title="Bits per pixel per frame, from average bitrate when declared, else peak. Includes audio.">bpp</th>
+          <th
+            *ngFor="let ref of selectedRefs"
+            [title]="ref.name + ' (bitrate at the same height, linear interpolation; diff is peak vs reference)'"
+          >
+            <i class="lc-swatch" [style.background]="colorOf(ref.name)"></i>{{ ref.name }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows; trackBy: trackByIndex">
+          <td>{{ row.rung.width }}x{{ row.rung.height }}</td>
+          <td>{{ kbps(row.rung.avg) }}</td>
+          <td>{{ kbps(row.rung.peak) }}</td>
+          <td [class.lc-warn]="row.step !== null && (row.step < 1.3 || row.step > 2.5)">
+            {{ row.step === null ? '—' : row.step.toFixed(2) + 'x' }}
+          </td>
+          <td
+            [title]="
+              row.isFpsAssumed ? 'Frame rate not declared (no FRAME-RATE); assumed ' + row.fps + ' fps' : row.fps + ' fps (FRAME-RATE)'
+            "
+          >
+            {{ row.bpp.toFixed(3) }}<span *ngIf="row.isFpsAssumed" class="lc-assumed">*</span>
+          </td>
+          <td *ngFor="let cell of row.refs">
+            <ng-container *ngIf="cell.bps !== null; else none">
+              {{ kbps(cell.bps) }}
+              <span class="lc-diff" [class.lc-up]="cell.diff > 0" [class.lc-down]="cell.diff < 0">{{ pct(cell.diff) }}</span>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="lc-note"><span class="lc-assumed">*</span> fps not declared, assumed 30</p>
+  </ng-container>
+</div>
+<ng-template #none>&mdash;</ng-template>

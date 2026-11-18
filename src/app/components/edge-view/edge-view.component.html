@@ -1,0 +1,114 @@
+<div class="edge-view">
+  <div class="title">
+    <h3>Akamai edge</h3>
+    <span class="chip chip-warn" *ngIf="singleBitrate.isSingle" [title]="singleBitrate.reason">single-bitrate rendition served</span>
+  </div>
+
+  <p class="empty" *ngIf="rows.length === 0">No requests logged yet. Load a stream to see edge headers.</p>
+
+  <ng-container *ngIf="rows.length > 0">
+    <div class="kpis">
+      <div class="kpi" title="Segments with a hit / (hits + misses), from akamai-cache-status, x-cache or server-timing cdn-cache">
+        <span class="kpi-label">Cache hit ratio (segments)</span>
+        <span class="kpi-value">{{ percent(summary.hitRatio) }}</span>
+        <span class="kpi-sub">{{ summary.hits }} hit / {{ summary.misses }} miss of {{ summary.segments }}; {{ summary.segments - summary.classifiedSegments }} unclassified</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Median TTFB hit / miss</span>
+        <span class="kpi-value">{{ ms(summary.medianTtfbHitMs) }} / {{ ms(summary.medianTtfbMissMs) }}</span>
+      </div>
+      <div class="kpi" title="From Server-Timing: edge;dur and origin;dur">
+        <span class="kpi-label">Median edge / origin</span>
+        <span class="kpi-value">{{ ms(summary.medianEdgeDurMs) }} / {{ ms(summary.medianOriginDurMs) }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">EdgeWorker seen</span>
+        <span class="kpi-value">{{ summary.edgeWorkerSeen ? 'yes' : 'no' }}</span>
+        <span class="kpi-sub">x-pton-* or EdgeWorker debug headers</span>
+      </div>
+    </div>
+
+    <div class="filter">
+      <label>
+        Kind
+        <select [ngModel]="kindFilter" (ngModelChange)="setFilter($event)">
+          <option value="all">all</option>
+          <option *ngFor="let kind of kinds" [value]="kind">{{ kind }}</option>
+        </select>
+      </label>
+      <span class="count">{{ visibleRows.length }} of {{ rows.length }}</span>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Kind</th>
+            <th>Path</th>
+            <th>Status</th>
+            <th>Cache</th>
+            <th>Served by</th>
+            <th>EdgeWorker</th>
+            <th class="num">Age</th>
+            <th class="num">Size</th>
+            <th class="num">TTFB</th>
+            <th class="num">Download</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let row of visibleRows; trackBy: trackById">
+            <tr class="row" [class.pinned]="row.kind === 'master' || row.kind === 'variant'" (click)="toggle(row)">
+              <td>{{ row.kind }}</td>
+              <td class="path" [title]="row.path">{{ row.path }}</td>
+              <td [class.bad]="row.status >= 400">{{ row.status }}</td>
+              <td>
+                <span class="cache" [ngClass]="'cache-' + row.cache.result" [title]="row.cache.source">{{ row.cache.label || '-' }}</span>
+              </td>
+              <td [title]="row.servedBy">{{ row.servedBy || '-' }}</td>
+              <td class="ew"><span *ngFor="let entry of row.edgeWorker" class="ew-entry">{{ entry }}</span><span *ngIf="!row.hasEdgeWorker">-</span></td>
+              <td class="num">{{ row.age !== undefined ? row.age + ' s' : '-' }}</td>
+              <td class="num">{{ formatBytes(row.contentLength) || '-' }}</td>
+              <td class="num">{{ ms(row.ttfbMs) }}</td>
+              <td class="num">{{ ms(row.downloadMs) }}</td>
+            </tr>
+            <tr class="details" *ngIf="expandedId === row.id">
+              <td colspan="10">
+                <div *ngIf="row.details.length === 0">No edge headers were readable on this response.</div>
+                <div *ngFor="let d of row.details"><span class="hname">{{ d[0] }}</span> {{ d[1] }}</div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="visibility">
+      <h4>Header visibility</h4>
+      <p *ngIf="missingHeaders.length === 0">Every tracked header was readable on at least one request.</p>
+      <ng-container *ngIf="missingHeaders.length > 0">
+        <p>Browsers only read response headers the server lists in <code>Access-Control-Expose-Headers</code>. Not readable on any request so far:</p>
+        <ul class="missing">
+          <li *ngFor="let h of missingHeaders">
+            <code>{{ h.name }}</code>
+            <span class="needs">{{ h.needs === 'debug' ? 'needs Pragma debug request' : 'sent by property' }}</span>
+          </li>
+        </ul>
+        <p>
+          Akamai change (Property Manager, response header for the media paths): add
+          <code>Access-Control-Expose-Headers: {{ exposeHeadersValue }}</code>. Wildcards are not allowed in this header, so add each concrete
+          <code>x-pton-*</code> name your EdgeWorker sets.
+        </p>
+        <p>
+          The <code>x-cache*</code>, <code>x-check-cacheable</code>, <code>x-serial</code> and <code>x-akamai-request-id</code> headers are debug headers: Akamai
+          only returns them when the request carries <code>Pragma: {{ pragmaValue }}</code>. Sending Pragma from a browser also needs
+          <code>Access-Control-Allow-Headers: pragma</code> on the CDN, otherwise the CORS preflight fails and the request is blocked.
+        </p>
+        <label class="pragma-toggle" title="HLS.js only. Applies when the stream is next loaded. Turn off if requests start failing with CORS errors.">
+          <input type="checkbox" [checked]="sendPragma" (change)="togglePragma($any($event.target).checked)" />
+          Send Akamai Pragma debug headers (next load)
+        </label>
+        <span class="pragma-note" *ngIf="sendPragma">On: if the CDN rejects it, the viewer turns it off and reloads.</span>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>

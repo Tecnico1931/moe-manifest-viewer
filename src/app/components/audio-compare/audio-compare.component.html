@@ -1,0 +1,59 @@
+<div class="audio-compare">
+  <div class="ac-head">
+    <h3>Audio tracks</h3>
+    <label class="ac-seg">Segment
+      <input type="number" min="1" placeholder="auto" [value]="segmentIndex !== undefined ? segmentIndex + 1 : ''" (input)="onSegmentInput($any($event.target).value)" />
+    </label>
+    <button type="button" (click)="analyse()" [disabled]="!canAnalyse">{{ isAnalysing ? 'Analysing…' : 'Analyse' }}</button>
+    <button type="button" (click)="reload()" [disabled]="isAnalysing">Reload</button>
+    <span class="ac-status" *ngIf="status">{{ status }}</span>
+  </div>
+
+  <table class="ac-table" *ngIf="rows.length">
+    <thead>
+      <tr>
+        <th>Name</th><th>Lang</th><th>Group</th><th>Def</th><th>Ch</th><th>kb/s (log)</th>
+        <th>LUFS</th><th>Peak dBFS</th><th>True peak</th><th>RMS dB</th><th>Rate</th><th>Dur s</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows; trackBy: trackByName">
+        <td>{{ row.rendition.name }}</td>
+        <td>{{ row.rendition.language || '—' }}</td>
+        <td>{{ row.rendition.groupId || '—' }}</td>
+        <td>{{ row.rendition.isDefault ? 'yes' : '' }}</td>
+        <td>{{ row.measurement ? row.measurement.channels : row.rendition.channels || '—' }}</td>
+        <td [title]="row.kbpsSegments ? row.kbpsSegments + ' segments downloaded' : 'No audio segments logged'">{{ row.kbps ? (row.kbps | number: '1.0-0') : '—' }}</td>
+        <ng-container *ngIf="row.measurement; else noMeasure">
+          <td class="ac-num">{{ formatDb(row.measurement.lufs) }}</td>
+          <td>{{ formatDb(row.measurement.samplePeakDb) }}</td>
+          <td>{{ formatDb(row.measurement.truePeakDb) }}</td>
+          <td>{{ formatDb(row.measurement.rmsDb) }}</td>
+          <td>{{ row.measurement.sampleRate }}</td>
+          <td>{{ row.measurement.durationSec | number: '1.1-1' }}</td>
+        </ng-container>
+        <ng-template #noMeasure>
+          <td colspan="6" class="ac-note" [class.ac-error]="row.error">{{ row.busy ? 'working…' : row.error || '' }}</td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="ac-results" *ngIf="analysedIndex !== undefined && !isAnalysing">
+    <div class="ac-label">{{ resultLabel }}</div>
+    <div class="ac-chart">
+      <div class="ac-bar-row" *ngFor="let row of rows">
+        <span class="ac-bar-name">{{ row.rendition.name }}</span>
+        <span class="ac-bar-track">
+          <span class="ac-bar" *ngIf="row.measurement" [style.width.%]="lufsBarPercent(row.measurement.lufs)"></span>
+        </span>
+        <span class="ac-bar-val">{{ row.measurement ? formatDb(row.measurement.lufs) : '—' }}</span>
+      </div>
+    </div>
+    <div class="ac-spread">
+      Spread (max − min)
+      <span class="ac-chip" [class.ac-chip-warm]="spread?.isWarm">{{ spreadText }}</span>
+    </div>
+  </div>
+  <p class="ac-hint" *ngIf="!rows.length && !status">No audio renditions loaded</p>
+</div>

@@ -16,6 +16,7 @@ import {
 import { ShakaErrorCode } from './shakaErrorCode';
 import { CMCDFilter, CMCDTransitionModes, CMCDHeaders } from '../../shared/utils/cmcd-filter';
 import { VideoPlayers } from '../../shared/models/video-players';
+import { RequestLogService } from '../../shared/services/request-log.service';
 
 @Component({
   selector: 'app-shaka-player',
@@ -61,7 +62,8 @@ export class ShakaPlayerComponent implements OnInit, OnDestroy {
     public appService: AppService,
     public loggerService: LoggerService,
     private drmManager: DrmManagerService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private requestLog: RequestLogService
   ) {}
 
   public ngOnInit(): void {
@@ -131,6 +133,7 @@ export class ShakaPlayerComponent implements OnInit, OnDestroy {
     this.ui = new (<any>window).shaka.ui.Overlay(localPlayer, this.playerContainer.nativeElement, this.video.nativeElement);
     const controls = this.ui.getControls();
     this.player = controls.getPlayer();
+    this.requestLog.attachShaka(this.player.getNetworkingEngine());
 
     this.player.getNetworkingEngine()?.registerResponseFilter((type, response, context) => {
       if (type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {

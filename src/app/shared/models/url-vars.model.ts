@@ -16,6 +16,11 @@ export enum VarNames {
   SHOWPLAYERLOGS = 'showPlayerLogs',
   SHOWHLSISSUES = 'showHlsIssues',
   SHOWCLIP = 'showClip',
+  SHOWBITRATEAUDIT = 'showBitrateAudit',
+  SHOWSTARTUP = 'showStartup',
+  SHOWLADDERCHECK = 'showLadderCheck',
+  SHOWAUDIOCOMPARE = 'showAudioCompare',
+  SHOWEDGEVIEW = 'showEdgeView',
   SCROLLING = 'scrolling',
   XHRCREDENTIALS = 'xhrCredentials',
   MUTED = 'muted',
@@ -23,7 +28,6 @@ export enum VarNames {
   USEGLOBALTOKEN = 'globalToken',
   AUTOMATICPOLLING = 'automaticPolling',
   POLLINTERVAL = 'pollInterval',
-  ENABLERELM = 'relm',
   USEHLSJS = 'useHlsjs',
   AUTOLOAD = 'autoLoad',
   VIDEOPLAYER = 'videoPlayer',
@@ -43,13 +47,17 @@ export class UrlVars {
   public displayPlayerLogs: boolean;
   public displayHlsIssues: boolean;
   public displayClip: boolean;
+  public displayBitrateAudit: boolean;
+  public displayStartup: boolean;
+  public displayLadderCheck: boolean;
+  public displayAudioCompare: boolean;
+  public displayEdgeView: boolean;
   public scrolling: ScrollTypes;
   public credentials: boolean;
   public muted: boolean;
   public url: string;
   public automaticPolling: boolean;
   public pollInterval: number;
-  public relm: boolean;
   public useGlobalToken: boolean;
   public useHlsjs: boolean;
   public autoLoad: boolean;
@@ -69,6 +77,11 @@ export class UrlVars {
     this.displayPlayerLogs = this.checkForProperty(obj, VarNames.SHOWPLAYERLOGS);
     this.displayHlsIssues = this.checkForProperty(obj, VarNames.SHOWHLSISSUES);
     this.displayClip = this.checkForProperty(obj, VarNames.SHOWCLIP);
+    this.displayBitrateAudit = this.checkForProperty(obj, VarNames.SHOWBITRATEAUDIT);
+    this.displayStartup = this.checkForProperty(obj, VarNames.SHOWSTARTUP);
+    this.displayLadderCheck = this.checkForProperty(obj, VarNames.SHOWLADDERCHECK);
+    this.displayAudioCompare = this.checkForProperty(obj, VarNames.SHOWAUDIOCOMPARE);
+    this.displayEdgeView = this.checkForProperty(obj, VarNames.SHOWEDGEVIEW);
     this.scrolling = this.checkForProperty(obj, VarNames.SCROLLING, false) ? obj[VarNames.SCROLLING] : ScrollTypes.AUTO_SCROLL;
     this.credentials = this.checkForProperty(obj, VarNames.XHRCREDENTIALS);
     this.muted = this.checkForProperty(obj, VarNames.MUTED);
@@ -84,7 +97,6 @@ export class UrlVars {
     this.useGlobalToken = this.checkForProperty(obj, VarNames.USEGLOBALTOKEN);
     this.automaticPolling = this.checkForProperty(obj, VarNames.AUTOMATICPOLLING);
     this.pollInterval = obj && !isNaN(Number(obj[VarNames.POLLINTERVAL])) ? Number(obj[VarNames.POLLINTERVAL]) : 6;
-    this.relm = this.checkForProperty(obj, VarNames.ENABLERELM);
     this.useHlsjs = this.checkForProperty(obj, VarNames.USEHLSJS);
     this.autoLoad = this.checkForProperty(obj, VarNames.AUTOLOAD);
     this.videoPlayer = this.checkForProperty(obj, VarNames.VIDEOPLAYER, false) ? obj[VarNames.VIDEOPLAYER] : VideoPlayers.NONE;

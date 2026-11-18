@@ -1,5 +1,4 @@
 <app-wrapper [showOptionsModal]="optionsMenuShow"></app-wrapper>
 
-<app-options-modal class="modal" *ngIf="optionsMenuShow" (close)="setOptionsShow(false)" (openRelm)="setRelmShow(true)"></app-options-modal>
-<app-relm-menu class="modal" *ngIf="showRelm" (closeRelm)="setRelmShow(false)"></app-relm-menu>
+<app-options-modal class="modal" *ngIf="optionsMenuShow" (close)="setOptionsShow(false)"></app-options-modal>
 <app-drm-modal class="modal" *ngIf="appService.isDrmModalOpen"></app-drm-modal>

@@ -14,7 +14,6 @@ import {
   DashPlayerComponent,
   WrapperComponent,
   ManifestViewerComponent,
-  RelmMenuComponent,
   OptionsModalComponent,
 } from './components';
 
@@ -40,6 +39,11 @@ import { CMCDComponent } from './components/cmcd/cmcd.component';
 import { PlayerConfigComponent } from './components/player-config/player-config.component';
 import { MetricsDropdownComponent } from './components/metrics-dropdown/metrics-dropdown.component';
 import { StallDetectorComponent } from './components/stall-detector/stall-detector.component';
+import { BitrateAuditComponent } from './components/bitrate-audit/bitrate-audit.component';
+import { StartupWaterfallComponent } from './components/startup-waterfall/startup-waterfall.component';
+import { LadderCheckComponent } from './components/ladder-check/ladder-check.component';
+import { AudioCompareComponent } from './components/audio-compare/audio-compare.component';
+import { EdgeViewComponent } from './components/edge-view/edge-view.component';
 import { SubtitlesViewerComponent } from './components/subtitles-viewer/subtitles-viewer.component';
 import { InfoContainerComponent } from './components/info-container/info-container.component';
 import { ErrorDisplayComponent } from './components/error-display/error-display.component';
@@ -56,6 +60,8 @@ import { DrmModalComponent } from './components/drm-modal/drm-modal.component';
 import { ToastrModule } from 'ngx-toastr';
 import { ShakaPlayerComponent } from './components/shaka-player/shaka-player.component';
 import * as Shakajs from 'shaka-player';
+import { DeviceProfileComponent } from './components/device-profile/device-profile.component';
+import { AudioTrackSelectComponent } from './components/audio-track-select/audio-track-select.component';
 import { PlayerDropdownComponent } from './components/player-dropdown/player-dropdown.component';
 import { PipesModule } from './shared/pipes/pipes.module';
 import { ScteDisplayComponent } from './components/scte-display/scte-display.component';
@@ -81,8 +87,7 @@ declare global {
     DashPlayerComponent,
     WrapperComponent,
     ManifestViewerComponent,
-    RelmMenuComponent,
-    OptionsModalComponent,
+      OptionsModalComponent,
     PlayerOverlayComponent,
     VirtualScrollComponent,
     TextComponent,
@@ -92,6 +97,11 @@ declare global {
     CMCDComponent,
     MetricsDropdownComponent,
     StallDetectorComponent,
+    BitrateAuditComponent,
+    StartupWaterfallComponent,
+    LadderCheckComponent,
+    AudioCompareComponent,
+    EdgeViewComponent,
     SubtitlesViewerComponent,
     SubtitlesComponent,
     InfoContainerComponent,
@@ -105,6 +115,8 @@ declare global {
     DrmModalComponent,
     ShakaPlayerComponent,
     PlayerDropdownComponent,
+    DeviceProfileComponent,
+    AudioTrackSelectComponent,
     ScteDisplayComponent,
     PlayerConfigComponent,
     HlsIssuesComponent,

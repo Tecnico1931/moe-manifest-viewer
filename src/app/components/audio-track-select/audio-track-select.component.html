@@ -1,0 +1,9 @@
+<select
+  *ngIf="tracks.length > 1"
+  class="audio-track-select"
+  title="Audio track (HLS.js)"
+  [value]="selectedId"
+  (change)="select($any($event.target).value)"
+>
+  <option *ngFor="let t of tracks" [value]="t.id" [selected]="t.id === selectedId">Audio: {{ label(t) }}</option>
+</select>

@@ -66,6 +66,11 @@ export class ViewerState {
   public _showClip: boolean;
   public _showWhisperSubtitles: boolean;
   public _showFrameOverlay: boolean;
+  public _showBitrateAudit: boolean;
+  public _showStartup: boolean;
+  public _showLadderCheck: boolean;
+  public _showAudioCompare: boolean;
+  public _showEdgeView: boolean;
   public _showPolling: boolean;
   public _showExplode = true;
   public _isMasterOpen: boolean;
@@ -417,6 +422,21 @@ export class ViewerState {
   }
   public get showClip(): boolean {
     return this._showClip;
+  }
+  public get showBitrateAudit(): boolean {
+    return this._showBitrateAudit;
+  }
+  public get showStartup(): boolean {
+    return this._showStartup;
+  }
+  public get showLadderCheck(): boolean {
+    return this._showLadderCheck;
+  }
+  public get showAudioCompare(): boolean {
+    return this._showAudioCompare;
+  }
+  public get showEdgeView(): boolean {
+    return this._showEdgeView;
   }
   public get showWhisperSubtitles(): boolean {
     return this._showWhisperSubtitles;

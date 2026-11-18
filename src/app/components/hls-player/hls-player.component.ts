@@ -9,9 +9,15 @@ import { v4 as uuidv4 } from 'uuid';
 import * as HlsTypes from 'hls.js';
 import Hls from 'hls.js';
 import { CMCDFilter, CMCDTransitionModes, CMCDHeaders } from '../../shared/utils/cmcd-filter';
-import { customXhrLoader } from './hls-player.custom-loader';
+import { createRecordingLoader } from './hls-player.custom-loader';
+import { RequestLogService } from '../../shared/services/request-log.service';
 import { VideoPlayers } from '../../shared/models/video-players';
+import { DeviceProfileService } from '../device-profile/device-profile.service';
+import { withDeviceProfileThrottle } from '../device-profile/device-profile.throttle-loader';
+import { capLevelIndex, hlsConfigOverrides, startLevelIndex } from '../device-profile/device-profile.logic';
+import { DEVICE_PROFILES, DeviceProfile } from '../../shared/models/device-profiles';
 
+import { addAkamaiPragma, isAkamaiPragmaEnabled, setAkamaiPragmaEnabled } from '../edge-view/akamai-pragma';
 @Component({
   selector: 'app-hls-player',
   templateUrl: './hls-player.component.html',
@@ -61,7 +67,9 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     private appService: AppService,
     private loggerService: LoggerService,
     private drmManager: DrmManagerService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private requestLog: RequestLogService,
+    private deviceProfiles: DeviceProfileService
   ) {}
 
   public ngOnInit() {
@@ -159,6 +167,9 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
   private configHls = () => {
     this.hlsConfig = {
       debug: this.loggerService,
+      // The single-file build is served with a CSP that blocks blob: workers (no worker-src), so hls.js would
+      // try a worker, fail and fall back to the main thread on every load. Go straight to the main thread.
+      enableWorker: false,
     };
     Hls.DefaultConfig.xhrSetup = (xhr: XMLHttpRequest) => {
       if (this.viewerState.xhrCredentials) {
@@ -185,8 +196,12 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
       console.log('[HlsPlayerComponent > initHls] DRM all set. ', this.drmInfo);
     }
     this.setCMCD();
-    this.hlsConfig.loader = customXhrLoader;
-    this.hlsConfig.xhrSetup = this.filterCMCDRequest;
+    this.hlsConfig.loader = withDeviceProfileThrottle(createRecordingLoader(this.requestLog), () => this.activeDeviceProfile);
+    Object.assign(this.hlsConfig, hlsConfigOverrides(this.activeDeviceProfile));
+    this.hlsConfig.xhrSetup = (xhr: XMLHttpRequest, url: string, headers: any) => {
+      this.filterCMCDRequest(xhr, url, headers);
+      addAkamaiPragma(xhr);
+    };
   };
 
   private applyHlsConfig = () => {
@@ -262,10 +277,13 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     this.viewerState.selectedSubtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.updateSelectedSubtitles);
     this.viewerState.cmcdOptions$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.updateCMCD);
     this.viewerState.playerConfigChanged$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.updateDynamicConfig);
+    this.deviceProfiles.profile$(this.viewerState.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onDeviceProfileChange);
   }
 
   private setHlsPlayerListeners() {
     this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed);
+    this.hls.on(Hls.Events.MANIFEST_PARSED, this.logDeclaredLadder);
+    this.hls.on(Hls.Events.MANIFEST_PARSED, this.applyDeviceProfileLevels);
     this.hls.on(Hls.Events.LEVEL_LOADED, this.onLevelLoaded);
     this.hls.on(Hls.Events.LEVEL_SWITCHED, this.onLevelSwitched);
     this.hls.on(Hls.Events.FRAG_LOADED, this.onFragLoaded);
@@ -305,6 +323,28 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
       this.switchBandwidth(`${this.availableRenditions[startLevel].bitrate}`);
     }
     this.exposeAudioTracks();
+  };
+
+  /** Feeds the master playlist's declared ladder (BANDWIDTH, RESOLUTION, CODECS, ...) to the request log. */
+  private logDeclaredLadder = (event: string, data: HlsTypes.ManifestParsedData) => {
+    this.requestLog.setLevels(
+      this.hls.levels.map((level) => {
+        const attrs: any = level.attrs || {};
+        return {
+          bandwidth: level.bitrate,
+          averageBandwidth: attrs['AVERAGE-BANDWIDTH'] ? Number(attrs['AVERAGE-BANDWIDTH']) : undefined,
+          resolution: attrs.RESOLUTION || (level.width && level.height ? `${level.width}x${level.height}` : undefined),
+          codecs: attrs.CODECS,
+          audioGroup: attrs.AUDIO,
+        };
+      })
+    );
+    const audioTracks: { name?: string; groupId?: string }[] = [];
+    // hls.audioTracks only lists the active group at this point; the event carries every track in the manifest
+    (data.audioTracks || []).forEach((track, i) => {
+      audioTracks[track.id !== undefined ? track.id : i] = { name: track.name, groupId: track.groupId };
+    });
+    this.requestLog.setAudioTracks(audioTracks);
   };
 
   private exposeAudioTracks = () => {
@@ -433,9 +473,29 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
       });
     }
     this.viewerState.onHlsError(data);
+    if (this.recoverFromPragmaBlock(data)) {
+      return;
+    }
     if (data.type === 'keySystemError') {
       this.toastrService.error(data.details, 'HLS ERROR ' + data.type);
     }
+  };
+
+  /** A playlist request failing with no HTTP status while Pragma is on is almost always the CDN's CORS preflight
+   * rejecting the header. Turn it off, say so, and reload once, so the toggle can't leave a stream unplayable. */
+  private recoverFromPragmaBlock = (data: any): boolean => {
+    const isPlaylistLoad = ['manifestLoadError', 'levelLoadError', 'audioTrackLoadError'].includes(data.details);
+    const status = data.response && data.response.code;
+    if (!isAkamaiPragmaEnabled() || !isPlaylistLoad || (status && status !== 0) || !this.currentSource) {
+      return false;
+    }
+    setAkamaiPragmaEnabled(false);
+    this.toastrService.warning(
+      'This CDN does not allow the Pragma header (CORS), so Akamai debug headers were turned off and the stream reloaded.',
+      'Akamai debug headers off'
+    );
+    this.loadHlsjsSource(this.currentSource);
+    return true;
   };
 
   public setBufferAndFrames = () => {
@@ -503,6 +563,34 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
           this.hlsConfig[property] = parsedPlayerConfig[property];
         }
       }
+    }
+  };
+
+  // --- device profiles (see components/device-profile) ---
+  // Start from Default so the player never reads an unset profile before the profile stream emits.
+  private activeDeviceProfile: DeviceProfile = DEVICE_PROFILES[0];
+
+  private onDeviceProfileChange = (profile: DeviceProfile): void => {
+    const changed = profile !== this.activeDeviceProfile;
+    this.activeDeviceProfile = profile;
+    if (changed && this.hls && this.currentSource && !this.useNative) {
+      // re-create the player so startLevel / capping / throttling start from a clean state
+      this.loadHlsjsSource(this.currentSource);
+    }
+  };
+
+  private applyDeviceProfileLevels = (): void => {
+    const profile = this.activeDeviceProfile;
+    const levels = this.hls.levels;
+    if (profile.maxHeight) {
+      const cap = capLevelIndex(levels, profile.maxHeight);
+      if (cap >= 0) {
+        this.hls.autoLevelCapping = cap;
+      }
+    }
+    const start = startLevelIndex(levels, profile);
+    if (start >= 0) {
+      this.hls.startLevel = start;
     }
   };
 

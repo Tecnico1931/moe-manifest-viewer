@@ -1,7 +1,7 @@
 <div id="options-wrapper" (clickOutside)="onClickOutside($event)">
   <div class="optionsSideHeading">
     <div class="logoDiv">
-      <div class="logoHolder" (click)="clickLogo()"></div>
+      <div class="logoHolder"></div>
     </div>
     <span id="optionsSideLabel">MOE:Viewer</span>
     <button *ngIf="termsCookieExists" id="leaveOptions" (click)="toggleOptions(false)">&times;</button>
@@ -192,6 +192,31 @@
         <input type="checkbox" [class.active]="displayWhisperSubtitles" />
         <span class="checkmark"></span>
       </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleBitrateAuditService', !displayBitrateAudit)"
+        >Show Declared vs Delivered
+        <input type="checkbox" [class.active]="displayBitrateAudit" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleStartupService', !displayStartup)"
+        >Show Startup Waterfall
+        <input type="checkbox" [class.active]="displayStartup" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleLadderCheckService', !displayLadderCheck)"
+        >Show Ladder Check
+        <input type="checkbox" [class.active]="displayLadderCheck" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleAudioCompareService', !displayAudioCompare)"
+        >Show Audio Tracks
+        <input type="checkbox" [class.active]="displayAudioCompare" />
+        <span class="checkmark"></span>
+      </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleEdgeViewService', !displayEdgeView)"
+        >Show Akamai Edge
+        <input type="checkbox" [class.active]="displayEdgeView" />
+        <span class="checkmark"></span>
+      </label>
       <div class="listButton">
         <button class="clearSettingsCookieButton" (click)="activateClearSettingsConfirmationPanel()">{{ settingsClearButtonText }}</button>
       </div>
@@ -200,12 +225,9 @@
         <button class="yesButton" (click)="clearSettingsCookie()">Yes</button>
         <button class="noButton" (click)="closeClearSettingsConfirmationPanel()">No</button>
       </div>
-      <div class="listButton" *ngIf="relm">
-        <button id="getRelm" class="option-button" name="relm" color="primary" (click)="relmClicked()">RE Live Manifester</button>
-      </div>
     </div>
     <div class="clearBoth"></div>
-    <div class="build-info">Version:&nbsp;{{ version }}</div>
+    <div class="build-info">Version:&nbsp;{{ version }}&nbsp;&middot;&nbsp;Peloton build</div>
   </div>
   <ng-template #acceptTermsBody>
     <div class="termsOfUse">

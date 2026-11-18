@@ -19,6 +19,7 @@ import {
   Metric,
   ScrollTypes,
   GoogleAnalyticsEventsService,
+  RequestLogService,
   AddViewerOptions,
   SegmentInspector,
   Viewer,
@@ -66,6 +67,8 @@ interface HlsFragLoadedData extends HlsTypes.FragLoadedData {
   selector: 'app-manifest-viewer',
   templateUrl: 'manifest-viewer.component.html',
   styleUrls: ['manifest-viewer.component.scss'],
+  // one request log per viewer, shared with the players and panels rendered inside it
+  providers: [RequestLogService],
 })
 export class ManifestViewerComponent implements OnInit, OnDestroy {
   @Input() public id: string;
@@ -175,7 +178,8 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     private downloadManager: DownloadDataManager,
     public storageService: StorageService,
     public keyboardService: KeyboardService,
-    public ga: GoogleAnalyticsEventsService
+    public ga: GoogleAnalyticsEventsService,
+    private requestLog: RequestLogService
   ) {}
 
   public ngOnInit() {
@@ -234,6 +238,11 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.appService.displayHlsIssues$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleHlsIssues);
     this.appService.displayClip$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleClip);
     this.appService.displayWhisperSubtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleWhisperSubtitles);
+    this.appService.displayBitrateAudit$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleBitrateAudit);
+    this.appService.displayStartup$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleStartup);
+    this.appService.displayLadderCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleLadderCheck);
+    this.appService.displayAudioCompare$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleAudioCompare);
+    this.appService.displayEdgeView$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleEdgeView);
     this.appService.pollInterval$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onIntervalChange);
     this.appService.showPolling$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.setPollingActive);
     this.appService.openSetManifest$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.openUrlFromAppService);
@@ -487,6 +496,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           const parsedManifest = await this.parserService.parseManifest(response);
           if ((!this.pollInterval && !(this.tabs && this.tabs.length)) || this.type !== previousType || this.activeKey) {
             this.currentUrl = this.currentUrl + this.params;
+            this.requestLog.reset();
             this.viewerState.updateSource(this.currentUrl);
             this.activeKey = false;
             if (parsedManifest?.info.subtitles) {
@@ -594,6 +604,11 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showWhisperSubtitles: false,
         showFrameOverlay: false,
         showSubtitles: false,
+        showBitrateAudit: false,
+        showStartup: false,
+        showLadderCheck: false,
+        showAudioCompare: false,
+        showEdgeView: false,
       },
     });
   }
@@ -1168,7 +1183,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
   };
 
   private hlsError = (data: any) => {
-    console.warn('HLS ERROR ', data.type, data.details);
+    console.warn('HLS ERROR ', data.type, data.details, data.event || '', data.error || data.err || '');
     if (this.manifest && data.frag) {
       this.manifest.map((line) => {
         if (data.frag && line.startTime && Math.round(line.startTime) === Math.round(data.frag.start)) {
@@ -1374,6 +1389,26 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showClip', show);
   };
 
+  public toggleBitrateAudit = (show: boolean) => {
+    this.setOption('showBitrateAudit', show);
+  };
+
+  public toggleStartup = (show: boolean) => {
+    this.setOption('showStartup', show);
+  };
+
+  public toggleLadderCheck = (show: boolean) => {
+    this.setOption('showLadderCheck', show);
+  };
+
+  public toggleAudioCompare = (show: boolean) => {
+    this.setOption('showAudioCompare', show);
+  };
+
+  public toggleEdgeView = (show: boolean) => {
+    this.setOption('showEdgeView', show);
+  };
+
   public toggleFrameOverlay = (show: boolean) => {
     this.setOption('showFrameOverlay', show);
   };
@@ -1480,6 +1515,11 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           showFrameOverlay: false,
           showSubtitles: false,
           showWhisperSubtitles: false,
+          showBitrateAudit: false,
+          showStartup: false,
+          showLadderCheck: false,
+          showAudioCompare: false,
+          showEdgeView: false,
         },
       })
     );
@@ -1508,6 +1548,11 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showWhisperSubtitles: false,
         showFrameOverlay: false,
         showSubtitles: false,
+        showBitrateAudit: false,
+        showStartup: false,
+        showLadderCheck: false,
+        showAudioCompare: false,
+        showEdgeView: false,
       },
     });
   };
@@ -1522,6 +1567,11 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showCMCD', false);
     this.setOption('showStallDetector', false);
     this.setOption('showPlayerLogs', false);
+    this.setOption('showBitrateAudit', false);
+    this.setOption('showStartup', false);
+    this.setOption('showLadderCheck', false);
+    this.setOption('showAudioCompare', false);
+    this.setOption('showEdgeView', false);
     this.appService.setViewerName(this.id, DefaultViewerName);
     this.appService.setViewerId(this.id, '_generateNewId_');
     this.viewerState.updateSource('');

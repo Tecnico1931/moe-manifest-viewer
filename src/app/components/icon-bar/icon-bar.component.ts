@@ -13,6 +13,7 @@ import {
   VideoPlayers,
 } from '../../shared';
 
+import { buildFeedbackMailto } from './feedback-mailto.logic';
 const { version: appVersion } = require('./../../../../package.json');
 
 @Component({
@@ -53,6 +54,11 @@ export class IconBarComponent implements OnInit {
   @Output() public onTogglePlayerLogs = new EventEmitter<boolean>();
   @Output() public onToggleHlsIssues = new EventEmitter<boolean>();
   @Output() public onToggleClip = new EventEmitter<boolean>();
+  @Output() public onToggleBitrateAudit = new EventEmitter<boolean>();
+  @Output() public onToggleStartup = new EventEmitter<boolean>();
+  @Output() public onToggleLadderCheck = new EventEmitter<boolean>();
+  @Output() public onToggleAudioCompare = new EventEmitter<boolean>();
+  @Output() public onToggleEdgeView = new EventEmitter<boolean>();
   @Output() public onToggleFrameOverlay = new EventEmitter<boolean>();
   @Output() public onToggleUseGlobalToken = new EventEmitter<boolean>();
   @Output() public onTogglePolling = new EventEmitter<boolean>();
@@ -187,6 +193,36 @@ export class IconBarComponent implements OnInit {
     this.submitEvent(this.GA_CLICK, 'ToggleClip:' + toggled, this.GA_ICON_BAR);
   };
 
+  public toggleBitrateAudit = (toggled: boolean) => {
+    this.onToggleBitrateAudit.emit(toggled);
+    this.viewerState.updateActiveTab(TabObjectName.BITRATEAUDIT, toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleBitrateAudit:' + toggled, this.GA_ICON_BAR);
+  };
+
+  public toggleStartup = (toggled: boolean) => {
+    this.onToggleStartup.emit(toggled);
+    this.viewerState.updateActiveTab(TabObjectName.STARTUP, toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleStartup:' + toggled, this.GA_ICON_BAR);
+  };
+
+  public toggleLadderCheck = (toggled: boolean) => {
+    this.onToggleLadderCheck.emit(toggled);
+    this.viewerState.updateActiveTab(TabObjectName.LADDERCHECK, toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleLadderCheck:' + toggled, this.GA_ICON_BAR);
+  };
+
+  public toggleAudioCompare = (toggled: boolean) => {
+    this.onToggleAudioCompare.emit(toggled);
+    this.viewerState.updateActiveTab(TabObjectName.AUDIOCOMPARE, toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleAudioCompare:' + toggled, this.GA_ICON_BAR);
+  };
+
+  public toggleEdgeView = (toggled: boolean) => {
+    this.onToggleEdgeView.emit(toggled);
+    this.viewerState.updateActiveTab(TabObjectName.EDGEVIEW, toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleEdgeView:' + toggled, this.GA_ICON_BAR);
+  };
+
   public toggleFrameOverlay = (toggled: boolean) => {
     this.onToggleFrameOverlay.emit(toggled);
     this.viewerState.updateActiveTab('Frame Overlay', toggled);
@@ -249,6 +285,11 @@ export class IconBarComponent implements OnInit {
         showSubtitles: this.viewerState.showSubtitles,
         showWhisperSubtitles: this.viewerState.showWhisperSubtitles,
         showFrameOverlay: this.viewerState.showFrameOverlay,
+        showBitrateAudit: this.viewerState.showBitrateAudit,
+        showStartup: this.viewerState.showStartup,
+        showLadderCheck: this.viewerState.showLadderCheck,
+        showAudioCompare: this.viewerState.showAudioCompare,
+        showEdgeView: this.viewerState.showEdgeView,
       })
       .then(() => {
         this.storeViewerText = 'Stored ✅';
@@ -339,8 +380,12 @@ export class IconBarComponent implements OnInit {
 
   public openFeedbackPage = () => {
     this.submitEvent(this.GA_CLICK, 'OpenFeedbackPage', this.GA_ICON_BAR);
-    window.open('https://docs.google.com/forms/d/1z5lzDjGy5PLadpxp2awVU67KuLRnB9aJYzOqtzDoYAA/prefill');
+    window.open(this.generateFeedbackMailto(), '_self');
   };
+
+  public generateFeedbackMailto(): string {
+    return buildFeedbackMailto(this.version, this.currentUrl);
+  }
 
   public generateMetricsUrl(): string {
     if (this.type === 'dash') {

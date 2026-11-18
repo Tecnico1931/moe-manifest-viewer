@@ -27,6 +27,11 @@ export interface ViewerOptionTypes {
   showClip: boolean;
   showWhisperSubtitles: boolean;
   showFrameOverlay: boolean;
+  showBitrateAudit: boolean;
+  showStartup: boolean;
+  showLadderCheck: boolean;
+  showAudioCompare: boolean;
+  showEdgeView: boolean;
   showSubtitles: boolean;
   xhrCredentials: boolean;
   globalTokenActive: boolean;

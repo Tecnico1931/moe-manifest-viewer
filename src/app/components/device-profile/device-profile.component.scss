@@ -1,0 +1,37 @@
+@import '../../shared/utils/vars';
+
+.deviceProfile {
+  position: relative;
+  height: 28px;
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  select {
+    height: 21px;
+    max-width: 130px;
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: $whitest;
+    color: $dark;
+  }
+  .hlsOnly {
+    margin-left: 4px;
+    font-size: 11px;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+}
+
+.deviceProfileChip {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  background-color: rgba(0, 0, 0, 0.65);
+  color: $whitest;
+  pointer-events: auto;
+  user-select: none;
+}

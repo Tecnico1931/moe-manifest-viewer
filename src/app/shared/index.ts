@@ -15,6 +15,7 @@ export * from './services/hls-validation.service';
 export * from './services/clip.service';
 export * from './services/whisper.service';
 export * from './services/frame-analyzer.service';
+export * from './services/request-log.service';
 
 /** models */
 export * from './models/manifest-response';

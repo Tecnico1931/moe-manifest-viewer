@@ -14,4 +14,9 @@ export enum TabObjectName {
   HLSISSUES = 'HLS Issues',
   CLIP = 'Clip',
   WHISPER = 'AI Subtitles',
+  BITRATEAUDIT = 'Declared vs delivered',
+  STARTUP = 'Startup',
+  LADDERCHECK = 'Ladder check',
+  AUDIOCOMPARE = 'Audio tracks',
+  EDGEVIEW = 'Akamai edge',
 }

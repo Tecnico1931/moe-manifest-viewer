@@ -1,0 +1,111 @@
+@import '../../shared/utils/vars';
+
+.startup {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  padding: 8px;
+}
+
+.kpis {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+  padding: 6px 10px;
+  background: $whitest;
+  border: 1px solid $light-gray;
+  border-radius: 4px;
+
+  &.warm {
+    border-color: $dark-gold;
+    background: lighten($dark-gold, 48%);
+  }
+}
+
+.kpi-label {
+  color: $middle-color;
+}
+
+.kpi-value {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.kpi-sub {
+  color: $middle-color;
+  text-align: right;
+}
+
+.copy {
+  align-self: center;
+  margin-left: auto;
+}
+
+.waterfall {
+  display: block;
+  font-size: 11px;
+  max-width: 100%;
+  overflow: visible;
+
+  .grid {
+    stroke: $off-white;
+  }
+
+  .tick {
+    fill: $middle-color;
+  }
+
+  .row-label {
+    fill: #222;
+  }
+
+  .row-detail {
+    fill: $middle-color;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .wait {
+    fill: #9ec5ec;
+  }
+
+  .transfer {
+    fill: #2a6db0;
+
+    &.pending {
+      opacity: 0.45;
+    }
+  }
+
+  .first-frame {
+    stroke: #c0392b;
+    stroke-dasharray: 3 2;
+  }
+}
+
+.hint {
+  color: $middle-color;
+  margin: 6px 0 0;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 0 4px 0 8px;
+
+  &.wait {
+    background: #9ec5ec;
+  }
+
+  &.transfer {
+    background: #2a6db0;
+  }
+}

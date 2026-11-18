@@ -1,2 +1,47 @@
-<h3>Startup</h3>
-<p>Coming soon</p>
+<div class="startup">
+  <div class="kpis">
+    <div class="kpi" title="Master request start to end of first video segment (and first audio segment when audio is separate). Matches the Join Time Proxy dashboard. Frozen once complete; resets on reload.">
+      <span class="kpi-label">Join time</span>
+      <span class="kpi-value">{{ ms(result.joinMs) }}</span>
+    </div>
+    <div class="kpi">
+      <span class="kpi-label">Master TTFB</span>
+      <span class="kpi-value">{{ ms(result.masterTtfbMs) }}</span>
+    </div>
+    <div class="kpi">
+      <span class="kpi-label">First segment</span>
+      <span class="kpi-value">{{ kb(result.firstSegmentBytes) }}</span>
+      <span class="kpi-sub">{{ result.firstSegmentRendition || '—' }}</span>
+    </div>
+    <div class="kpi" [class.warm]="result.isTopRung" [attr.title]="result.isTopRung ? topRungHint : null">
+      <span class="kpi-label">Started on rung</span>
+      <span class="kpi-value">{{ result.startedOnRung || '—' }}</span>
+      <span class="kpi-sub" *ngIf="result.isTopRung">top rung</span>
+      <span class="kpi-sub" *ngIf="!result.isTopRung && !result.ladderKnown && result.startedOnRung">ladder not seen</span>
+    </div>
+    <div class="kpi" title="Time from the first master request to the video element's first playing/loadeddata event">
+      <span class="kpi-label">First frame</span>
+      <span class="kpi-value">{{ ms(result.firstFrameMs) }}</span>
+    </div>
+    <button class="copy" (click)="copyJson()" [disabled]="!result.rows.length">{{ copied ? 'Copied' : 'Copy as JSON' }}</button>
+  </div>
+
+  <p *ngIf="!result.rows.length" class="hint">No master request yet.</p>
+
+  <svg *ngIf="result.rows.length" class="waterfall" [attr.width]="labelWidth + barArea + 10" [attr.height]="svgHeight">
+    <g *ngFor="let t of ticks">
+      <line class="grid" [attr.x1]="x(t)" [attr.x2]="x(t)" y1="0" [attr.y2]="svgHeight - rowHeight" />
+      <text class="tick" [attr.x]="x(t)" [attr.y]="svgHeight - 6" text-anchor="middle">{{ t }}</text>
+    </g>
+    <g *ngFor="let row of result.rows; let i = index">
+      <text class="row-label" x="0" [attr.y]="y(i) + 13">{{ rowLabel(row) }}</text>
+      <text class="row-detail" [attr.x]="labelWidth - 6" [attr.y]="y(i) + 13" text-anchor="end">{{ rowDetail(row) }}</text>
+      <rect class="wait" [attr.x]="x(row.startMs)" [attr.y]="y(i) + 2" [attr.width]="waitWidth(row)" height="12" />
+      <rect class="transfer" [class.pending]="row.endMs === undefined" [attr.x]="transferX(row)" [attr.y]="y(i) + 2" [attr.width]="transferWidth(row)" height="12" />
+    </g>
+    <line *ngIf="result.firstFrameMs !== undefined" class="first-frame" [attr.x1]="x(result.firstFrameMs)" [attr.x2]="x(result.firstFrameMs)" y1="0" [attr.y2]="svgHeight - rowHeight" />
+  </svg>
+  <p *ngIf="result.rows.length" class="hint">
+    <span class="swatch wait"></span>waiting (TTFB) <span class="swatch transfer"></span>transfer. Axis in ms from first master request.
+  </p>
+</div>

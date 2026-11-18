@@ -13,7 +13,10 @@ export class UrlVarsService {
 
   public setUrlVars() {
     const queryString = require('query-string');
-    const parsed = queryString.parse(location.search);
+    // Parameters may come after "?" or "#". The redirect extension uses "#" so manifest tokens (hdntl etc.)
+    // stay in the browser and never reach the hosting server's logs. Fragment values win over query ones.
+    const raw = [location.search.replace(/^\?/, ''), location.hash.replace(/^#/, '')].filter(Boolean).join('&');
+    const parsed = queryString.parse(raw);
     const qs = {};
     const queryParams = queryString.stringify(parsed);
     const urlParams: string = queryParams;

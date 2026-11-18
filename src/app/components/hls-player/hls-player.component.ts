@@ -17,6 +17,7 @@ import { withDeviceProfileThrottle } from '../device-profile/device-profile.thro
 import { capLevelIndex, hlsConfigOverrides, startLevelIndex } from '../device-profile/device-profile.logic';
 import { DeviceProfile } from '../../shared/models/device-profiles';
 
+import { addAkamaiPragma } from '../edge-view/akamai-pragma';
 @Component({
   selector: 'app-hls-player',
   templateUrl: './hls-player.component.html',
@@ -194,7 +195,10 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     this.setCMCD();
     this.hlsConfig.loader = withDeviceProfileThrottle(createRecordingLoader(this.requestLog), () => this.activeDeviceProfile);
     Object.assign(this.hlsConfig, hlsConfigOverrides(this.activeDeviceProfile));
-    this.hlsConfig.xhrSetup = this.filterCMCDRequest;
+    this.hlsConfig.xhrSetup = (xhr: XMLHttpRequest, url: string, headers: any) => {
+      this.filterCMCDRequest(xhr, url, headers);
+      addAkamaiPragma(xhr);
+    };
   };
 
   private applyHlsConfig = () => {

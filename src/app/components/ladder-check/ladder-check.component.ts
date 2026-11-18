@@ -171,16 +171,19 @@ export class LadderCheckComponent implements OnInit, OnDestroy {
   private onRecords(records: RequestRecord[]): void {
     const byLevel = new Map<number, RequestRecord>();
     records.filter((r) => r.level !== undefined && r.bandwidthDeclared && r.resolution).forEach((r) => byLevel.set(r.level as number, r));
+    const declared = this.requestLog ? this.requestLog.declaredLevels.filter((l) => l.bandwidth && l.resolution) : [];
     const fromRecords = rungsFromLevels(
-      Array.from(byLevel.values()).map((r) => ({
-        bandwidth: r.bandwidthDeclared,
-        averageBandwidth: r.averageBandwidthDeclared,
-        resolution: r.resolution,
-      }))
+      declared.length
+        ? declared
+        : Array.from(byLevel.values()).map((r) => ({
+            bandwidth: r.bandwidthDeclared,
+            averageBandwidth: r.averageBandwidthDeclared,
+            resolution: r.resolution,
+          }))
     );
     if (fromRecords.length > this.current.length) {
       this.current = fromRecords;
-      this.currentSource = 'requested variants';
+      this.currentSource = declared.length ? 'player (declared ladder)' : 'requested variants';
       this.recompute();
     }
     // The log only has rungs the player requested; the master playlist has the full ladder (and FRAME-RATE).

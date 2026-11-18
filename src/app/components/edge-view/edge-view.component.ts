@@ -1,3 +1,4 @@
+import { isAkamaiPragmaEnabled, setAkamaiPragmaEnabled } from './akamai-pragma';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -42,7 +43,14 @@ export class EdgeViewComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
+  public sendPragma = isAkamaiPragmaEnabled();
+
   constructor(private requestLog: RequestLogService) {}
+
+  public togglePragma(on: boolean): void {
+    setAkamaiPragmaEnabled(on);
+    this.sendPragma = on;
+  }
 
   public ngOnInit(): void {
     this.requestLog.records$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.refresh);
@@ -76,7 +84,8 @@ export class EdgeViewComponent implements OnInit, OnDestroy {
     }
     this.visibleRows = filterRows(this.rows, this.kindFilter);
     this.summary = summarize(this.rows);
-    this.singleBitrate = detectSingleBitrate({ records });
+    const declared = this.requestLog.declaredLevels.filter((l) => !!l.resolution).length;
+    this.singleBitrate = detectSingleBitrate({ records, declaredVideoVariants: declared || undefined });
     this.visibility = headerVisibility(records);
     this.missingHeaders = this.visibility.filter((v) => !v.seen);
   };

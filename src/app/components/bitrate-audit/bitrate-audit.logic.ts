@@ -46,6 +46,10 @@ export interface VideoRow extends MediaStats {
   flagAvg: boolean;
   flagPeak: boolean;
   isFewSegments: boolean;
+  /** Median CMCD `br` (kbps) the player sent on this rendition's segment requests (query-mode CMCD only). */
+  cmcdBrKbps?: number;
+  /** CMCD br is under 20% of declared BANDWIDTH: the player is reporting the wrong bitrate. */
+  flagCmcdBr: boolean;
 }
 
 export interface AudioRow extends MediaStats {
@@ -109,6 +113,34 @@ const pickAudio = (audio: AudioRow[], group?: string): AudioRow | undefined => {
   return pool.reduce<AudioRow | undefined>((best, a) => (!best || (a.avgKbps as number) > (best.avgKbps as number) ? a : best), undefined);
 };
 
+export const CMCD_BR_MIN_RATIO = 0.2;
+
+/** CMCD `br` from a request URL's CMCD query parameter (e.g. ?CMCD=br%3D3200%2Cd%3D6006), in kbps. */
+export const cmcdBrFromUrl = (url: string): number | undefined => {
+  const m = /[?&]CMCD=([^&#]*)/.exec(url);
+  if (!m) {
+    return undefined;
+  }
+  let value: string;
+  try {
+    value = decodeURIComponent(m[1]);
+  } catch {
+    return undefined;
+  }
+  const br = value.split(',').map((kv) => kv.trim().split('=')).find(([k]) => k === 'br');
+  const n = br && br[1] !== undefined ? Number(br[1]) : NaN;
+  return Number.isFinite(n) ? n : undefined;
+};
+
+const median = (xs: number[]): number | undefined => {
+  if (!xs.length) {
+    return undefined;
+  }
+  const s = [...xs].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+};
+
 export const buildAudit = (records: AuditRecord[]): AuditResult => {
   const audio = audioRows(records);
   const levelKeys = Array.from(
@@ -130,6 +162,7 @@ export const buildAudit = (records: AuditRecord[]): AuditResult => {
     // Declared values include audio, so with separate audio the combined figure is the like-for-like one.
     const effAvg = combinedAvgKbps ?? stats.avgKbps;
     const effPeak = combinedPeakKbps ?? stats.peakKbps;
+    const cmcdBrKbps = median(segs.map((r) => cmcdBrFromUrl(r.url)).filter((n): n is number => n !== undefined));
     return {
       level,
       resolution: declared?.resolution,
@@ -148,6 +181,8 @@ export const buildAudit = (records: AuditRecord[]): AuditResult => {
       flagAvg: effAvg !== undefined && averageBandwidthKbps !== undefined && effAvg > averageBandwidthKbps * AVG_FLAG_RATIO,
       flagPeak: effPeak !== undefined && bandwidthKbps !== undefined && effPeak > bandwidthKbps,
       isFewSegments: stats.segments < MIN_SEGMENTS,
+      cmcdBrKbps,
+      flagCmcdBr: cmcdBrKbps !== undefined && bandwidthKbps !== undefined && cmcdBrKbps < bandwidthKbps * CMCD_BR_MIN_RATIO,
     } as VideoRow;
   });
   return { video, audio };
@@ -156,22 +191,30 @@ export const buildAudit = (records: AuditRecord[]): AuditResult => {
 const cell = (n: number | undefined, digits = 0): string => (n === undefined ? '—' : n.toFixed(digits));
 
 const flagText = (r: VideoRow): string =>
-  [r.flagAvg ? 'avg>110%' : '', r.flagPeak ? 'peak>BANDWIDTH' : '', r.isFewSegments ? 'few segments' : ''].filter(Boolean).join(',') || '—';
+  [
+    r.flagAvg ? 'avg>110%' : '',
+    r.flagPeak ? 'peak>BANDWIDTH' : '',
+    r.isFewSegments ? 'few segments' : '',
+    r.flagCmcdBr ? 'CMCD br<20%' : '',
+  ]
+    .filter(Boolean)
+    .join(',') || '—';
 
 export const toTsv = (result: AuditResult): string => {
   const head = [
     'level', 'resolution', 'container', 'segments', 'seconds', 'declared BANDWIDTH kbps', 'declared AVERAGE-BANDWIDTH kbps',
     'measured avg kbps', 'measured peak kbps', 'avg/AVERAGE-BANDWIDTH %', 'peak/BANDWIDTH %', 'video+audio avg kbps', 'flag',
+    'CMCD br kbps',
   ];
   const lines = result.video.map((r) =>
     [
       r.level === undefined ? '—' : String(r.level), r.resolution ?? '—', r.isTs ? 'TS' : '—', String(r.segments), cell(r.seconds, 1),
       cell(r.bandwidthKbps), cell(r.averageBandwidthKbps), cell(r.avgKbps), cell(r.peakKbps), cell(r.avgPct), cell(r.peakPct),
-      cell(r.combinedAvgKbps), flagText(r),
+      cell(r.combinedAvgKbps), flagText(r), cell(r.cmcdBrKbps),
     ].join('\t')
   );
   const audioLines = result.audio.map((a) =>
-    ['audio', a.name, a.group ?? '—', String(a.segments), cell(a.seconds, 1), '—', '—', cell(a.avgKbps), cell(a.peakKbps), '—', '—', '—', '—'].join('\t')
+    ['audio', a.name, a.group ?? '—', String(a.segments), cell(a.seconds, 1), '—', '—', cell(a.avgKbps), cell(a.peakKbps), '—', '—', '—', '—', '—'].join('\t')
   );
   return [head.join('\t'), ...lines, ...audioLines].join('\n');
 };

@@ -131,6 +131,11 @@ export class RequestLogService implements OnDestroy {
     this.records$.next(this.records.map((record) => (record.id === id ? { ...record, ...patch, id } : record)));
   }
 
+  /** Declared renditions from the master playlist, indexed like the player's level list (copy). */
+  public get declaredLevels(): DeclaredLevel[] {
+    return this.levels.slice();
+  }
+
   /** Declared renditions, indexed like the player's level list. Back-fills records already logged. */
   public setLevels(levels: DeclaredLevel[]): void {
     this.levels = levels;

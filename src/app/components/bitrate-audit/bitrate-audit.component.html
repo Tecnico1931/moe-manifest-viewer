@@ -40,6 +40,7 @@
           <span class="note" *ngIf="row.isFewSegments">few segments</span>
           <span class="chip" *ngIf="row.flagAvg" title="Measured average is more than 10% above AVERAGE-BANDWIDTH">avg &gt; +10%</span>
           <span class="chip" *ngIf="row.flagPeak" title="Measured peak segment bitrate is above BANDWIDTH">peak &gt; BW</span>
+          <span class="chip" *ngIf="row.flagCmcdBr" title="The player's CMCD br ({{ row.cmcdBrKbps }} kbps) is under 20% of this rendition's BANDWIDTH">CMCD br {{ row.cmcdBrKbps }}</span>
         </td>
       </tr>
       <tr class="combined" *ngIf="row.audioTrack" [class.few]="row.isFewSegments">

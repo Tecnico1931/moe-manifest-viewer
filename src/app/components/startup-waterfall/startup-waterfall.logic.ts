@@ -68,8 +68,8 @@ const toRow = (key: string, label: string, r: StartupRecord, start: number): Wat
 });
 
 /** Top rung and whether the log has seen enough distinct rungs to call it. */
-const topRung = (records: StartupRecord[], first?: StartupRecord): { isTop: boolean; known: boolean } => {
-  const rates = records
+const topRung = (records: StartupRecord[], first?: StartupRecord, declaredRates: number[] = []): { isTop: boolean; known: boolean } => {
+  const rates = declaredRates.length ? declaredRates : records
     .filter((r) => (r.kind === 'variant' || r.kind === 'video-segment' || r.kind === 'init') && r.bandwidthDeclared)
     .map((r) => r.bandwidthDeclared as number);
   const distinct = Array.from(new Set(rates));
@@ -78,7 +78,12 @@ const topRung = (records: StartupRecord[], first?: StartupRecord): { isTop: bool
   return { known, isTop: known && !!first && first.bandwidthDeclared === top };
 };
 
-export const computeStartup = (records: StartupRecord[], sessionStart?: number, firstFramePerf?: number): StartupResult => {
+export const computeStartup = (
+  records: StartupRecord[],
+  sessionStart?: number,
+  firstFramePerf?: number,
+  declaredRates: number[] = []
+): StartupResult => {
   const master = earliest(records, 'master');
   const empty: StartupResult = { rows: [], isTopRung: false, ladderKnown: false, isComplete: false };
   const start = sessionStart ?? master?.tRequest;
@@ -108,7 +113,7 @@ export const computeStartup = (records: StartupRecord[], sessionStart?: number, 
   const ends = [video?.tLoaded, hasSeparateAudio ? audio?.tLoaded : undefined];
   const isComplete = video?.tLoaded !== undefined && (!hasSeparateAudio || audio?.tLoaded !== undefined);
   const joinEnd = isComplete ? Math.max(...ends.filter((e): e is number => e !== undefined)) : undefined;
-  const rung = topRung(records, video);
+  const rung = topRung(records, video, declaredRates);
 
   return {
     rows,

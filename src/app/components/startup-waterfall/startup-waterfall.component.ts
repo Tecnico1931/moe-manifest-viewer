@@ -112,7 +112,8 @@ export class StartupWaterfallComponent implements OnInit, OnDestroy {
     }
     this.frozen = false;
     this.attachVideo();
-    this.result = computeStartup(this.requestLog.records, start, this.firstFramePerf);
+    const declaredRates = this.requestLog.declaredLevels.filter((l) => !!l.bandwidth).map((l) => l.bandwidth as number);
+    this.result = computeStartup(this.requestLog.records, start, this.firstFramePerf, declaredRates);
     if (this.result.isComplete) {
       this.frozen = true;
       this.frozenStart = start;

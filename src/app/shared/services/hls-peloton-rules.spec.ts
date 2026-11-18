@@ -6,8 +6,8 @@ const master = (v: string[]) => ['#EXTM3U', ...v].join('\n');
 
 // Codec strings
 assert.strictEqual(checkCodecString('avc1.4d401e'), null);
-assert.strictEqual(checkCodecString('avc1.77.30')!.fix, 'avc1.4d001e');
-assert.strictEqual(checkCodecString('avc1.66.30')!.fix, 'avc1.42001e');
+assert.strictEqual(checkCodecString('avc1.77.30')!.fix, 'avc1.4d401e');
+assert.strictEqual(checkCodecString('avc1.66.30')!.fix, 'avc1.42e01e');
 assert.strictEqual(checkCodecString('avc1.100.40')!.fix, 'avc1.640028');
 assert.strictEqual(checkCodecString('avc1.4d40')!.code, C.CODEC_MALFORMED);
 assert.strictEqual(checkCodecString('mp4a.40.2'), null);

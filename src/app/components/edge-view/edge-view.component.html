@@ -103,6 +103,10 @@
           only returns them when the request carries <code>Pragma: {{ pragmaValue }}</code>. Sending Pragma from a browser also needs
           <code>Access-Control-Allow-Headers: pragma</code> on the CDN, otherwise the CORS preflight fails and the request is blocked.
         </p>
+        <label class="pragma-toggle" title="HLS.js only. Applies when the stream is next loaded. Turn off if requests start failing with CORS errors.">
+          <input type="checkbox" [checked]="sendPragma" (change)="togglePragma($any($event.target).checked)" />
+          Send Akamai Pragma debug headers (next load)
+        </label>
       </ng-container>
     </div>
   </ng-container>

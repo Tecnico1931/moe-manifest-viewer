@@ -110,7 +110,9 @@ export function checkCodecString(codec: string): { code: string; message: string
       const profile = parseInt(legacy[1], 10);
       const level = parseInt(legacy[2], 10);
       if (profile < 256 && level < 256) {
-        const fix = `${avc[1].toLowerCase()}.${hex2(profile)}00${hex2(level)}`;
+        // Constraint byte as encoders usually write it: Baseline e0 (constrained), Main 40, others 00.
+        const constraint = profile === 66 ? 'e0' : profile === 77 ? '40' : '00';
+        const fix = `${avc[1].toLowerCase()}.${hex2(profile)}${constraint}${hex2(level)}`;
         return { code: PELOTON_ISSUE_CODES.CODEC_LEGACY_AVC, message: `legacy decimal form`, fix };
       }
     }
@@ -144,7 +146,7 @@ function codecIssues(variants: Variant[]): HlsIssue[] {
       if (!res) {
         continue;
       }
-      const hint = res.fix ? ` Use ${res.fix} (constraint byte 00).` : '';
+      const hint = res.fix ? ` Likely ${res.fix} (check the encoder's constraint flags).` : '';
       out.push(
         issue(
           res.code,

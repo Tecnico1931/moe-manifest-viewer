@@ -107,6 +107,7 @@
           <input type="checkbox" [checked]="sendPragma" (change)="togglePragma($any($event.target).checked)" />
           Send Akamai Pragma debug headers (next load)
         </label>
+        <span class="pragma-note" *ngIf="sendPragma">On: if the CDN rejects it, the viewer turns it off and reloads.</span>
       </ng-container>
     </div>
   </ng-container>

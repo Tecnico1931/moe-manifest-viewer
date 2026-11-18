@@ -77,6 +77,7 @@ export class EdgeViewComponent implements OnInit, OnDestroy {
   public ms = (value?: number): string => (value === undefined ? '-' : `${Math.round(value)} ms`);
 
   private refresh = (records: RequestRecord[]): void => {
+    this.sendPragma = isAkamaiPragmaEnabled();
     this.rows = orderRows(records.map(buildRow));
     this.kinds = Array.from(new Set(this.rows.map((r) => r.kind)));
     if (this.kindFilter !== 'all' && !this.kinds.includes(this.kindFilter)) {

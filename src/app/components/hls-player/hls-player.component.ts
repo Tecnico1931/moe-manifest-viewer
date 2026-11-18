@@ -17,7 +17,7 @@ import { withDeviceProfileThrottle } from '../device-profile/device-profile.thro
 import { capLevelIndex, hlsConfigOverrides, startLevelIndex } from '../device-profile/device-profile.logic';
 import { DEVICE_PROFILES, DeviceProfile } from '../../shared/models/device-profiles';
 
-import { addAkamaiPragma } from '../edge-view/akamai-pragma';
+import { addAkamaiPragma, isAkamaiPragmaEnabled, setAkamaiPragmaEnabled } from '../edge-view/akamai-pragma';
 @Component({
   selector: 'app-hls-player',
   templateUrl: './hls-player.component.html',
@@ -473,9 +473,29 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
       });
     }
     this.viewerState.onHlsError(data);
+    if (this.recoverFromPragmaBlock(data)) {
+      return;
+    }
     if (data.type === 'keySystemError') {
       this.toastrService.error(data.details, 'HLS ERROR ' + data.type);
     }
+  };
+
+  /** A playlist request failing with no HTTP status while Pragma is on is almost always the CDN's CORS preflight
+   * rejecting the header. Turn it off, say so, and reload once, so the toggle can't leave a stream unplayable. */
+  private recoverFromPragmaBlock = (data: any): boolean => {
+    const isPlaylistLoad = ['manifestLoadError', 'levelLoadError', 'audioTrackLoadError'].includes(data.details);
+    const status = data.response && data.response.code;
+    if (!isAkamaiPragmaEnabled() || !isPlaylistLoad || (status && status !== 0) || !this.currentSource) {
+      return false;
+    }
+    setAkamaiPragmaEnabled(false);
+    this.toastrService.warning(
+      'This CDN does not allow the Pragma header (CORS), so Akamai debug headers were turned off and the stream reloaded.',
+      'Akamai debug headers off'
+    );
+    this.loadHlsjsSource(this.currentSource);
+    return true;
   };
 
   public setBufferAndFrames = () => {

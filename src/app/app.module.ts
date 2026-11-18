@@ -61,6 +61,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ShakaPlayerComponent } from './components/shaka-player/shaka-player.component';
 import * as Shakajs from 'shaka-player';
 import { DeviceProfileComponent } from './components/device-profile/device-profile.component';
+import { AudioTrackSelectComponent } from './components/audio-track-select/audio-track-select.component';
 import { PlayerDropdownComponent } from './components/player-dropdown/player-dropdown.component';
 import { PipesModule } from './shared/pipes/pipes.module';
 import { ScteDisplayComponent } from './components/scte-display/scte-display.component';
@@ -115,6 +116,7 @@ declare global {
     ShakaPlayerComponent,
     PlayerDropdownComponent,
     DeviceProfileComponent,
+    AudioTrackSelectComponent,
     ScteDisplayComponent,
     PlayerConfigComponent,
     HlsIssuesComponent,

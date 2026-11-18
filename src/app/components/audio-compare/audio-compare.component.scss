@@ -1,0 +1,106 @@
+.audio-compare {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.ac-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+
+  h3 {
+    margin: 0 8px 0 0;
+    font-size: 14px;
+  }
+}
+
+.ac-seg input {
+  width: 52px;
+  margin-left: 4px;
+}
+
+.ac-status,
+.ac-hint,
+.ac-note {
+  opacity: 0.7;
+}
+
+.ac-error {
+  color: #e8a33d;
+  opacity: 1;
+}
+
+.ac-table {
+  border-collapse: collapse;
+  width: 100%;
+
+  th,
+  td {
+    padding: 2px 8px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+  }
+}
+
+.ac-num {
+  font-weight: 600;
+}
+
+.ac-label {
+  margin: 8px 0 4px;
+  opacity: 0.8;
+}
+
+.ac-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0;
+}
+
+.ac-bar-name {
+  width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ac-bar-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(128, 128, 128, 0.2);
+  border-radius: 2px;
+  max-width: 420px;
+}
+
+.ac-bar {
+  display: block;
+  height: 100%;
+  background: #4a9eed;
+  border-radius: 2px;
+}
+
+.ac-bar-val {
+  width: 48px;
+  text-align: right;
+}
+
+.ac-spread {
+  margin-top: 6px;
+}
+
+.ac-chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: rgba(128, 128, 128, 0.25);
+
+  &.ac-chip-warm {
+    background: #e8a33d;
+    color: #1a1a1a;
+  }
+}

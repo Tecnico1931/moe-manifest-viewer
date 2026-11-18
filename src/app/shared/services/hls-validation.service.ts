@@ -6,6 +6,7 @@ import {
   HlsIssueCategory,
   HLS_ISSUE_CODES,
 } from '../models/hls-issue.model';
+import { runPelotonRules } from './hls-peloton-rules';
 
 interface ParsedTag {
   line: string;
@@ -55,6 +56,9 @@ export class HlsValidationService {
 
     // Best practices
     this.validateBestPractices(manifest, lines, isMedia, issues);
+
+    // Peloton-specific lint rules (see hls-peloton-rules.ts)
+    issues.push(...runPelotonRules(manifest, isMedia));
 
     return this.buildResult(issues);
   }

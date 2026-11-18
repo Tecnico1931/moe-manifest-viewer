@@ -12,6 +12,7 @@
     (autoSelect)="switchToAbr()"
     (toggleMute)="switchMuted($event)"
   ></app-player-overlay>
+  <app-device-profile mode="chip" [viewerId]="viewerState.id"></app-device-profile>
   <app-subtitles [viewerState]="viewerState"></app-subtitles>
   <div class="hlsPlayerContainer" #playerContainer>
     <video

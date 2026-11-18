@@ -60,6 +60,7 @@ import { DrmModalComponent } from './components/drm-modal/drm-modal.component';
 import { ToastrModule } from 'ngx-toastr';
 import { ShakaPlayerComponent } from './components/shaka-player/shaka-player.component';
 import * as Shakajs from 'shaka-player';
+import { DeviceProfileComponent } from './components/device-profile/device-profile.component';
 import { PlayerDropdownComponent } from './components/player-dropdown/player-dropdown.component';
 import { PipesModule } from './shared/pipes/pipes.module';
 import { ScteDisplayComponent } from './components/scte-display/scte-display.component';
@@ -113,6 +114,7 @@ declare global {
     DrmModalComponent,
     ShakaPlayerComponent,
     PlayerDropdownComponent,
+    DeviceProfileComponent,
     ScteDisplayComponent,
     PlayerConfigComponent,
     HlsIssuesComponent,

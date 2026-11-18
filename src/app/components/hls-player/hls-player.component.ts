@@ -12,6 +12,10 @@ import { CMCDFilter, CMCDTransitionModes, CMCDHeaders } from '../../shared/utils
 import { createRecordingLoader } from './hls-player.custom-loader';
 import { RequestLogService } from '../../shared/services/request-log.service';
 import { VideoPlayers } from '../../shared/models/video-players';
+import { DeviceProfileService } from '../device-profile/device-profile.service';
+import { withDeviceProfileThrottle } from '../device-profile/device-profile.throttle-loader';
+import { capLevelIndex, hlsConfigOverrides, startLevelIndex } from '../device-profile/device-profile.logic';
+import { DeviceProfile } from '../../shared/models/device-profiles';
 
 @Component({
   selector: 'app-hls-player',
@@ -63,7 +67,8 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     private loggerService: LoggerService,
     private drmManager: DrmManagerService,
     private toastrService: ToastrService,
-    private requestLog: RequestLogService
+    private requestLog: RequestLogService,
+    private deviceProfiles: DeviceProfileService
   ) {}
 
   public ngOnInit() {
@@ -187,7 +192,8 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
       console.log('[HlsPlayerComponent > initHls] DRM all set. ', this.drmInfo);
     }
     this.setCMCD();
-    this.hlsConfig.loader = createRecordingLoader(this.requestLog);
+    this.hlsConfig.loader = withDeviceProfileThrottle(createRecordingLoader(this.requestLog), () => this.activeDeviceProfile);
+    Object.assign(this.hlsConfig, hlsConfigOverrides(this.activeDeviceProfile));
     this.hlsConfig.xhrSetup = this.filterCMCDRequest;
   };
 
@@ -264,11 +270,13 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     this.viewerState.selectedSubtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.updateSelectedSubtitles);
     this.viewerState.cmcdOptions$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.updateCMCD);
     this.viewerState.playerConfigChanged$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.updateDynamicConfig);
+    this.deviceProfiles.profile$(this.viewerState.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onDeviceProfileChange);
   }
 
   private setHlsPlayerListeners() {
     this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed);
     this.hls.on(Hls.Events.MANIFEST_PARSED, this.logDeclaredLadder);
+    this.hls.on(Hls.Events.MANIFEST_PARSED, this.applyDeviceProfileLevels);
     this.hls.on(Hls.Events.LEVEL_LOADED, this.onLevelLoaded);
     this.hls.on(Hls.Events.LEVEL_SWITCHED, this.onLevelSwitched);
     this.hls.on(Hls.Events.FRAG_LOADED, this.onFragLoaded);
@@ -528,6 +536,33 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
           this.hlsConfig[property] = parsedPlayerConfig[property];
         }
       }
+    }
+  };
+
+  // --- device profiles (see components/device-profile) ---
+  private activeDeviceProfile: DeviceProfile;
+
+  private onDeviceProfileChange = (profile: DeviceProfile): void => {
+    const changed = profile !== this.activeDeviceProfile;
+    this.activeDeviceProfile = profile;
+    if (changed && this.hls && this.currentSource && !this.useNative) {
+      // re-create the player so startLevel / capping / throttling start from a clean state
+      this.loadHlsjsSource(this.currentSource);
+    }
+  };
+
+  private applyDeviceProfileLevels = (): void => {
+    const profile = this.activeDeviceProfile;
+    const levels = this.hls.levels;
+    if (profile.maxHeight) {
+      const cap = capLevelIndex(levels, profile.maxHeight);
+      if (cap >= 0) {
+        this.hls.autoLevelCapping = cap;
+      }
+    }
+    const start = startLevelIndex(levels, profile);
+    if (start >= 0) {
+      this.hls.startLevel = start;
     }
   };
 

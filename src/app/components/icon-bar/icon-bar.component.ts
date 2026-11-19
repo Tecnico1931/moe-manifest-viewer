@@ -13,7 +13,9 @@ import {
   VideoPlayers,
 } from '../../shared';
 
+import { ToastrService } from 'ngx-toastr';
 import { buildFeedbackMailto } from './feedback-mailto.logic';
+import { redactTokens, hasToken } from '../../shared/token-safety.logic';
 const { version: appVersion } = require('./../../../../package.json');
 
 @Component({
@@ -73,7 +75,7 @@ export class IconBarComponent implements OnInit {
 
   public storeViewerText = 'Save Viewer';
   public copyUrlText = 'Copy Current URL';
-  public shiftCopyUrlText = 'Copy URI Encoded URL';
+  public shiftCopyUrlText = 'Copy URI Encoded URL + token';
   public copyManifestText = 'Copy Manifest';
   public copyPermalinkText = 'Copy Permalink';
   public clearSessionText = 'Clear Session';
@@ -89,7 +91,8 @@ export class IconBarComponent implements OnInit {
     public storageService: StorageService,
     public copyService: CopyService,
     public ga: GoogleAnalyticsEventsService,
-    public appService: AppService
+    public appService: AppService,
+    private toastrService: ToastrService
   ) {}
 
   public ngOnInit() {}
@@ -260,11 +263,22 @@ export class IconBarComponent implements OnInit {
     }, 1000);
   };
 
-  public saveCurrentViewer = (): void => {
+  /** Strip Akamai tokens unless Shift is held (explicit opt-in), warning when a token is shared. */
+  private tokenSafe = (url: string, withToken: boolean): string => {
+    if (!withToken) {
+      return redactTokens(url);
+    }
+    if (hasToken(url)) {
+      this.toastrService.warning('Token included. Anyone with this link can play until it expires.', 'Copied with token');
+    }
+    return url;
+  };
+
+  public saveCurrentViewer = (event?: MouseEvent): void => {
     const previousStoreText = this.storeViewerText;
     this.submitEvent(this.GA_CLICK, 'SaveCurrentViewer', this.GA_ICON_BAR);
     this.storageService
-      .saveViewer(this.id, (this.setManifestUrl || this.currentUrl || '') + this.params, {
+      .saveViewer(this.id, this.tokenSafe((this.setManifestUrl || this.currentUrl || '') + this.params, !!(event && event.shiftKey)), {
         showVideo: this.viewerState.showVideo,
         muteVideo: this.viewerState.muteVideo,
         useNative: this.viewerState.useNative,
@@ -306,7 +320,7 @@ export class IconBarComponent implements OnInit {
     this.submitEvent(this.GA_CLICK, 'CopyText', this.GA_ICON_BAR);
     const originalText = this.copyUrlText;
     const originalShiftText = this.shiftCopyUrlText;
-    url = this.currentUrl ? this.currentUrl + this.params : '';
+    url = this.currentUrl ? this.tokenSafe(this.currentUrl + this.params, event.shiftKey) : '';
     if (event.shiftKey && url) {
       url = encodeURIComponent(url);
     }
@@ -353,9 +367,9 @@ export class IconBarComponent implements OnInit {
     }
   }
 
-  public copyPermalinkUrl = () => {
+  public copyPermalinkUrl = (event?: MouseEvent) => {
     const originalText = this.copyPermalinkText;
-    const textToCopy = this.generatePermalinkUrl();
+    const textToCopy = this.tokenSafe(this.generatePermalinkUrl(), !!(event && event.shiftKey));
     this.submitEvent(this.GA_CLICK, 'CopyPermalinkUrl', this.GA_ICON_BAR);
     this.copyService
       .copyText(textToCopy)
@@ -373,9 +387,9 @@ export class IconBarComponent implements OnInit {
       });
   };
 
-  public openDemoPage = () => {
+  public openDemoPage = (event?: MouseEvent) => {
     this.submitEvent(this.GA_CLICK, 'OpenDemoPage', this.GA_ICON_BAR);
-    window.open(this.generateMetricsUrl(), '_blank');
+    window.open(this.tokenSafe(this.generateMetricsUrl(), !!(event && event.shiftKey)), '_blank');
   };
 
   public openFeedbackPage = () => {
@@ -384,7 +398,7 @@ export class IconBarComponent implements OnInit {
   };
 
   public generateFeedbackMailto(): string {
-    return buildFeedbackMailto(this.version, this.currentUrl);
+    return buildFeedbackMailto(this.version, redactTokens(this.currentUrl || ''));
   }
 
   public generateMetricsUrl(): string {

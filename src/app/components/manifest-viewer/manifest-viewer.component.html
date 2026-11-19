@@ -35,6 +35,7 @@
                   <div class="response tab-dropdown" [class.highlight]="resChange" [class.highlightError]="resErrorChange">
                     <span>{{ res.status }} {{ res.statusText }}</span>
                   </div>
+                  <div class="tab-dropdown"><app-token-indicator [url]="currentUrl + params" [status]="res.status"></app-token-indicator></div>
                   <div *ngIf="type === 'dash'" class="tab-dropdown">
                     <div class="dashDropdown" *ngIf="bandwidths && bandwidths.length">
                       <div class="dropdownContainer">

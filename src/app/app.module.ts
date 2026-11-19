@@ -58,6 +58,7 @@ import { DownloadDataManager } from './shared/services/download-data-manager.ser
 import { DrmModalComponent } from './components/drm-modal/drm-modal.component';
 
 import { ToastrModule } from 'ngx-toastr';
+import { TokenIndicatorComponent } from './components/token-indicator/token-indicator.component';
 import { ShakaPlayerComponent } from './components/shaka-player/shaka-player.component';
 import * as Shakajs from 'shaka-player';
 import { DeviceProfileComponent } from './components/device-profile/device-profile.component';
@@ -84,6 +85,7 @@ declare global {
 @NgModule({
   declarations: [
     AppComponent,
+    TokenIndicatorComponent,
     HlsPlayerComponent,
     DashPlayerComponent,
     WrapperComponent,

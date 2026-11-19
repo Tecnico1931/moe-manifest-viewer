@@ -142,6 +142,10 @@
       <em class="material-icons" [class.iconActive]="viewerState.showStartup">timer</em>
       <span class="iconText">Show Startup Waterfall <span *ngIf="viewerState.showStartup">&#9989;</span></span>
     </div>
+    <div class="iconWrapper" (click)="toggleLive(!viewerState.showLive)" *ngIf="type === 'unknown' || type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showLive">sensors</em>
+      <span class="iconText">Show Live <span *ngIf="viewerState.showLive">&#9989;</span></span>
+    </div>
     <div class="iconWrapper" (click)="toggleLadderCheck(!viewerState.showLadderCheck)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showLadderCheck">stacked_bar_chart</em>
       <span class="iconText">Show Ladder Check <span *ngIf="viewerState.showLadderCheck">&#9989;</span></span>

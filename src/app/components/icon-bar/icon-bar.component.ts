@@ -56,6 +56,7 @@ export class IconBarComponent implements OnInit {
   @Output() public onToggleClip = new EventEmitter<boolean>();
   @Output() public onToggleBitrateAudit = new EventEmitter<boolean>();
   @Output() public onToggleStartup = new EventEmitter<boolean>();
+  @Output() public onToggleLive = new EventEmitter<boolean>();
   @Output() public onToggleLadderCheck = new EventEmitter<boolean>();
   @Output() public onToggleAudioCompare = new EventEmitter<boolean>();
   @Output() public onToggleEdgeView = new EventEmitter<boolean>();
@@ -205,6 +206,12 @@ export class IconBarComponent implements OnInit {
     this.submitEvent(this.GA_CLICK, 'ToggleStartup:' + toggled, this.GA_ICON_BAR);
   };
 
+  public toggleLive = (toggled: boolean) => {
+    this.onToggleLive.emit(toggled);
+    this.viewerState.updateActiveTab(TabObjectName.LIVE, toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleLive:' + toggled, this.GA_ICON_BAR);
+  };
+
   public toggleLadderCheck = (toggled: boolean) => {
     this.onToggleLadderCheck.emit(toggled);
     this.viewerState.updateActiveTab(TabObjectName.LADDERCHECK, toggled);
@@ -287,6 +294,7 @@ export class IconBarComponent implements OnInit {
         showFrameOverlay: this.viewerState.showFrameOverlay,
         showBitrateAudit: this.viewerState.showBitrateAudit,
         showStartup: this.viewerState.showStartup,
+        showLive: this.viewerState.showLive,
         showLadderCheck: this.viewerState.showLadderCheck,
         showAudioCompare: this.viewerState.showAudioCompare,
         showEdgeView: this.viewerState.showEdgeView,

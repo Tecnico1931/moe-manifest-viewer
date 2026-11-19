@@ -16,6 +16,7 @@ export enum TabObjectName {
   WHISPER = 'AI Subtitles',
   BITRATEAUDIT = 'Declared vs delivered',
   STARTUP = 'Startup',
+  LIVE = 'Live',
   LADDERCHECK = 'Ladder check',
   AUDIOCOMPARE = 'Audio tracks',
   EDGEVIEW = 'Akamai edge',

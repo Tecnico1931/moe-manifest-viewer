@@ -154,6 +154,7 @@
         (onToggleClip)="toggleClip($event)"
         (onToggleBitrateAudit)="toggleBitrateAudit($event)"
         (onToggleStartup)="toggleStartup($event)"
+        (onToggleLive)="toggleLive($event)"
         (onToggleLadderCheck)="toggleLadderCheck($event)"
         (onToggleAudioCompare)="toggleAudioCompare($event)"
         (onToggleEdgeView)="toggleEdgeView($event)"
@@ -245,6 +246,7 @@
         viewerState.showSubtitles ||
         viewerState.showBitrateAudit ||
         viewerState.showStartup ||
+        viewerState.showLive ||
         viewerState.showLadderCheck ||
         viewerState.showAudioCompare ||
         viewerState.showEdgeView ||
@@ -265,6 +267,7 @@
           viewerState.showSubtitles ||
           viewerState.showBitrateAudit ||
           viewerState.showStartup ||
+          viewerState.showLive ||
           viewerState.showLadderCheck ||
           viewerState.showAudioCompare ||
           viewerState.showEdgeView ||

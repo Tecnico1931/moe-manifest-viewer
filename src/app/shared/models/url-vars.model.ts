@@ -18,6 +18,7 @@ export enum VarNames {
   SHOWCLIP = 'showClip',
   SHOWBITRATEAUDIT = 'showBitrateAudit',
   SHOWSTARTUP = 'showStartup',
+  SHOWLIVE = 'showLive',
   SHOWLADDERCHECK = 'showLadderCheck',
   SHOWAUDIOCOMPARE = 'showAudioCompare',
   SHOWEDGEVIEW = 'showEdgeView',
@@ -49,6 +50,7 @@ export class UrlVars {
   public displayClip: boolean;
   public displayBitrateAudit: boolean;
   public displayStartup: boolean;
+  public displayLive: boolean;
   public displayLadderCheck: boolean;
   public displayAudioCompare: boolean;
   public displayEdgeView: boolean;
@@ -79,6 +81,7 @@ export class UrlVars {
     this.displayClip = this.checkForProperty(obj, VarNames.SHOWCLIP);
     this.displayBitrateAudit = this.checkForProperty(obj, VarNames.SHOWBITRATEAUDIT);
     this.displayStartup = this.checkForProperty(obj, VarNames.SHOWSTARTUP);
+    this.displayLive = this.checkForProperty(obj, VarNames.SHOWLIVE);
     this.displayLadderCheck = this.checkForProperty(obj, VarNames.SHOWLADDERCHECK);
     this.displayAudioCompare = this.checkForProperty(obj, VarNames.SHOWAUDIOCOMPARE);
     this.displayEdgeView = this.checkForProperty(obj, VarNames.SHOWEDGEVIEW);

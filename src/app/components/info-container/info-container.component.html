@@ -13,6 +13,7 @@
     viewerState.showWhisperSubtitles ||
     viewerState.showBitrateAudit ||
     viewerState.showStartup ||
+    viewerState.showLive ||
     viewerState.showLadderCheck ||
     viewerState.showAudioCompare ||
     viewerState.showEdgeView ||
@@ -82,6 +83,10 @@
 
   <app-tab *ngIf="viewerState.showStartup" tabTitle="{{ tabName.STARTUP }}">
     <app-startup-waterfall [viewerState]="viewerState"></app-startup-waterfall>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showLive" tabTitle="{{ tabName.LIVE }}">
+    <app-live-mode [viewerState]="viewerState"></app-live-mode>
   </app-tab>
 
   <app-tab *ngIf="viewerState.showLadderCheck" tabTitle="{{ tabName.LADDERCHECK }}">

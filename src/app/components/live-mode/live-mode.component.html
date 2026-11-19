@@ -1,0 +1,75 @@
+<div class="live">
+  <p *ngIf="!hasPlaylist" class="hint">Waiting for a media playlist.</p>
+  <p *ngIf="isVod" class="hint">VOD stream — live metrics not applicable (the playlist has #EXT-X-ENDLIST).</p>
+
+  <ng-container *ngIf="hasPlaylist && !isVod">
+    <ul class="flags" *ngIf="flags.length">
+      <li *ngFor="let flag of flags" class="flag">{{ flag.message }}</li>
+    </ul>
+
+    <div class="kpis">
+      <div class="kpi" title="First manifest request to the video element's first 'playing' event">
+        <span class="kpi-label">Join time</span>
+        <span class="kpi-value">{{ msAsSec(joinMs) }}</span>
+      </div>
+      <div class="kpi" [class.bad]="flagIds.indexOf('latency-high') >= 0" title="Wall clock minus PROGRAM-DATE-TIME at the playhead">
+        <span class="kpi-label">Live edge latency</span>
+        <span class="kpi-value">{{ sec(latencySec) }}</span>
+        <span class="kpi-sub" *ngIf="latencySec === undefined">needs PROGRAM-DATE-TIME and playback</span>
+      </div>
+      <div class="kpi" title="Observed reload interval (average of the last 5) against EXT-X-TARGETDURATION">
+        <span class="kpi-label">Reload interval</span>
+        <span class="kpi-value">{{ msAsSec(analysis.avgIntervalMs) }}</span>
+        <span class="kpi-sub">target {{ sec(analysis.targetDurationSec, 0) }}</span>
+      </div>
+      <div class="kpi" title="Newest segment's PDT + duration, compared to the wall clock when the playlist arrived">
+        <span class="kpi-label">Segment availability lag</span>
+        <span class="kpi-value">{{ sec(analysis.lastAvailabilityLagSec) }}</span>
+      </div>
+      <div class="kpi" title="Change of availability lag per minute. Non-zero for long means PDT and wall clock drift apart.">
+        <span class="kpi-label">PDT drift</span>
+        <span class="kpi-value">{{ sec(analysis.driftSecPerMin, 2) }}/min</span>
+      </div>
+      <div class="kpi" title="Reloads that brought no new segment">
+        <span class="kpi-label">Stale reloads</span>
+        <span class="kpi-value">{{ analysis.staleTotal }}</span>
+        <span class="kpi-sub">{{ analysis.staleInARow }} in a row</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Seq advance / reload</span>
+        <span class="kpi-value">{{ analysis.avgSeqAdvance === undefined ? '—' : analysis.avgSeqAdvance.toFixed(2) }}</span>
+      </div>
+    </div>
+
+    <div class="spark">
+      <div class="spark-title">Latency over time <span *ngIf="samples.length">(max {{ maxLatency.toFixed(1) }} s)</span></div>
+      <svg *ngIf="sparkline" [attr.width]="sparkW" [attr.height]="sparkH" [attr.viewBox]="'0 0 ' + sparkW + ' ' + sparkH">
+        <polyline [attr.points]="sparkline" fill="none" stroke="#1c7ed6" stroke-width="1.5" />
+      </svg>
+      <span *ngIf="!sparkline" class="hint">Collecting samples while playing.</span>
+    </div>
+
+    <table class="reloads">
+      <thead>
+        <tr>
+          <th>Loaded at</th>
+          <th>Interval</th>
+          <th>Head SN</th>
+          <th>Seq +</th>
+          <th>New segs</th>
+          <th>Head age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of tableRows" [class.stale]="row.stale">
+          <td>{{ msAsSec(row.t - (analysis.rows[0]?.t || 0)) }}</td>
+          <td>{{ msAsSec(row.intervalMs) }}</td>
+          <td>{{ row.headSn }}</td>
+          <td>{{ row.seqAdvance === undefined ? '—' : row.seqAdvance }}</td>
+          <td>{{ row.newSegments === undefined ? '—' : row.newSegments }}{{ row.stale ? ' (stale)' : '' }}</td>
+          <td>{{ rowAge(row) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</div>

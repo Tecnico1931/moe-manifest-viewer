@@ -68,6 +68,7 @@ export class ViewerState {
   public _showFrameOverlay: boolean;
   public _showBitrateAudit: boolean;
   public _showStartup: boolean;
+  public _showLive: boolean;
   public _showLadderCheck: boolean;
   public _showAudioCompare: boolean;
   public _showEdgeView: boolean;
@@ -428,6 +429,9 @@ export class ViewerState {
   }
   public get showStartup(): boolean {
     return this._showStartup;
+  }
+  public get showLive(): boolean {
+    return this._showLive;
   }
   public get showLadderCheck(): boolean {
     return this._showLadderCheck;

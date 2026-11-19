@@ -186,6 +186,23 @@
       <em class="material-icons" [class.iconActive]="viewerState.xhrCredentials">&#xE897;</em>
       <span class="iconText">XHR Credentials <span *ngIf="viewerState.xhrCredentials">&#9989;</span></span>
     </div>
+    <div
+      class="iconWrapper"
+      *ngIf="getGrafanaLinks().length"
+      [title]="grafanaTooltip"
+      (click)="setGrafanaShow(!showGrafanaOptions)"
+      (clickOutside)="setGrafanaShow(false)"
+    >
+      <div class="scrollingOptionsContainer grafanaOptionsContainer" *ngIf="showGrafanaOptions">
+        <div class="scrollingOptions">
+          <div class="scrollOption" *ngFor="let link of getGrafanaLinks()" (click)="openGrafanaLink(link, $event)">{{ link.label }}</div>
+        </div>
+        <i class="material-icons">insights</i>
+        <span class="iconText">Open in Grafana</span>
+      </div>
+      <em class="material-icons">insights</em>
+      <span class="iconText">Open in Grafana</span>
+    </div>
     <div class="iconWrapper" (click)="clearViewer()">
       <em class="material-icons" [class.iconActive]="clearSessionText === 'Clear success ✅'">&#xE033;</em>
       <span class="iconText">{{ clearSessionText }}</span>

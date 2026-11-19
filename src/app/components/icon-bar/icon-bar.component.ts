@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Optional } from '@angular/core';
 import { TabObjectName } from 'src/app/shared/models/tabs.model';
 import {
   AppService,
@@ -14,6 +14,8 @@ import {
 } from '../../shared';
 
 import { buildFeedbackMailto } from './feedback-mailto.logic';
+import { RequestLogService } from '../../shared/services/request-log.service';
+import { SessionReportService } from '../export-report/session-report.service';
 const { version: appVersion } = require('./../../../../package.json');
 
 @Component({
@@ -89,10 +91,31 @@ export class IconBarComponent implements OnInit {
     public storageService: StorageService,
     public copyService: CopyService,
     public ga: GoogleAnalyticsEventsService,
-    public appService: AppService
+    public appService: AppService,
+    private reportService: SessionReportService,
+    @Optional() private requestLog: RequestLogService
   ) {}
 
   public ngOnInit() {}
+
+  public exportReportText = 'Export Report';
+
+  /** One click: downloads the redacted session report (HTML, or JSON with shift) for a ticket. */
+  public exportReport = (format: 'html' | 'json' = 'html') => {
+    const result = this.reportService.export(
+      {
+        viewerState: this.viewerState,
+        requestLog: this.requestLog,
+        manifestUrl: this.currentUrl || this.setManifestUrl,
+        params: this.params,
+        manifest: this.manifest,
+      },
+      format
+    );
+    this.exportReportText = result === 'downloaded' ? 'Report saved' : result === 'copied' ? 'Too big: JSON copied' : 'Export failed';
+    setTimeout(() => (this.exportReportText = 'Export Report'), 2500);
+    this.submitEvent(this.GA_CLICK, 'ExportReport:' + format, this.GA_ICON_BAR);
+  };
 
   public setScrolling = (scrollType: ScrollTypes) => {
     this.onScrollingSet.emit(scrollType);

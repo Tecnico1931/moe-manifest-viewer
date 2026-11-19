@@ -487,11 +487,12 @@ export class IconBarComponent implements OnInit {
     this.showGrafanaOptions = show;
   };
 
-  public openGrafanaLink = (link: GrafanaLink, event: Event) => {
+  /** The options are real links (target=_blank), so the browser opens them; this only logs and closes the menu. */
+  public onGrafanaLinkClick = (link: GrafanaLink, event: Event) => {
     event.stopPropagation();
     this.submitEvent(this.GA_CLICK, 'OpenGrafana:' + link.label, this.GA_ICON_BAR);
-    window.open(link.url, '_blank', 'noopener');
-    this.showGrafanaOptions = false;
+    // Close after the browser has followed the link; removing the anchor mid-click can cancel it.
+    setTimeout(() => (this.showGrafanaOptions = false));
   };
 
   public openFeedbackPage = () => {

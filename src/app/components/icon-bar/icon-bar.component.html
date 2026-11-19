@@ -215,7 +215,15 @@
     >
       <div class="scrollingOptionsContainer grafanaOptionsContainer" *ngIf="showGrafanaOptions">
         <div class="scrollingOptions">
-          <div class="scrollOption" *ngFor="let link of getGrafanaLinks()" (click)="openGrafanaLink(link, $event)">{{ link.label }}</div>
+          <a
+            class="scrollOption grafanaLink"
+            *ngFor="let link of getGrafanaLinks()"
+            [href]="link.url"
+            target="_blank"
+            rel="noopener"
+            (click)="onGrafanaLinkClick(link, $event)"
+            >{{ link.label }}</a
+          >
         </div>
         <i class="material-icons">insights</i>
         <span class="iconText">Open in Grafana</span>

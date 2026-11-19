@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { PlaylistSummary } from '../../components/live-mode/live-mode.logic';
 
 export type RequestKind =
   | 'master'
@@ -38,6 +39,8 @@ export interface RequestRecord {
   error?: string;
   /** Bytes on the wire (PerformanceResourceTiming.transferSize), when the browser exposes it. */
   transferSize?: number;
+  /** Digest of a media playlist response (no URLs), used by the Live panel. */
+  playlist?: PlaylistSummary;
 }
 
 /** Declared ladder data for a rendition, as listed in the master playlist. */

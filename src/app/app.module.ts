@@ -41,6 +41,7 @@ import { MetricsDropdownComponent } from './components/metrics-dropdown/metrics-
 import { StallDetectorComponent } from './components/stall-detector/stall-detector.component';
 import { BitrateAuditComponent } from './components/bitrate-audit/bitrate-audit.component';
 import { StartupWaterfallComponent } from './components/startup-waterfall/startup-waterfall.component';
+import { LiveModeComponent } from './components/live-mode/live-mode.component';
 import { LadderCheckComponent } from './components/ladder-check/ladder-check.component';
 import { AudioCompareComponent } from './components/audio-compare/audio-compare.component';
 import { EdgeViewComponent } from './components/edge-view/edge-view.component';
@@ -102,6 +103,7 @@ declare global {
     StallDetectorComponent,
     BitrateAuditComponent,
     StartupWaterfallComponent,
+    LiveModeComponent,
     LadderCheckComponent,
     AudioCompareComponent,
     EdgeViewComponent,

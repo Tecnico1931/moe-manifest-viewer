@@ -202,6 +202,11 @@
         <input type="checkbox" [class.active]="displayStartup" />
         <span class="checkmark"></span>
       </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleLiveService', !displayLive)"
+        >Show Live
+        <input type="checkbox" [class.active]="displayLive" />
+        <span class="checkmark"></span>
+      </label>
       <label class="checkboxContainer" (mouseup)="setOnAppService('toggleLadderCheckService', !displayLadderCheck)"
         >Show Ladder Check
         <input type="checkbox" [class.active]="displayLadderCheck" />

@@ -29,6 +29,7 @@ export interface ViewerOptionTypes {
   showFrameOverlay: boolean;
   showBitrateAudit: boolean;
   showStartup: boolean;
+  showLive: boolean;
   showLadderCheck: boolean;
   showAudioCompare: boolean;
   showEdgeView: boolean;

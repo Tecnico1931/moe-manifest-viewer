@@ -54,6 +54,7 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public displayWhisperSubtitles: boolean;
   public displayBitrateAudit: boolean;
   public displayStartup: boolean;
+  public displayLive: boolean;
   public displayLadderCheck: boolean;
   public displayAudioCompare: boolean;
   public displayEdgeView: boolean;
@@ -174,6 +175,10 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
       this.displayStartup = val;
     });
 
+    this.appService.displayLive$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayLive = val;
+    });
+
     this.appService.displayLadderCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.displayLadderCheck = val;
     });
@@ -261,6 +266,11 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
         case 'displayStartup':
           if (vars[urlVar]) {
             this.appService.toggleStartupService(true);
+          }
+          break;
+        case 'displayLive':
+          if (vars[urlVar]) {
+            this.appService.toggleLiveService(true);
           }
           break;
         case 'displayLadderCheck':
@@ -531,6 +541,9 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
           break;
         case 'showStartup':
           this.appService.toggleStartupService(viewer.options[option]);
+          break;
+        case 'showLive':
+          this.appService.toggleLiveService(viewer.options[option]);
           break;
         case 'showLadderCheck':
           this.appService.toggleLadderCheckService(viewer.options[option]);

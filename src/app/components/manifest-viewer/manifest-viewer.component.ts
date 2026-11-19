@@ -241,6 +241,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.appService.displayWhisperSubtitles$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleWhisperSubtitles);
     this.appService.displayBitrateAudit$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleBitrateAudit);
     this.appService.displayStartup$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleStartup);
+    this.appService.displayLive$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleLive);
     this.appService.displayLadderCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleLadderCheck);
     this.appService.displayAudioCompare$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleAudioCompare);
     this.appService.displayEdgeView$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleEdgeView);
@@ -607,6 +608,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showSubtitles: false,
         showBitrateAudit: false,
         showStartup: false,
+        showLive: false,
         showLadderCheck: false,
         showAudioCompare: false,
         showEdgeView: false,
@@ -1410,6 +1412,10 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showStartup', show);
   };
 
+  public toggleLive = (show: boolean) => {
+    this.setOption('showLive', show);
+  };
+
   public toggleLadderCheck = (show: boolean) => {
     this.setOption('showLadderCheck', show);
   };
@@ -1530,6 +1536,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           showWhisperSubtitles: false,
           showBitrateAudit: false,
           showStartup: false,
+          showLive: false,
           showLadderCheck: false,
           showAudioCompare: false,
           showEdgeView: false,
@@ -1563,6 +1570,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showSubtitles: false,
         showBitrateAudit: false,
         showStartup: false,
+        showLive: false,
         showLadderCheck: false,
         showAudioCompare: false,
         showEdgeView: false,
@@ -1582,6 +1590,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showPlayerLogs', false);
     this.setOption('showBitrateAudit', false);
     this.setOption('showStartup', false);
+    this.setOption('showLive', false);
     this.setOption('showLadderCheck', false);
     this.setOption('showAudioCompare', false);
     this.setOption('showEdgeView', false);

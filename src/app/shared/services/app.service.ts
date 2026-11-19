@@ -32,6 +32,7 @@ export class AppService {
   public displayWhisperSubtitles$ = new Subject<boolean>();
   public displayBitrateAudit$ = new Subject<boolean>();
   public displayStartup$ = new Subject<boolean>();
+  public displayLive$ = new Subject<boolean>();
   public displayLadderCheck$ = new Subject<boolean>();
   public displayAudioCompare$ = new Subject<boolean>();
   public displayEdgeView$ = new Subject<boolean>();
@@ -129,6 +130,10 @@ export class AppService {
 
   public toggleStartupService(val: boolean): void {
     this.displayStartup$.next(val);
+  }
+
+  public toggleLiveService(val: boolean): void {
+    this.displayLive$.next(val);
   }
 
   public toggleLadderCheckService(val: boolean): void {

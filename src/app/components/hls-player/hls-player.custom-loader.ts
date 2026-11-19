@@ -1,5 +1,6 @@
 import * as HlsTypes from 'hls.js';
 import { BeginInit, RequestLogService, RequestRecord, parseResponseHeaders } from '../../shared/services/request-log.service';
+import { summarizePlaylist } from '../live-mode/live-mode.logic';
 
 const AGE_HEADER_LINE_REGEX = /^age:\s*[\d.]+\s*$/m;
 
@@ -211,7 +212,7 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
             len = data.length;
           }
           stats.loaded = stats.total = len;
-          this.logUpdate({ tLoaded: stats.loading.end, bytes: len, status, error: undefined });
+          this.logUpdate({ tLoaded: stats.loading.end, bytes: len, status, error: undefined, ...this.playlistDigest(data) });
           if (!isArrayBuffer && (context as any).type === 'manifest') {
             this.requestLog?.setMasterText(data);
           }
@@ -290,6 +291,15 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
       const { url } = this.context;
       this.requestId = this.requestLog.begin({ url, tRequest: this.stats.loading.start, ...classifyContext(this.context) });
     }
+  }
+
+  /** Variant playlists only: a small digest for the Live panel. Never throws. */
+  private playlistDigest(data: unknown): Partial<RequestRecord> {
+    if (!this.requestLog || typeof data !== 'string' || (this.context as any).type !== 'level') {
+      return {};
+    }
+    const playlist = summarizePlaylist(data);
+    return playlist ? { playlist } : {};
   }
 
   private logUpdate(patch: Partial<RequestRecord>): void {

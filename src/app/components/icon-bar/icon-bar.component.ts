@@ -259,6 +259,8 @@ export class IconBarComponent implements OnInit {
     this.onToggleCaptionCheck.emit(toggled);
     this.viewerState.updateActiveTab(TabObjectName.CAPTIONCHECK, toggled);
     this.submitEvent(this.GA_CLICK, 'ToggleCaptionCheck:' + toggled, this.GA_ICON_BAR);
+  };
+
   public toggleCompare = (toggled: boolean) => {
     this.onToggleCompare.emit(toggled);
     this.viewerState.updateActiveTab(TabObjectName.COMPARE, toggled);

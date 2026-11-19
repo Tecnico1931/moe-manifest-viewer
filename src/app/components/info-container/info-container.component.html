@@ -101,6 +101,8 @@
 
   <app-tab *ngIf="viewerState.showCaptionCheck" tabTitle="{{ tabName.CAPTIONCHECK }}">
     <app-caption-check [viewerState]="viewerState"></app-caption-check>
+  </app-tab>
+
   <app-tab *ngIf="viewerState.showCompare" tabTitle="{{ tabName.COMPARE }}">
     <app-compare [viewerState]="viewerState"></app-compare>
   </app-tab>

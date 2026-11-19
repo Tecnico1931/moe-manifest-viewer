@@ -443,6 +443,7 @@ export class ViewerState {
   }
   public get showCaptionCheck(): boolean {
     return this._showCaptionCheck;
+  }
   public get showCompare(): boolean {
     return this._showCompare;
   }

@@ -191,6 +191,8 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
 
     this.appService.displayCaptionCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.displayCaptionCheck = val;
+    });
+
     this.appService.displayCompare$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.displayCompare = val;
     });
@@ -294,6 +296,8 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
         case 'displayCaptionCheck':
           if (vars[urlVar]) {
             this.appService.toggleCaptionCheckService(true);
+          }
+          break;
         case 'displayCompare':
           if (vars[urlVar]) {
             this.appService.toggleCompareService(true);
@@ -569,6 +573,7 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
           break;
         case 'showCaptionCheck':
           this.appService.toggleCaptionCheckService(viewer.options[option]);
+          break;
         case 'showCompare':
           this.appService.toggleCompareService(viewer.options[option]);
           break;

@@ -1430,6 +1430,8 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
 
   public toggleCaptionCheck = (show: boolean) => {
     this.setOption('showCaptionCheck', show);
+  };
+
   public toggleCompare = (show: boolean) => {
     this.setOption('showCompare', show);
   };

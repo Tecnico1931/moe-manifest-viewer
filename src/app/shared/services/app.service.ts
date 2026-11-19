@@ -148,6 +148,8 @@ export class AppService {
 
   public toggleCaptionCheckService(val: boolean): void {
     this.displayCaptionCheck$.next(val);
+  }
+
   public toggleCompareService(val: boolean): void {
     this.displayCompare$.next(val);
   }

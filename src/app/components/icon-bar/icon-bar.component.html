@@ -150,6 +150,10 @@
       <em class="material-icons" [class.iconActive]="viewerState.showAudioCompare">graphic_eq</em>
       <span class="iconText">Show Audio Tracks <span *ngIf="viewerState.showAudioCompare">&#9989;</span></span>
     </div>
+    <div class="iconWrapper" (click)="toggleCompare(!viewerState.showCompare)" *ngIf="type === 'unknown' || type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showCompare">compare</em>
+      <span class="iconText">Show A/B Compare <span *ngIf="viewerState.showCompare">&#9989;</span></span>
+    </div>
     <div class="iconWrapper" (click)="toggleEdgeView(!viewerState.showEdgeView)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showEdgeView">dns</em>
       <span class="iconText">Show Akamai Edge <span *ngIf="viewerState.showEdgeView">&#9989;</span></span>

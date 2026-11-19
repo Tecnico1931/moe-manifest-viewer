@@ -70,6 +70,7 @@ export class ViewerState {
   public _showStartup: boolean;
   public _showLadderCheck: boolean;
   public _showAudioCompare: boolean;
+  public _showCompare: boolean;
   public _showEdgeView: boolean;
   public _showPolling: boolean;
   public _showExplode = true;
@@ -434,6 +435,9 @@ export class ViewerState {
   }
   public get showAudioCompare(): boolean {
     return this._showAudioCompare;
+  }
+  public get showCompare(): boolean {
+    return this._showCompare;
   }
   public get showEdgeView(): boolean {
     return this._showEdgeView;

@@ -20,6 +20,7 @@ export enum VarNames {
   SHOWSTARTUP = 'showStartup',
   SHOWLADDERCHECK = 'showLadderCheck',
   SHOWAUDIOCOMPARE = 'showAudioCompare',
+  SHOWCOMPARE = 'showCompare',
   SHOWEDGEVIEW = 'showEdgeView',
   SCROLLING = 'scrolling',
   XHRCREDENTIALS = 'xhrCredentials',
@@ -51,6 +52,7 @@ export class UrlVars {
   public displayStartup: boolean;
   public displayLadderCheck: boolean;
   public displayAudioCompare: boolean;
+  public displayCompare: boolean;
   public displayEdgeView: boolean;
   public scrolling: ScrollTypes;
   public credentials: boolean;
@@ -81,6 +83,7 @@ export class UrlVars {
     this.displayStartup = this.checkForProperty(obj, VarNames.SHOWSTARTUP);
     this.displayLadderCheck = this.checkForProperty(obj, VarNames.SHOWLADDERCHECK);
     this.displayAudioCompare = this.checkForProperty(obj, VarNames.SHOWAUDIOCOMPARE);
+    this.displayCompare = this.checkForProperty(obj, VarNames.SHOWCOMPARE);
     this.displayEdgeView = this.checkForProperty(obj, VarNames.SHOWEDGEVIEW);
     this.scrolling = this.checkForProperty(obj, VarNames.SCROLLING, false) ? obj[VarNames.SCROLLING] : ScrollTypes.AUTO_SCROLL;
     this.credentials = this.checkForProperty(obj, VarNames.XHRCREDENTIALS);

@@ -243,6 +243,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.appService.displayStartup$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleStartup);
     this.appService.displayLadderCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleLadderCheck);
     this.appService.displayAudioCompare$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleAudioCompare);
+    this.appService.displayCompare$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleCompare);
     this.appService.displayEdgeView$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.toggleEdgeView);
     this.appService.pollInterval$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.onIntervalChange);
     this.appService.showPolling$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(this.setPollingActive);
@@ -609,6 +610,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showStartup: false,
         showLadderCheck: false,
         showAudioCompare: false,
+        showCompare: false,
         showEdgeView: false,
       },
     });
@@ -1418,6 +1420,10 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showAudioCompare', show);
   };
 
+  public toggleCompare = (show: boolean) => {
+    this.setOption('showCompare', show);
+  };
+
   public toggleEdgeView = (show: boolean) => {
     this.setOption('showEdgeView', show);
   };
@@ -1532,6 +1538,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
           showStartup: false,
           showLadderCheck: false,
           showAudioCompare: false,
+          showCompare: false,
           showEdgeView: false,
         },
       })
@@ -1565,6 +1572,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
         showStartup: false,
         showLadderCheck: false,
         showAudioCompare: false,
+        showCompare: false,
         showEdgeView: false,
       },
     });
@@ -1584,6 +1592,7 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
     this.setOption('showStartup', false);
     this.setOption('showLadderCheck', false);
     this.setOption('showAudioCompare', false);
+    this.setOption('showCompare', false);
     this.setOption('showEdgeView', false);
     this.appService.setViewerName(this.id, DefaultViewerName);
     this.appService.setViewerId(this.id, '_generateNewId_');

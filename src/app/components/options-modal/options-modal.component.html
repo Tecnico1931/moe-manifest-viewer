@@ -212,6 +212,11 @@
         <input type="checkbox" [class.active]="displayAudioCompare" />
         <span class="checkmark"></span>
       </label>
+      <label class="checkboxContainer" (mouseup)="setOnAppService('toggleCompareService', !displayCompare)"
+        >Show A/B Compare
+        <input type="checkbox" [class.active]="displayCompare" />
+        <span class="checkmark"></span>
+      </label>
       <label class="checkboxContainer" (mouseup)="setOnAppService('toggleEdgeViewService', !displayEdgeView)"
         >Show Akamai Edge
         <input type="checkbox" [class.active]="displayEdgeView" />

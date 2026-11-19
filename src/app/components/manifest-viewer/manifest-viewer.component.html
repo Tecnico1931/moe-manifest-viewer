@@ -156,6 +156,7 @@
         (onToggleStartup)="toggleStartup($event)"
         (onToggleLadderCheck)="toggleLadderCheck($event)"
         (onToggleAudioCompare)="toggleAudioCompare($event)"
+        (onToggleCompare)="toggleCompare($event)"
         (onToggleEdgeView)="toggleEdgeView($event)"
         (onToggleFrameOverlay)="toggleFrameOverlay($event)"
         (onToggleUseGlobalToken)="onUseGlobalTokenChange($event)"
@@ -247,6 +248,7 @@
         viewerState.showStartup ||
         viewerState.showLadderCheck ||
         viewerState.showAudioCompare ||
+        viewerState.showCompare ||
         viewerState.showEdgeView ||
         viewerState.showFrameOverlay
       "
@@ -267,6 +269,7 @@
           viewerState.showStartup ||
           viewerState.showLadderCheck ||
           viewerState.showAudioCompare ||
+          viewerState.showCompare ||
           viewerState.showEdgeView ||
           viewerState.showFrameOverlay
         "

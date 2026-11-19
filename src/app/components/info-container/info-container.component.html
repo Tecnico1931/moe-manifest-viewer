@@ -15,6 +15,7 @@
     viewerState.showStartup ||
     viewerState.showLadderCheck ||
     viewerState.showAudioCompare ||
+    viewerState.showCompare ||
     viewerState.showEdgeView ||
     viewerState.showVideo ||
     viewerState.showScteDisplay ||
@@ -90,6 +91,10 @@
 
   <app-tab *ngIf="viewerState.showAudioCompare" tabTitle="{{ tabName.AUDIOCOMPARE }}">
     <app-audio-compare [viewerState]="viewerState"></app-audio-compare>
+  </app-tab>
+
+  <app-tab *ngIf="viewerState.showCompare" tabTitle="{{ tabName.COMPARE }}">
+    <app-compare [viewerState]="viewerState"></app-compare>
   </app-tab>
 
   <app-tab *ngIf="viewerState.showEdgeView" tabTitle="{{ tabName.EDGEVIEW }}">

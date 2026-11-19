@@ -31,6 +31,7 @@ export interface ViewerOptionTypes {
   showStartup: boolean;
   showLadderCheck: boolean;
   showAudioCompare: boolean;
+  showCompare: boolean;
   showEdgeView: boolean;
   showSubtitles: boolean;
   xhrCredentials: boolean;

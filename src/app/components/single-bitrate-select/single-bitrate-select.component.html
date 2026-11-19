@@ -1,0 +1,8 @@
+<select
+  class="single-bitrate-select"
+  title="Peloton single-bitrate EdgeWorker: adds ?rendition= to the master manifest and reloads. The edge then serves one video variant (nearest height)."
+  (change)="select($any($event.target).value)"
+>
+  <option *ngFor="let o of options" [value]="o.key" [selected]="o.key === current">{{ o.label }}</option>
+  <option *ngIf="isCustom" [value]="current" selected>Single: {{ current }} (edge uses 720p)</option>
+</select>

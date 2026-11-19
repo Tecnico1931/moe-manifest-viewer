@@ -62,6 +62,7 @@ import { ShakaPlayerComponent } from './components/shaka-player/shaka-player.com
 import * as Shakajs from 'shaka-player';
 import { DeviceProfileComponent } from './components/device-profile/device-profile.component';
 import { AudioTrackSelectComponent } from './components/audio-track-select/audio-track-select.component';
+import { SingleBitrateSelectComponent } from './components/single-bitrate-select/single-bitrate-select.component';
 import { PlayerDropdownComponent } from './components/player-dropdown/player-dropdown.component';
 import { PipesModule } from './shared/pipes/pipes.module';
 import { ScteDisplayComponent } from './components/scte-display/scte-display.component';
@@ -117,6 +118,7 @@ declare global {
     PlayerDropdownComponent,
     DeviceProfileComponent,
     AudioTrackSelectComponent,
+    SingleBitrateSelectComponent,
     ScteDisplayComponent,
     PlayerConfigComponent,
     HlsIssuesComponent,

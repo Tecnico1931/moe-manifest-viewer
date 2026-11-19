@@ -74,6 +74,9 @@
                     <app-device-profile mode="select" [viewerId]="viewerState.id" [selectedPlayer]="selectedPlayer"></app-device-profile>
                   </div>
                   <div *ngIf="type === 'hls'" class="tab-dropdown">
+                    <app-single-bitrate-select [current]="singleBitrateKey" (renditionChange)="setSingleBitrate($event)"></app-single-bitrate-select>
+                  </div>
+                  <div *ngIf="type === 'hls'" class="tab-dropdown">
                     <app-audio-track-select [viewerState]="viewerState"></app-audio-track-select>
                   </div>
                   <div class="tab-dropdown">

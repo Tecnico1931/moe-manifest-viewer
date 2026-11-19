@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { readRendition, withRendition } from '../single-bitrate-select/single-bitrate.logic';
 import {
   DataService,
   ParserService,
@@ -612,6 +613,18 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  /** Current single-bitrate EdgeWorker key from the sticky query params ('' = full ladder). */
+  public get singleBitrateKey(): string {
+    return readRendition(this.params || '');
+  }
+
+  /** Set or clear ?rendition= on the master manifest and reload it (the cached master would hide the change). */
+  public setSingleBitrate = (key: string): void => {
+    this.params = withRendition('x' + (this.params || ''), key).slice(1);
+    this.cachedMasterManifest = undefined as any;
+    this.viewerState.updateUrl(this.setManifestUrl || this.currentUrl, true);
+  };
 
   public combineParams(params: string[]): string {
     const allParams: string[] = [];

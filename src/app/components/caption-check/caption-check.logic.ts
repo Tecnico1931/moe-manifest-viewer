@@ -319,6 +319,7 @@ export const formatSec = (s: number | undefined): string => {
   if (s === undefined || !isFinite(s)) {
     return '—';
   }
-  const m = Math.floor(s / 60);
-  return `${m}:${(s - m * 60).toFixed(1).padStart(4, '0')}`;
+  const tenths = Math.round(s * 10);
+  const m = Math.floor(tenths / 600);
+  return `${m}:${((tenths - m * 600) / 10).toFixed(1).padStart(4, '0')}`;
 };

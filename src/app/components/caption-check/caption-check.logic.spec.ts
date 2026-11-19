@@ -93,3 +93,13 @@ assert.strictEqual(cueIssues(analyseCues([]), { present: 0, total: 0, offsetsSec
 assert.ok(!parseVtt('<xml/>').isWebVtt);
 assert.strictEqual(formatSec(65.04), '1:05.0');
 console.log('caption-check.logic.spec OK');
+
+// formatSec rounds before splitting minutes/seconds (239.98 s is 4:00.0, not 3:60.0)
+{
+  const { formatSec: fs } = require('./caption-check.logic');
+  const a = require('assert');
+  a.strictEqual(fs(239.98), '4:00.0');
+  a.strictEqual(fs(59.96), '1:00.0');
+  a.strictEqual(fs(61.24), '1:01.2');
+  console.log('formatSec rounding: ok');
+}

@@ -10,7 +10,13 @@ import { VideoPlayers, VideoSourceType } from 'src/app/shared';
 export class PlayerDropdownComponent implements OnInit {
   public VideoPlayers = VideoPlayers;
   @Input() public selectedPlayer: VideoPlayers;
-  @Input() public allplayers = [VideoPlayers.HLS_PLAYER, VideoPlayers.DASH_PLAYER, VideoPlayers.SHAKA_PLAYER, VideoPlayers.NONE];
+  @Input() public allplayers = [
+    VideoPlayers.HLS_PLAYER,
+    VideoPlayers.DASH_PLAYER,
+    VideoPlayers.SHAKA_PLAYER,
+    VideoPlayers.VIDEOJS_PLAYER,
+    VideoPlayers.NONE,
+  ];
   @Input() public streamType: VideoSourceType;
 
   @Output()
@@ -31,7 +37,9 @@ export class PlayerDropdownComponent implements OnInit {
     this.closed = !val;
   };
 
-  public canPlayType = (player: VideoPlayers) => this.streamType === player || player === VideoPlayers.SHAKA_PLAYER;
+  // Shaka and Video.js play both HLS and DASH.
+  public canPlayType = (player: VideoPlayers) =>
+    this.streamType === player || player === VideoPlayers.SHAKA_PLAYER || player === VideoPlayers.VIDEOJS_PLAYER;
 
   public selectedPlayerClick = () => {
     this.closed ? this.toggleMenu(true) : this.playerClick(this.selectedPlayer);

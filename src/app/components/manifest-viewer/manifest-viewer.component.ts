@@ -441,8 +441,9 @@ export class ManifestViewerComponent implements OnInit, OnDestroy {
    * Before setting selectedPlayer, check if the player can display the stream
    */
   private setSelectedPlayer = (type: VideoSourceType) => {
-    // shaka can play both types of stream
-    const check = type !== this.selectedPlayer && this.selectedPlayer !== VideoPlayers.SHAKA_PLAYER;
+    // shaka and video.js can play both types of stream
+    const playsBoth = this.selectedPlayer === VideoPlayers.SHAKA_PLAYER || this.selectedPlayer === VideoPlayers.VIDEOJS_PLAYER;
+    const check = type !== this.selectedPlayer && !playsBoth;
     if (this.selectedPlayer === VideoPlayers.NONE || check) {
       this.selectedPlayer = getVideoPlayerType(type);
     }

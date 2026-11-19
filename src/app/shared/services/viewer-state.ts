@@ -42,6 +42,7 @@ export interface PlayerConfigs {
   [VideoPlayers.HLS_PLAYER]: string | undefined;
   [VideoPlayers.DASH_PLAYER]: string | undefined;
   [VideoPlayers.SHAKA_PLAYER]: string | undefined;
+  [VideoPlayers.VIDEOJS_PLAYER]?: string | undefined;
 }
 
 export class ViewerState {
@@ -102,6 +103,7 @@ export class ViewerState {
     [VideoPlayers.HLS_PLAYER]: undefined,
     [VideoPlayers.DASH_PLAYER]: undefined,
     [VideoPlayers.SHAKA_PLAYER]: undefined,
+    [VideoPlayers.VIDEOJS_PLAYER]: undefined,
   };
   public levelManifests: ParsedManifest[];
   public syncScteData = false;

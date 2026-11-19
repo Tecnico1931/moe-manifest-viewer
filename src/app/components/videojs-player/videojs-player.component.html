@@ -1,0 +1,16 @@
+<div class="videojsPlayerContainer" (mouseover)="toggleTopBar(true)" (mouseout)="toggleTopBar(false)">
+  <app-player-overlay
+    [hidden]="!showTopBar"
+    [muted]="muted || volume === 0"
+    [bitrates$]="bitratesList$"
+    [width]="width"
+    [currentBitrate]="currentBitrate"
+    [playerHeight]="height"
+    [version]="version"
+    [usingAbr]="isAuto"
+    (bitrateSelect)="setQualityByBitrate($event.bitrate)"
+    (autoSelect)="setABR()"
+    (toggleMute)="switchMuted($event)"
+  ></app-player-overlay>
+  <div class="holdTemp" #playerContainer></div>
+</div>

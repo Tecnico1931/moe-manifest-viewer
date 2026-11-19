@@ -331,6 +331,12 @@
             [width]="widthInPx"
             *ngIf="selectedPlayer === VideoPlayers.SHAKA_PLAYER"
           ></app-shaka-player>
+          <app-videojs-player
+            (onBitrateList)="getBitrateList($event)"
+            [viewerState]="viewerState"
+            [width]="widthInPx"
+            *ngIf="selectedPlayer === VideoPlayers.VIDEOJS_PLAYER"
+          ></app-videojs-player>
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ export class DataComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public isOnlyViewer = false;
   @Input() public id: string;
   @Input() public type: 'hls' | 'dash' | 'unknown';
-  @Input() public selectedPlayer: 'hls' | 'dash' | 'shaka';
+  @Input() public selectedPlayer: 'hls' | 'dash' | 'shaka' | 'videojs';
   @Output() public seek = new EventEmitter<Metric>();
   @Output() public loadLevelRequest = new EventEmitter<string>();
 

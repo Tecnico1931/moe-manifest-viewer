@@ -63,6 +63,7 @@ import { DrmModalComponent } from './components/drm-modal/drm-modal.component';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenIndicatorComponent } from './components/token-indicator/token-indicator.component';
 import { ShakaPlayerComponent } from './components/shaka-player/shaka-player.component';
+import { VideojsPlayerComponent } from './components/videojs-player/videojs-player.component';
 import * as Shakajs from 'shaka-player';
 import { DeviceProfileComponent } from './components/device-profile/device-profile.component';
 import { AudioTrackSelectComponent } from './components/audio-track-select/audio-track-select.component';
@@ -123,6 +124,7 @@ declare global {
     SegmentInspectorComponent,
     DrmModalComponent,
     ShakaPlayerComponent,
+    VideojsPlayerComponent,
     PlayerDropdownComponent,
     DeviceProfileComponent,
     AudioTrackSelectComponent,

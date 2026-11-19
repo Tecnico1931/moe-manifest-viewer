@@ -2,6 +2,7 @@ export enum VideoPlayers {
   HLS_PLAYER = 'hls',
   DASH_PLAYER = 'dash',
   SHAKA_PLAYER = 'shaka',
+  VIDEOJS_PLAYER = 'videojs',
   NONE = 'unknown',
 }
 
@@ -15,6 +16,9 @@ export const getVideoPlayerTitle = (type: VideoPlayers) => {
       break;
     case VideoPlayers.SHAKA_PLAYER:
       return 'Shaka Player';
+      break;
+    case VideoPlayers.VIDEOJS_PLAYER:
+      return 'Video.js Player';
       break;
     default:
       return ' ';

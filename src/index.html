@@ -89,9 +89,27 @@
             const shakajsDebugDefaultVersion = 'https://cdn.jsdelivr.net/npm/shaka-player@3.0.10/dist/shaka-player.ui.debug.js';
             return tryLoadScript(shakajsDebugVersionUrl, shakajsDebugDefaultVersion, 'shakajsLibrary');
             break;
+          case 'videojs':
+            const videojsVersionUrl = 'https://cdn.jsdelivr.net/npm/video.js@' + (versionNumber ? versionNumber : '8') + '/dist/video.min.js';
+            const videojsDefaultVersion = 'https://cdn.jsdelivr.net/npm/video.js@8/dist/video.min.js';
+            return tryLoadScript(videojsVersionUrl, videojsDefaultVersion, 'videojsLibrary');
+            break;
           default:
             break;
         }
+      }
+
+      // Video.js is loaded only when it is picked as the player, with its stylesheet.
+      function getVideojsLibrary() {
+        if (!window.videojsLibrary) {
+          var version = getVersionNumber('videojsVersion') || '8';
+          var css = document.createElement('link');
+          css.rel = 'stylesheet';
+          css.href = 'https://cdn.jsdelivr.net/npm/video.js@' + version + '/dist/video-js.min.css';
+          document.head.appendChild(css);
+          window.videojsLibrary = getLibrary(getVersionNumber('videojsVersion'), 'videojs');
+        }
+        return window.videojsLibrary;
       }
 
       var hlsjsVersionNumber = getVersionNumber('hlsjsVersion');

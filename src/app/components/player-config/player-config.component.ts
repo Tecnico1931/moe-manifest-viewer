@@ -17,6 +17,7 @@ export class PlayerConfigComponent implements OnInit {
     [VideoPlayers.HLS_PLAYER]: undefined,
     [VideoPlayers.DASH_PLAYER]: undefined,
     [VideoPlayers.SHAKA_PLAYER]: undefined,
+    [VideoPlayers.VIDEOJS_PLAYER]: undefined,
   };
 
   public customConfig: string;

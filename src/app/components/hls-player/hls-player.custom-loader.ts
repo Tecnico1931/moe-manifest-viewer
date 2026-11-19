@@ -212,6 +212,9 @@ export class customXhrLoader implements HlsTypes.Loader<HlsTypes.LoaderContext> 
           }
           stats.loaded = stats.total = len;
           this.logUpdate({ tLoaded: stats.loading.end, bytes: len, status, error: undefined });
+          if (!isArrayBuffer && (context as any).type === 'manifest') {
+            this.requestLog?.setMasterText(data);
+          }
 
           if (!this.callbacks) {
             return;

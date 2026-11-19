@@ -74,7 +74,7 @@
       <em class="material-icons" [class.iconActive]="scrolling === 'tailManifest' || scrolling === 'autoScroll'">low_priority</em>
       <span class="iconText">Scrolling</span>
     </div>
-    <div class="iconWrapper" (click)="toggleVideo(!viewerState.showVideo)" *ngIf="type === 'hls' || type === 'dash' || type === 'vtt'">
+    <div class="iconWrapper" (click)="toggleVideo(!viewerState.showVideo)" *ngIf="type === 'unknown' || type === 'hls' || type === 'dash' || type === 'vtt'">
       <em class="material-icons" [class.iconActive]="viewerState.showVideo">&#xE333;</em>
       <span class="iconText">Show Video <span *ngIf="viewerState.showVideo">&#9989;</span></span>
     </div>
@@ -126,7 +126,7 @@
       <em class="material-icons" [class.iconActive]="viewerState.showPlayerLogs">receipt</em>
       <span class="iconText">Show Player Logs <span *ngIf="viewerState.showPlayerLogs">&#9989;</span></span>
     </div>
-    <div class="iconWrapper" (click)="toggleHlsIssues(!viewerState.showHlsIssues)" *ngIf="type === 'hls'">
+    <div class="iconWrapper" (click)="toggleHlsIssues(!viewerState.showHlsIssues)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showHlsIssues">warning</em>
       <span class="iconText">Show HLS Issues <span *ngIf="viewerState.showHlsIssues">&#9989;</span></span>
     </div>
@@ -134,23 +134,23 @@
       <em class="material-icons" [class.iconActive]="viewerState.showClip">content_cut</em>
       <span class="iconText">Show Clip Tool <span *ngIf="viewerState.showClip">&#9989;</span></span>
     </div>
-    <div class="iconWrapper" (click)="toggleBitrateAudit(!viewerState.showBitrateAudit)" *ngIf="type === 'hls'">
+    <div class="iconWrapper" (click)="toggleBitrateAudit(!viewerState.showBitrateAudit)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showBitrateAudit">fact_check</em>
       <span class="iconText">Show Declared vs Delivered <span *ngIf="viewerState.showBitrateAudit">&#9989;</span></span>
     </div>
-    <div class="iconWrapper" (click)="toggleStartup(!viewerState.showStartup)" *ngIf="type === 'hls'">
+    <div class="iconWrapper" (click)="toggleStartup(!viewerState.showStartup)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showStartup">timer</em>
       <span class="iconText">Show Startup Waterfall <span *ngIf="viewerState.showStartup">&#9989;</span></span>
     </div>
-    <div class="iconWrapper" (click)="toggleLadderCheck(!viewerState.showLadderCheck)" *ngIf="type === 'hls'">
+    <div class="iconWrapper" (click)="toggleLadderCheck(!viewerState.showLadderCheck)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showLadderCheck">stacked_bar_chart</em>
       <span class="iconText">Show Ladder Check <span *ngIf="viewerState.showLadderCheck">&#9989;</span></span>
     </div>
-    <div class="iconWrapper" (click)="toggleAudioCompare(!viewerState.showAudioCompare)" *ngIf="type === 'hls'">
+    <div class="iconWrapper" (click)="toggleAudioCompare(!viewerState.showAudioCompare)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showAudioCompare">graphic_eq</em>
       <span class="iconText">Show Audio Tracks <span *ngIf="viewerState.showAudioCompare">&#9989;</span></span>
     </div>
-    <div class="iconWrapper" (click)="toggleEdgeView(!viewerState.showEdgeView)" *ngIf="type === 'hls'">
+    <div class="iconWrapper" (click)="toggleEdgeView(!viewerState.showEdgeView)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showEdgeView">dns</em>
       <span class="iconText">Show Akamai Edge <span *ngIf="viewerState.showEdgeView">&#9989;</span></span>
     </div>

@@ -20,7 +20,7 @@
       <em class="material-icons" [class.iconActive]="viewerState.showHelp">help</em>
       <span class="iconText">Help <span *ngIf="viewerState.showHelp">&#9989;</span></span>
     </div>
-    <div class="iconWrapper" (click)="saveCurrentViewer()">
+    <div class="iconWrapper" (click)="saveCurrentViewer($event)">
       <em
         class="material-icons"
         [class.iconActive]="storeViewerText === 'Stored ✅'"
@@ -44,7 +44,7 @@
       >
       <span class="iconText">{{ copyManifestText }}</span>
     </div>
-    <div class="iconWrapper" (click)="copyPermalinkUrl()">
+    <div class="iconWrapper" (click)="copyPermalinkUrl($event)">
       <em
         class="material-icons"
         [class.iconActive]="copyPermalinkText === 'Copy success ✅'"
@@ -53,7 +53,7 @@
       >
       <span class="iconText">{{ copyPermalinkText }}</span>
     </div>
-    <div class="iconWrapper" (click)="openDemoPage()">
+    <div class="iconWrapper" (click)="openDemoPage($event)">
       <em class="material-icons">&#xE86D;</em>
       <span class="iconText">Open Demo Page</span>
     </div>

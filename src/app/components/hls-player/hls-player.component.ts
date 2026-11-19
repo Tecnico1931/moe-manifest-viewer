@@ -5,6 +5,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { LoggerService } from './../../shared/services/logger.service';
 import { DrmInfoType, DrmManagerService, DRMType } from 'src/app/shared/services/drm-manager.service';
 import { ToastrService } from 'ngx-toastr';
+import { isTokenExpired } from '../../shared/token-safety.logic';
 import { v4 as uuidv4 } from 'uuid';
 import * as HlsTypes from 'hls.js';
 import Hls from 'hls.js';
@@ -475,6 +476,9 @@ export class HlsPlayerComponent implements OnInit, OnDestroy {
     this.viewerState.onHlsError(data);
     if (this.recoverFromPragmaBlock(data)) {
       return;
+    }
+    if (data.response && (data.response as any).code === 403 && isTokenExpired(data.url || this.currentSource || '', Date.now())) {
+      this.toastrService.error('Token expired — get a new URL', 'Request denied (403)');
     }
     if (data.type === 'keySystemError') {
       this.toastrService.error(data.details, 'HLS ERROR ' + data.type);

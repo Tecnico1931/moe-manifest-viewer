@@ -154,6 +154,14 @@
       <em class="material-icons" [class.iconActive]="viewerState.showEdgeView">dns</em>
       <span class="iconText">Show Akamai Edge <span *ngIf="viewerState.showEdgeView">&#9989;</span></span>
     </div>
+    <div class="iconWrapper" (click)="exportReport('html')" title="Download a token-redacted HTML report of this session">
+      <em class="material-icons">assignment_returned</em>
+      <span class="iconText">{{ exportReportText }}</span>
+    </div>
+    <div class="iconWrapper" (click)="exportReport('json')" title="Same report as JSON">
+      <em class="material-icons">data_object</em>
+      <span class="iconText">Export Report (JSON)</span>
+    </div>
     <div class="iconWrapper" (click)="toggleFrameOverlay(!viewerState.showFrameOverlay)">
       <em class="material-icons" [class.iconActive]="viewerState.showFrameOverlay">video_label</em>
       <span class="iconText">Show Frame Overlay <span *ngIf="viewerState.showFrameOverlay">&#9989;</span></span>

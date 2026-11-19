@@ -14,6 +14,7 @@ import {
 } from '../../shared';
 
 import { buildFeedbackMailto } from './feedback-mailto.logic';
+import { grafanaLinks, GrafanaLink, GRAFANA_TOOLTIP } from './grafana-links.logic';
 const { version: appVersion } = require('./../../../../package.json');
 
 @Component({
@@ -70,6 +71,8 @@ export class IconBarComponent implements OnInit {
 
   public showScrollingOptions = false;
   public showPollingOptions = false;
+  public showGrafanaOptions = false;
+  public grafanaTooltip = GRAFANA_TOOLTIP;
 
   public storeViewerText = 'Save Viewer';
   public copyUrlText = 'Copy Current URL';
@@ -376,6 +379,21 @@ export class IconBarComponent implements OnInit {
   public openDemoPage = () => {
     this.submitEvent(this.GA_CLICK, 'OpenDemoPage', this.GA_ICON_BAR);
     window.open(this.generateMetricsUrl(), '_blank');
+  };
+
+  public getGrafanaLinks(): GrafanaLink[] {
+    return grafanaLinks(this.currentUrl);
+  }
+
+  public setGrafanaShow = (show: boolean) => {
+    this.showGrafanaOptions = show;
+  };
+
+  public openGrafanaLink = (link: GrafanaLink, event: Event) => {
+    event.stopPropagation();
+    this.submitEvent(this.GA_CLICK, 'OpenGrafana:' + link.label, this.GA_ICON_BAR);
+    window.open(link.url, '_blank', 'noopener');
+    this.showGrafanaOptions = false;
   };
 
   public openFeedbackPage = () => {

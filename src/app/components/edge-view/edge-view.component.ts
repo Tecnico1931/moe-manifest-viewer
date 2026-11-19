@@ -19,6 +19,7 @@ import {
   orderRows,
   summarize,
 } from './edge-view.logic';
+import { EwFinding, UA_NOTE, inferEdgeWorker } from './edgeworker-view.logic';
 
 @Component({
   selector: 'app-edge-view',
@@ -40,6 +41,8 @@ export class EdgeViewComponent implements OnInit, OnDestroy {
   public readonly exposeHeadersValue = EXPOSE_HEADERS_VALUE;
   public readonly pragmaValue = PRAGMA_VALUE;
   public readonly formatBytes = formatBytes;
+  public ewFindings: EwFinding[] = [];
+  public readonly ewUaNote = UA_NOTE;
 
   private ngUnsubscribe = new Subject<void>();
 
@@ -89,5 +92,6 @@ export class EdgeViewComponent implements OnInit, OnDestroy {
     this.singleBitrate = detectSingleBitrate({ records, declaredVideoVariants: declared || undefined });
     this.visibility = headerVisibility(records);
     this.missingHeaders = this.visibility.filter((v) => !v.seen);
+    this.ewFindings = inferEdgeWorker({ masterText: this.requestLog.masterText, records });
   };
 }

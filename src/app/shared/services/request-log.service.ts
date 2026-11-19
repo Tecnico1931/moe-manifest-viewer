@@ -70,6 +70,8 @@ export class RequestLogService implements OnDestroy {
   public readonly records$ = new BehaviorSubject<RequestRecord[]>([]);
   /** performance.now() of the first master request in this session, undefined until one is seen. */
   public sessionStart?: number;
+  /** Master playlist body as received (HLS.js only), for the EdgeWorker view. Never persisted; cleared on reset(). */
+  public masterText?: string;
 
   private nextId = 1;
   private levels: DeclaredLevel[] = [];
@@ -93,12 +95,19 @@ export class RequestLogService implements OnDestroy {
   /** Called when a new manifest is loaded. */
   public reset(): void {
     this.sessionStart = undefined;
+    this.masterText = undefined;
     this.nextId = 1;
     this.levels = [];
     this.audioTracks = [];
     this.perfMatched.clear();
     this.audioTrackIds.clear();
     this.records$.next([]);
+  }
+
+  /** Stores the master playlist body and re-emits so panels refresh. */
+  public setMasterText(text: string): void {
+    this.masterText = text;
+    this.records$.next(this.records.slice());
   }
 
   public byKind(kind: RequestKind): RequestRecord[] {

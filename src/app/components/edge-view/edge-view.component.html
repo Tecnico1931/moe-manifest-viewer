@@ -28,6 +28,24 @@
       </div>
     </div>
 
+    <div class="ew-section">
+      <h4>EdgeWorker</h4>
+      <p class="ew-note">{{ ewUaNote }}</p>
+      <table class="ew-table">
+        <thead>
+          <tr><th>Finding</th><th>Result</th><th>Evidence</th><th>Confidence</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of ewFindings">
+            <td>{{ f.label }}</td>
+            <td><span class="ew-state" [ngClass]="'ew-state-' + f.state">{{ f.state }}</span></td>
+            <td class="ew-evidence">{{ f.evidence }}</td>
+            <td><span class="ew-conf" [ngClass]="'ew-conf-' + f.confidence">{{ f.confidence }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="filter">
       <label>
         Kind

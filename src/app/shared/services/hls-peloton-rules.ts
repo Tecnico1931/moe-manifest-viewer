@@ -1,4 +1,5 @@
 import { HlsIssue, HlsIssueCategory, HlsIssueSeverity } from '../models/hls-issue.model';
+import { RENDITION_ISSUE_CODES, renditionNameIssues } from './hls-peloton-rendition-rules';
 
 /**
  * Peloton-relevant HLS lint rules. Pure functions, no Angular dependencies.
@@ -17,6 +18,7 @@ export const PELOTON_ISSUE_CODES = {
   VIDEO_RESOLUTION_MISSING: 'PL031',
   CMCD_BR_TOO_LOW: 'PL040',
   LIVE_LONG_SEGMENTS: 'PL050',
+  ...RENDITION_ISSUE_CODES,
 } as const;
 
 const APPLE_AUTHORING = 'Apple HLS Authoring Specification';
@@ -377,5 +379,11 @@ export function runPelotonRules(manifest: string, isMedia: boolean): HlsIssue[] 
     return mediaIssues(lines);
   }
   const variants = parseVariants(lines);
-  return [...codecIssues(variants), ...bandwidthIssues(variants), ...ladderIssues(variants), ...cmcdIssues(variants)];
+  return [
+    ...codecIssues(variants),
+    ...bandwidthIssues(variants),
+    ...ladderIssues(variants),
+    ...cmcdIssues(variants),
+    ...renditionNameIssues(variants),
+  ];
 }

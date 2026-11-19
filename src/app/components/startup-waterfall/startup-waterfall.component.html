@@ -19,9 +19,9 @@
       <span class="kpi-sub" *ngIf="result.isTopRung">top rung</span>
       <span class="kpi-sub" *ngIf="!result.isTopRung && !result.ladderKnown && result.startedOnRung">ladder not seen</span>
     </div>
-    <div class="kpi" title="Time from the first master request to the video element's first playing/loadeddata event">
+    <div class="kpi" title="Time from the first master request to the first video frame presented (requestVideoFrameCallback after 'playing'; 'playing' alone where unsupported). Stays on 'waiting for play' while autoplay is blocked or the video is paused.">
       <span class="kpi-label">First frame</span>
-      <span class="kpi-value">{{ ms(result.firstFrameMs) }}</span>
+      <span class="kpi-value" [class.pending]="firstFramePending">{{ firstFrameLabel }}</span>
     </div>
     <button class="copy" (click)="copyJson()" [disabled]="!result.rows.length">{{ copied ? 'Copied' : 'Copy as JSON' }}</button>
   </div>
@@ -40,6 +40,7 @@
       <rect class="transfer" [class.pending]="row.endMs === undefined" [attr.x]="transferX(row)" [attr.y]="y(i) + 2" [attr.width]="transferWidth(row)" height="12" />
     </g>
     <line *ngIf="result.firstFrameMs !== undefined" class="first-frame" [attr.x1]="x(result.firstFrameMs)" [attr.x2]="x(result.firstFrameMs)" y1="0" [attr.y2]="svgHeight - rowHeight" />
+    <text *ngIf="result.firstFrameMs !== undefined" class="first-frame-label" [attr.x]="x(result.firstFrameMs) + 4" y="10">first frame {{ ms(result.firstFrameMs) }}</text>
   </svg>
   <p *ngIf="result.rows.length" class="hint">
     <span class="swatch wait"></span>waiting (TTFB) <span class="swatch transfer"></span>transfer. Axis in ms from first master request.

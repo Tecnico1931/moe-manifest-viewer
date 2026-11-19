@@ -2,7 +2,8 @@ import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ViewerState } from '../../shared';
 import { RequestLogService } from '../../shared/services/request-log.service';
-import { computeStartup, StartupResult, toJson, WaterfallRow } from './startup-waterfall.logic';
+import { watchFirstFrame, FirstFrameWatch } from './first-frame.capture';
+import { computeStartup, firstFrameStatus, firstFrameText, StartupResult, toJson, VideoSnapshot, WaterfallRow } from './startup-waterfall.logic';
 
 const LABEL_WIDTH = 360;
 const BAR_AREA = 520;
@@ -29,6 +30,7 @@ export class StartupWaterfallComponent implements OnInit, OnDestroy {
   private frozenStart?: number;
   private firstFramePerf?: number;
   private video?: HTMLVideoElement;
+  private watch?: FirstFrameWatch;
 
   constructor(private requestLog: RequestLogService, private host: ElementRef<HTMLElement>) {}
 
@@ -82,6 +84,14 @@ export class StartupWaterfallComponent implements OnInit, OnDestroy {
     return [row.label, row.rendition].filter(Boolean).join(' ');
   }
 
+  public get firstFrameLabel(): string {
+    return firstFrameText(this.result.firstFrameMs, this.snapshot());
+  }
+
+  public get firstFramePending(): boolean {
+    return firstFrameStatus(this.result.firstFrameMs, this.snapshot()) !== 'rendered';
+  }
+
   public ms(value?: number): string {
     return value === undefined ? '—' : Math.round(value).toLocaleString() + ' ms';
   }
@@ -107,17 +117,22 @@ export class StartupWaterfallComponent implements OnInit, OnDestroy {
 
   private recompute(): void {
     const start = this.requestLog.sessionStart;
+    this.attachVideo();
     if (this.frozen && start === this.frozenStart) {
       return; // startup is a one-off: keep the frozen numbers until the log is reset
     }
     this.frozen = false;
-    this.attachVideo();
     const declaredRates = this.requestLog.declaredLevels.filter((l) => !!l.bandwidth).map((l) => l.bandwidth as number);
     this.result = computeStartup(this.requestLog.records, start, this.firstFramePerf, declaredRates);
     if (this.result.isComplete) {
       this.frozen = true;
       this.frozenStart = start;
     }
+  }
+
+  private snapshot(): VideoSnapshot {
+    const v = this.video;
+    return { hasVideo: !!v, paused: !!v?.paused, readyState: v?.readyState ?? 0, hasSource: !!(v && (v.currentSrc || v.src)) };
   }
 
   /** Best effort: finds this viewer's <video> in the DOM, so no player internals are touched. */
@@ -129,21 +144,27 @@ export class StartupWaterfallComponent implements OnInit, OnDestroy {
     this.detachVideo();
     this.video = video;
     this.firstFramePerf = undefined;
-    video.addEventListener('playing', this.onFrame);
-    video.addEventListener('loadeddata', this.onFrame);
+    this.watch = watchFirstFrame(video, this.onFrame, this.onVideoChange);
   }
 
   private detachVideo(): void {
-    this.video?.removeEventListener('playing', this.onFrame);
-    this.video?.removeEventListener('loadeddata', this.onFrame);
+    this.watch?.dispose();
+    this.watch = undefined;
     this.video = undefined;
   }
 
-  private onFrame = (): void => {
-    if (this.firstFramePerf === undefined) {
-      this.firstFramePerf = performance.now();
-      this.frozen = false;
-      this.recompute();
+  private onFrame = (perf: number): void => {
+    this.firstFramePerf = perf;
+    this.frozen = false;
+    this.recompute();
+  };
+
+  /** The element started a new load (drop the old frame) or changed play state (refresh the label). */
+  private onVideoChange = (isNewLoad: boolean): void => {
+    if (isNewLoad) {
+      this.firstFramePerf = undefined;
     }
+    this.frozen = false;
+    this.recompute();
   };
 }

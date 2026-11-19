@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { computeStartup, toJson } from './startup-waterfall.logic';
+import { computeStartup, firstFrameStatus, firstFrameText, toJson } from './startup-waterfall.logic';
 
 const rec = (kind: string, tRequest: number, tFirstByte?: number, tLoaded?: number, extra: any = {}) => ({
   url: kind + tRequest,
@@ -105,3 +105,20 @@ console.log('startup-waterfall.logic: all tests passed');
 }
 console.log('startup-waterfall ABR-switch case: ok');
 
+
+// First frame: relative to the same t0, stale frames dropped, status text for paused / buffering.
+{
+  const recs = [rec('master', 1000, 1040, 1050), rec('video-segment', 1100, 1200, 1500)];
+  assert.strictEqual(computeStartup(recs, 1000, 1900).firstFrameMs, 900);
+  assert.strictEqual(computeStartup(recs, 1000, 500).firstFrameMs, undefined, 'frame before t0 is from an earlier load');
+  assert.strictEqual(computeStartup(recs, 1000).firstFrameMs, undefined);
+  const base = { hasVideo: true, paused: false, readyState: 0, hasSource: true };
+  assert.strictEqual(firstFrameStatus(900, base), 'rendered');
+  assert.strictEqual(firstFrameText(900.4, base), '900 ms');
+  assert.strictEqual(firstFrameStatus(undefined, { ...base, hasVideo: false }), 'no-video');
+  assert.strictEqual(firstFrameStatus(undefined, { ...base, hasSource: false }), 'waiting-source');
+  assert.strictEqual(firstFrameStatus(undefined, base), 'buffering');
+  assert.strictEqual(firstFrameStatus(undefined, { ...base, paused: true, readyState: 1 }), 'buffering');
+  assert.strictEqual(firstFrameText(undefined, { ...base, paused: true, readyState: 4 }), 'waiting for play');
+}
+console.log('startup-waterfall first-frame cases: ok');

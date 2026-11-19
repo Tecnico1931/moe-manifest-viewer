@@ -446,6 +446,22 @@ export class IconBarComponent implements OnInit {
     return grafanaLinks(this.currentUrl);
   }
 
+  /** Anchors pop-out menus (fixed-position, see icon-bar.component.scss) to the item that was clicked. */
+  public onMenuClick = (event: MouseEvent) => {
+    const menu = event.currentTarget as HTMLElement;
+    const item = (event.target as HTMLElement).closest('.iconWrapper');
+    if (item && menu.contains(item)) {
+      menu.style.setProperty('--pop-y', `${Math.round(item.getBoundingClientRect().top)}px`);
+    }
+  };
+
+  /** Pop-outs don't follow the scrolled list, so scrolling closes them. */
+  public onMenuScroll = () => {
+    this.showScrollingOptions = false;
+    this.showPollingOptions = false;
+    this.showGrafanaOptions = false;
+  };
+
   public setGrafanaShow = (show: boolean) => {
     this.showGrafanaOptions = show;
   };

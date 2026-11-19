@@ -1,11 +1,22 @@
 @import '../../shared/utils/vars';
 
+// The menu fills the viewer height and scrolls when its items don't fit.
+// Pop-outs are fixed-position so the scroller can't clip them; --pop-y is the top of
+// the item that was clicked (set on mousedown in onMenuClick, before item click handlers that stop propagation), and scrolling closes them.
+:host {
+  display: block;
+  height: 100%;
+}
+
 .bar {
   background-color: #eee;
-  min-height: 100vh;
+  height: 100%;
 
   .sidebarWrapper {
-    min-height: 100vh;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
   }
   .build-info {
     display: none;
@@ -60,6 +71,12 @@
         color: $error-color;
       }
     }
+  }
+
+  .scrollingOptionsContainer,
+  .pollingOptions {
+    position: fixed !important;
+    top: var(--pop-y, auto);
   }
 
   .scrollingOptionsContainer {

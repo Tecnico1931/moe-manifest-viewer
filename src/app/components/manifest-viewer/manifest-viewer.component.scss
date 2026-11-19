@@ -399,6 +399,8 @@ $manifestTopOptionsHeight: 43px;
   position: absolute;
   width: $manifestToolsWidth;
   left: 0;
+  top: 0;
+  bottom: 0;
   user-select: none;
   z-index: 3;
 }

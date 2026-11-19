@@ -442,21 +442,42 @@ export class IconBarComponent implements OnInit {
     window.open(this.tokenSafe(this.generateMetricsUrl(), !!(event && event.shiftKey)), '_blank');
   };
 
+  private grafanaLinksFor: { url: string; links: GrafanaLink[] } = { url: '', links: [] };
+
+  /** Same array until the URL changes: a new array each change detection made ngFor rebuild the
+   * options between mousedown and mouseup, and the browser then drops the click. */
   public getGrafanaLinks(): GrafanaLink[] {
-    return grafanaLinks(this.currentUrl);
+    const url = this.currentUrl || '';
+    if (url !== this.grafanaLinksFor.url) {
+      this.grafanaLinksFor = { url, links: grafanaLinks(url) };
+    }
+    return this.grafanaLinksFor.links;
   }
 
   /** Anchors pop-out menus (fixed-position, see icon-bar.component.scss) to the item that was clicked. */
   public onMenuClick = (event: MouseEvent) => {
     const menu = event.currentTarget as HTMLElement;
     const item = (event.target as HTMLElement).closest('.iconWrapper');
-    if (item && menu.contains(item)) {
-      menu.style.setProperty('--pop-y', `${Math.round(item.getBoundingClientRect().top)}px`);
+    if (!item || !menu.contains(item)) {
+      return;
     }
+    this.popOpenScrollTop = menu.scrollTop;
+    // Items in the lower half open their pop-out upwards so it stays on screen.
+    const rect = item.getBoundingClientRect();
+    const opensUp = rect.top > window.innerHeight / 2;
+    menu.style.setProperty('--pop-y', opensUp ? 'auto' : `${Math.round(rect.top)}px`);
+    menu.style.setProperty('--pop-bottom', opensUp ? `${Math.round(window.innerHeight - rect.bottom)}px` : 'auto');
   };
 
-  /** Pop-outs don't follow the scrolled list, so scrolling closes them. */
-  public onMenuScroll = () => {
+  private popOpenScrollTop = 0;
+
+  /** Pop-outs don't follow the scrolled list, so a real scroll closes them; small nudges
+   * (trackpad momentum, scroll-into-view on click) are ignored. */
+  public onMenuScroll = (event: Event) => {
+    const menu = event.target as HTMLElement;
+    if (Math.abs(menu.scrollTop - this.popOpenScrollTop) < 24) {
+      return;
+    }
     this.showScrollingOptions = false;
     this.showPollingOptions = false;
     this.showGrafanaOptions = false;

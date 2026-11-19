@@ -11,17 +11,24 @@
 .bar {
   background-color: #eee;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 
   .sidebarWrapper {
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-width: thin;
   }
+  // Sits below the scrolling list (flex column), so it never covers menu items.
+  // visibility (not display) so its space is kept: showing it on hover must not shrink the list
+  // and slide the bottom item under the pointer.
   .build-info {
-    display: none;
-    position: relative;
-    bottom: 107px;
+    visibility: hidden;
+    white-space: nowrap;
+    overflow: hidden;
+    flex: 0 0 auto;
     padding: 5px 0;
     text-align: center;
     font-weight: bold;
@@ -33,7 +40,6 @@
   &.showLargeMenu {
     background-color: #ccc;
     width: 180px;
-    display: block;
 
     .iconText {
       padding-left: 20px;
@@ -41,7 +47,7 @@
     }
 
     .build-info {
-      display: block;
+      visibility: visible;
     }
   }
 
@@ -77,6 +83,7 @@
   .pollingOptions {
     position: fixed !important;
     top: var(--pop-y, auto);
+    bottom: var(--pop-bottom, auto);
   }
 
   .scrollingOptionsContainer {

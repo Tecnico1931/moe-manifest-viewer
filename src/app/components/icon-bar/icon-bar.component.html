@@ -1,5 +1,5 @@
 <div class="bar" [ngClass]="{ showLargeMenu: showIconText }">
-  <div class="sidebarWrapper" (scroll)="onMenuScroll()" (mousedown)="onMenuClick($event)">
+  <div class="sidebarWrapper" (scroll)="onMenuScroll($event)" (mousedown)="onMenuClick($event)">
     <div class="iconWrapper" (click)="explodeManifest()" *ngIf="viewerState.showExplode">
       <em class="material-icons">&#xe02f;</em>
       <span class="iconText">Explode Manifest</span>

@@ -49,6 +49,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
       showLive: false,
       showLadderCheck: false,
       showAudioCompare: false,
+      showCaptionCheck: false,
       showEdgeView: false,
     };
     this.addViewer({ url: '', options: options }, -1);
@@ -158,6 +159,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
             showLive: lastViewer.viewerState.showLive,
             showLadderCheck: lastViewer.viewerState.showLadderCheck,
             showAudioCompare: lastViewer.viewerState.showAudioCompare,
+            showCaptionCheck: lastViewer.viewerState.showCaptionCheck,
             showEdgeView: lastViewer.viewerState.showEdgeView,
           },
         };
@@ -191,6 +193,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
           showLive: false,
           showLadderCheck: false,
           showAudioCompare: false,
+          showCaptionCheck: false,
           showEdgeView: false,
         },
       };

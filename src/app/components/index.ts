@@ -19,4 +19,5 @@ export * from './startup-waterfall/startup-waterfall.component';
 export * from './live-mode/live-mode.component';
 export * from './ladder-check/ladder-check.component';
 export * from './audio-compare/audio-compare.component';
+export * from './caption-check/caption-check.component';
 export * from './edge-view/edge-view.component';

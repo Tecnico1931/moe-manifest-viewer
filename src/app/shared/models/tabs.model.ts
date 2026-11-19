@@ -19,5 +19,6 @@ export enum TabObjectName {
   LIVE = 'Live',
   LADDERCHECK = 'Ladder check',
   AUDIOCOMPARE = 'Audio tracks',
+  CAPTIONCHECK = 'Captions',
   EDGEVIEW = 'Akamai edge',
 }

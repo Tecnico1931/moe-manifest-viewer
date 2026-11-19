@@ -1,0 +1,86 @@
+.caption-check {
+  padding: 8px 10px;
+  font-size: 12px;
+
+  h3 {
+    margin: 0 8px 0 0;
+    font-size: 14px;
+  }
+
+  h4 {
+    margin: 10px 0 4px;
+    font-size: 13px;
+  }
+}
+
+.cc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.cc-status,
+.cc-hint,
+.cc-note {
+  opacity: 0.7;
+}
+
+.cc-chips,
+.cc-issues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0;
+}
+
+.cc-issues {
+  display: table-cell;
+}
+
+.cc-chip {
+  display: inline-block;
+  padding: 1px 8px;
+  margin: 1px 4px 1px 0;
+  border-radius: 10px;
+  background: #e9ecef;
+  color: #212529;
+}
+
+.cc-error {
+  background: #ffe3e3;
+  color: #c92a2a;
+}
+
+.cc-warn {
+  background: #fff3bf;
+  color: #8a5a00;
+}
+
+.cc-info {
+  background: #e7f5ff;
+  color: #1864ab;
+}
+
+.cc-ok {
+  background: #d3f9d8;
+  color: #2b8a3e;
+}
+
+.cc-error-text {
+  color: #c92a2a;
+}
+
+.cc-table {
+  border-collapse: collapse;
+  width: 100%;
+
+  th,
+  td {
+    text-align: left;
+    padding: 2px 8px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+    white-space: nowrap;
+  }
+}

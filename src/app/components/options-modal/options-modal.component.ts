@@ -56,6 +56,7 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
   public displayStartup: boolean;
   public displayLadderCheck: boolean;
   public displayAudioCompare: boolean;
+  public displayCaptionCheck: boolean;
   public displayEdgeView: boolean;
   public seconds = 6;
   public optionsChecked: { prop: string; value: boolean }[] = new Array();
@@ -182,6 +183,10 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
       this.displayAudioCompare = val;
     });
 
+    this.appService.displayCaptionCheck$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
+      this.displayCaptionCheck = val;
+    });
+
     this.appService.displayEdgeView$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((val: boolean) => {
       this.displayEdgeView = val;
     });
@@ -271,6 +276,11 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
         case 'displayAudioCompare':
           if (vars[urlVar]) {
             this.appService.toggleAudioCompareService(true);
+          }
+          break;
+        case 'displayCaptionCheck':
+          if (vars[urlVar]) {
+            this.appService.toggleCaptionCheckService(true);
           }
           break;
         case 'displayEdgeView':
@@ -537,6 +547,9 @@ export class OptionsModalComponent implements OnInit, OnDestroy {
           break;
         case 'showAudioCompare':
           this.appService.toggleAudioCompareService(viewer.options[option]);
+          break;
+        case 'showCaptionCheck':
+          this.appService.toggleCaptionCheckService(viewer.options[option]);
           break;
         case 'showEdgeView':
           this.appService.toggleEdgeViewService(viewer.options[option]);

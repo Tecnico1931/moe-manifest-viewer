@@ -43,6 +43,7 @@ import { BitrateAuditComponent } from './components/bitrate-audit/bitrate-audit.
 import { StartupWaterfallComponent } from './components/startup-waterfall/startup-waterfall.component';
 import { LadderCheckComponent } from './components/ladder-check/ladder-check.component';
 import { AudioCompareComponent } from './components/audio-compare/audio-compare.component';
+import { CaptionCheckComponent } from './components/caption-check/caption-check.component';
 import { EdgeViewComponent } from './components/edge-view/edge-view.component';
 import { SubtitlesViewerComponent } from './components/subtitles-viewer/subtitles-viewer.component';
 import { InfoContainerComponent } from './components/info-container/info-container.component';
@@ -102,6 +103,7 @@ declare global {
     StartupWaterfallComponent,
     LadderCheckComponent,
     AudioCompareComponent,
+    CaptionCheckComponent,
     EdgeViewComponent,
     SubtitlesViewerComponent,
     SubtitlesComponent,

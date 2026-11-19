@@ -34,6 +34,7 @@ export class AppService {
   public displayStartup$ = new Subject<boolean>();
   public displayLadderCheck$ = new Subject<boolean>();
   public displayAudioCompare$ = new Subject<boolean>();
+  public displayCaptionCheck$ = new Subject<boolean>();
   public displayEdgeView$ = new Subject<boolean>();
   public openSetManifest$ = new Subject<string>();
   public updatePlayerConfig$ = new Subject<string>();
@@ -137,6 +138,10 @@ export class AppService {
 
   public toggleAudioCompareService(val: boolean): void {
     this.displayAudioCompare$.next(val);
+  }
+
+  public toggleCaptionCheckService(val: boolean): void {
+    this.displayCaptionCheck$.next(val);
   }
 
   public toggleEdgeViewService(val: boolean): void {

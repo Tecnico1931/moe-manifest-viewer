@@ -1,0 +1,73 @@
+<div class="caption-check">
+  <div class="cc-head">
+    <h3>Captions</h3>
+    <button type="button" (click)="checkCues()" [disabled]="!canCheck">{{ isChecking ? 'Checking…' : 'Check cues' }}</button>
+    <button type="button" (click)="reload()" [disabled]="isChecking">Reload</button>
+    <span class="cc-status" *ngIf="status">{{ status }}</span>
+  </div>
+
+  <div class="cc-chips" *ngIf="captions.length || audio.length">
+    <span *ngFor="let i of issues" class="cc-chip" [ngClass]="'cc-' + i.severity" [title]="i.message">{{ i.message }}</span>
+    <span *ngIf="!issues.length" class="cc-chip cc-ok">no playlist issues</span>
+  </div>
+
+  <table class="cc-table" *ngIf="captions.length">
+    <thead>
+      <tr>
+        <th>Type</th><th>Group</th><th>Name</th><th>Lang</th><th>Def</th><th>Auto</th><th>Forced</th>
+        <th>Cues</th><th>First</th><th>Last</th><th>Segments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let row of captions; trackBy: trackByIndex">
+        <tr>
+          <td>{{ row.entry.type === 'SUBTITLES' ? 'SUBS' : 'CC' }}</td>
+          <td>{{ row.entry.groupId || '—' }}</td>
+          <td>{{ row.entry.name }}</td>
+          <td [class.cc-error-text]="!row.entry.language">{{ row.entry.language || 'missing' }}</td>
+          <td>{{ row.entry.isDefault ? 'yes' : '' }}</td>
+          <td>{{ row.entry.isAutoselect ? 'yes' : '' }}</td>
+          <td>{{ row.entry.isForced ? 'yes' : '' }}</td>
+          <ng-container *ngIf="row.result?.report as r; else noResult">
+            <td>{{ r.total }}</td>
+            <td>{{ formatSec(r.firstStart) }}</td>
+            <td [title]="'Stream duration ' + formatSec(row.result.duration)">{{ formatSec(r.lastEnd) }} / {{ formatSec(row.result.duration) }}</td>
+            <td>{{ row.result.segmentsFetched }} / {{ row.result.segmentsTotal }}</td>
+          </ng-container>
+          <ng-template #noResult>
+            <td colspan="4" class="cc-note" [class.cc-error-text]="row.result?.error">
+              {{ row.busy ? 'working…' : row.result?.error || (row.entry.type === 'CLOSED-CAPTIONS' ? 'in-band ' + (row.entry.instreamId || '') : '') }}
+            </td>
+          </ng-template>
+        </tr>
+        <tr *ngIf="row.result?.issues?.length">
+          <td colspan="11" class="cc-issues">
+            <span *ngFor="let i of row.result.issues" class="cc-chip" [ngClass]="'cc-' + i.severity">{{ i.message }}</span>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+
+  <p class="cc-hint" *ngIf="captions.length">Check cues reads up to {{ maxSegments }} WebVTT segments per track. Gaps over 10 s, overlaps, cues over 7 s and lines over 42 characters are flagged.</p>
+
+  <h4 *ngIf="audio.length">Audio renditions</h4>
+  <table class="cc-table" *ngIf="audio.length">
+    <thead>
+      <tr><th>Group</th><th>Name</th><th>Lang</th><th>Def</th><th>Channels</th><th>Codec (from variants)</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of audio; trackBy: trackByIndex">
+        <td>{{ a.entry.groupId || '—' }}</td>
+        <td>{{ a.entry.name }}</td>
+        <td [class.cc-error-text]="!a.entry.language">{{ a.entry.language || 'missing' }}</td>
+        <td>{{ a.entry.isDefault ? 'yes' : '' }}</td>
+        <td>{{ a.entry.channels || '—' }}</td>
+        <td>{{ a.codecs.length ? a.codecs.join(', ') : '—' }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="cc-hint" *ngIf="audio.length">Loudness per track is measured in the Audio tracks panel.</p>
+
+  <p class="cc-hint" *ngIf="!captions.length && !audio.length && !status">No subtitle, caption or audio renditions loaded</p>
+</div>

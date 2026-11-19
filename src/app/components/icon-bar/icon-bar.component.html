@@ -157,6 +157,9 @@
     <div class="iconWrapper" (click)="toggleCaptionCheck(!viewerState.showCaptionCheck)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showCaptionCheck">closed_caption</em>
       <span class="iconText">Show Captions <span *ngIf="viewerState.showCaptionCheck">&#9989;</span></span>
+    <div class="iconWrapper" (click)="toggleCompare(!viewerState.showCompare)" *ngIf="type === 'unknown' || type === 'hls'">
+      <em class="material-icons" [class.iconActive]="viewerState.showCompare">compare</em>
+      <span class="iconText">Show A/B Compare <span *ngIf="viewerState.showCompare">&#9989;</span></span>
     </div>
     <div class="iconWrapper" (click)="toggleEdgeView(!viewerState.showEdgeView)" *ngIf="type === 'unknown' || type === 'hls'">
       <em class="material-icons" [class.iconActive]="viewerState.showEdgeView">dns</em>

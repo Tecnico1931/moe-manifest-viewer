@@ -1,0 +1,94 @@
+.cmp {
+  font-size: 12px;
+  padding: 4px 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.cmp-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.cmp-note {
+  color: #868e96;
+  margin: 2px 0;
+}
+
+.cmp-form {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.cmp-url {
+  flex: 1;
+  min-width: 200px;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.cmp-btn {
+  font-size: 12px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.cmp-error {
+  color: #e03131;
+  margin: 4px 0;
+}
+
+.cmp-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+
+  th,
+  td {
+    padding: 2px 6px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .left {
+    text-align: left;
+  }
+
+  .grp {
+    text-align: center;
+    border-bottom: 1px solid #adb5bd;
+  }
+
+  .codecs {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  tbody tr:nth-child(even) {
+    background: rgba(128, 128, 128, 0.08);
+  }
+
+  tr.only {
+    opacity: 0.65;
+  }
+
+  tfoot td {
+    border-top: 1px solid #adb5bd;
+    font-weight: bold;
+  }
+
+  .neg {
+    color: #2f9e44;
+  }
+
+  .pos {
+    color: #e8590c;
+  }
+}

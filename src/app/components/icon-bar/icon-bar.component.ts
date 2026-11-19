@@ -65,6 +65,7 @@ export class IconBarComponent implements OnInit {
   @Output() public onToggleLadderCheck = new EventEmitter<boolean>();
   @Output() public onToggleAudioCompare = new EventEmitter<boolean>();
   @Output() public onToggleCaptionCheck = new EventEmitter<boolean>();
+  @Output() public onToggleCompare = new EventEmitter<boolean>();
   @Output() public onToggleEdgeView = new EventEmitter<boolean>();
   @Output() public onToggleFrameOverlay = new EventEmitter<boolean>();
   @Output() public onToggleUseGlobalToken = new EventEmitter<boolean>();
@@ -258,6 +259,10 @@ export class IconBarComponent implements OnInit {
     this.onToggleCaptionCheck.emit(toggled);
     this.viewerState.updateActiveTab(TabObjectName.CAPTIONCHECK, toggled);
     this.submitEvent(this.GA_CLICK, 'ToggleCaptionCheck:' + toggled, this.GA_ICON_BAR);
+  public toggleCompare = (toggled: boolean) => {
+    this.onToggleCompare.emit(toggled);
+    this.viewerState.updateActiveTab(TabObjectName.COMPARE, toggled);
+    this.submitEvent(this.GA_CLICK, 'ToggleCompare:' + toggled, this.GA_ICON_BAR);
   };
 
   public toggleEdgeView = (toggled: boolean) => {
@@ -345,6 +350,7 @@ export class IconBarComponent implements OnInit {
         showLadderCheck: this.viewerState.showLadderCheck,
         showAudioCompare: this.viewerState.showAudioCompare,
         showCaptionCheck: this.viewerState.showCaptionCheck,
+        showCompare: this.viewerState.showCompare,
         showEdgeView: this.viewerState.showEdgeView,
       })
       .then(() => {

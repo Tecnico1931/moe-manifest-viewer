@@ -1,0 +1,92 @@
+<div class="cmp">
+  <div class="cmp-head">
+    <h3>A/B ladder compare</h3>
+    <span class="cmp-note">A = loaded master. B = proposed ladder.</span>
+  </div>
+  <form class="cmp-form" (submit)="$event.preventDefault(); compare()">
+    <input class="cmp-url" type="text" name="urlB" [(ngModel)]="urlB" placeholder="B master playlist URL (.m3u8)" spellcheck="false" />
+    <button type="submit" class="cmp-btn" [disabled]="!canCompare">{{ isLoading ? 'Loading…' : 'Compare' }}</button>
+    <button
+      type="button"
+      class="cmp-btn"
+      [disabled]="!canMeasure"
+      (click)="measureB()"
+      title="Fetches the first 3 segments of each B rung and computes bytes*8/duration"
+    >
+      {{ isMeasuring ? 'Measuring…' : 'Measure B' }}
+    </button>
+  </form>
+  <div class="cmp-error" *ngIf="error">{{ error.message }}</div>
+
+  <ng-container *ngIf="a && b && !error">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th rowspan="2">Height</th>
+          <th colspan="5" class="grp">A</th>
+          <th colspan="5" class="grp">B</th>
+          <th colspan="3" class="grp">B vs A</th>
+        </tr>
+        <tr>
+          <th>Res</th>
+          <th>BW kbps</th>
+          <th>Avg kbps</th>
+          <th>FPS</th>
+          <th class="left">Codecs</th>
+          <th>Res</th>
+          <th>BW kbps</th>
+          <th>Avg kbps</th>
+          <th>FPS</th>
+          <th class="left">Codecs</th>
+          <th>BW</th>
+          <th>Avg</th>
+          <th>Delivered A / B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows; trackBy: trackByIndex" [class.only]="!row.a || !row.b">
+          <td>{{ row.height }}p</td>
+          <td>{{ res(row.a) }}</td>
+          <td>{{ kbps(row.a?.bandwidth) }}</td>
+          <td>{{ kbps(row.a?.avg) }}</td>
+          <td>{{ row.a?.fps || '—' }}</td>
+          <td class="left codecs">{{ row.a?.codecs || '—' }}</td>
+          <td>{{ res(row.b) }}</td>
+          <td>{{ kbps(row.b?.bandwidth) }}</td>
+          <td>{{ kbps(row.b?.avg) }}</td>
+          <td>{{ row.b?.fps || '—' }}</td>
+          <td class="left codecs">{{ row.b?.codecs || '—' }}</td>
+          <td [ngClass]="tone(row.deltaBandwidthPct)">{{ pct(row.deltaBandwidthPct) }}</td>
+          <td [ngClass]="tone(row.deltaAvgPct)">{{ pct(row.deltaAvgPct) }}</td>
+          <td class="delivered">
+            <span title="A: measured by Declared vs delivered">A {{ kbpsRaw(deliveredA(row.a)) }}</span>
+            <span title="B: measured with Measure B">/ B {{ kbpsRaw(deliveredB(row.b)) }}</span>
+            <span [ngClass]="tone(deliveredDelta(row))"> {{ pct(deliveredDelta(row)) }}</span>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td colspan="5" class="left">
+            {{ totalsA.count }} rungs, sum AVG {{ kbps(totalsA.sumAvg) }} kbps, sum BW {{ kbps(totalsA.sumBandwidth) }} kbps
+            <span *ngIf="totalsA.missingAvg">({{ totalsA.missingAvg }} without AVG)</span>
+          </td>
+          <td colspan="5" class="left">
+            {{ totalsB.count }} rungs, sum AVG {{ kbps(totalsB.sumAvg) }} kbps, sum BW {{ kbps(totalsB.sumBandwidth) }} kbps
+            <span *ngIf="totalsB.missingAvg">({{ totalsB.missingAvg }} without AVG)</span>
+          </td>
+          <td [ngClass]="tone(totalsDelta('sumBandwidth'))">{{ pct(totalsDelta('sumBandwidth')) }}</td>
+          <td [ngClass]="tone(totalsDelta('sumAvg'))">{{ pct(totalsDelta('sumAvg')) }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    <p class="cmp-note">Audio A: {{ audioA }}</p>
+    <p class="cmp-note">Audio B: {{ audioB }}</p>
+    <p class="cmp-note">
+      Delta is (B - A) / A. Rows are aligned by height. A delivered needs "Declared vs delivered" data from playback; B delivered comes from
+      Measure B (first 3 segments per rung, container overhead included).
+    </p>
+  </ng-container>
+</div>

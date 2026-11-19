@@ -45,6 +45,7 @@ import { LiveModeComponent } from './components/live-mode/live-mode.component';
 import { LadderCheckComponent } from './components/ladder-check/ladder-check.component';
 import { AudioCompareComponent } from './components/audio-compare/audio-compare.component';
 import { CaptionCheckComponent } from './components/caption-check/caption-check.component';
+import { CompareComponent } from './components/compare/compare.component';
 import { EdgeViewComponent } from './components/edge-view/edge-view.component';
 import { SubtitlesViewerComponent } from './components/subtitles-viewer/subtitles-viewer.component';
 import { InfoContainerComponent } from './components/info-container/info-container.component';
@@ -108,6 +109,7 @@ declare global {
     LadderCheckComponent,
     AudioCompareComponent,
     CaptionCheckComponent,
+    CompareComponent,
     EdgeViewComponent,
     SubtitlesViewerComponent,
     SubtitlesComponent,

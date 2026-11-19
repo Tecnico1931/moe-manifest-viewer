@@ -133,7 +133,8 @@ export const computeStartup = (
     startedOnRung: video?.resolution,
     isTopRung: rung.isTop,
     ladderKnown: rung.known,
-    firstFrameMs: firstFramePerf !== undefined ? firstFramePerf - start : undefined,
+    // a frame captured before this session's t0 belongs to an earlier load: not a first frame of this one
+    firstFrameMs: firstFramePerf !== undefined && firstFramePerf >= start ? firstFramePerf - start : undefined,
     isComplete,
   };
 };
@@ -159,3 +160,40 @@ export const toJson = (r: StartupResult): object => ({
     endMs: round(row.endMs),
   })),
 });
+
+/** What the <video> is doing, as far as the first-frame milestone cares. */
+export interface VideoSnapshot {
+  hasVideo: boolean;
+  paused: boolean;
+  /** HTMLMediaElement.readyState */
+  readyState: number;
+  hasSource: boolean;
+}
+
+export type FirstFrameStatus = 'rendered' | 'no-video' | 'waiting-source' | 'buffering' | 'waiting-play';
+
+/** Why the first frame is (not) there yet. Paused with data ready is the autoplay-blocked case. */
+export const firstFrameStatus = (firstFrameMs: number | undefined, v: VideoSnapshot): FirstFrameStatus => {
+  if (firstFrameMs !== undefined) {
+    return 'rendered';
+  }
+  if (!v.hasVideo) {
+    return 'no-video';
+  }
+  if (!v.hasSource) {
+    return 'waiting-source';
+  }
+  // HAVE_CURRENT_DATA (2) or better and not playing: the browser is holding it until the user presses play
+  return v.paused && v.readyState >= 2 ? 'waiting-play' : 'buffering';
+};
+
+const STATUS_TEXT: Record<FirstFrameStatus, string> = {
+  rendered: '',
+  'no-video': 'no video',
+  'waiting-source': 'waiting for load',
+  buffering: 'buffering',
+  'waiting-play': 'waiting for play',
+};
+
+export const firstFrameText = (firstFrameMs: number | undefined, v: VideoSnapshot): string =>
+  firstFrameMs !== undefined ? Math.round(firstFrameMs).toLocaleString() + ' ms' : STATUS_TEXT[firstFrameStatus(firstFrameMs, v)];

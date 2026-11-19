@@ -88,6 +88,10 @@
     stroke: #c0392b;
     stroke-dasharray: 3 2;
   }
+  .first-frame-label {
+    fill: #c0392b;
+    font-size: 10px;
+  }
 }
 
 .hint {
@@ -108,4 +112,9 @@
   &.transfer {
     background: #2a6db0;
   }
+}
+
+.kpi-value.pending {
+  font-size: 0.8em;
+  opacity: 0.7;
 }
